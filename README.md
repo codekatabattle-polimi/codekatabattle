@@ -9,5 +9,7 @@ Link to view RASD on Google Docs: https://docs.google.com/document/d/1uCtbc6kutM
 ## Group Members
 
 Nicolò Giallongo - 10764261
+
 Giovanni Orciuolo - 10994077
+
 Giuseppe Vitello - 10766482
