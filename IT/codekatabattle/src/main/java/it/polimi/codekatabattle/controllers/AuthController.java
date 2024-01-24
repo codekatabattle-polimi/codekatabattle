@@ -1,21 +1,51 @@
 package it.polimi.codekatabattle.controllers;
 
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import it.polimi.codekatabattle.exceptions.OAuthException;
+import it.polimi.codekatabattle.models.github.GHUser;
+import it.polimi.codekatabattle.models.oauth.OAuthAccessToken;
+import it.polimi.codekatabattle.services.AuthService;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.Map;
-
+@Tag(name = "Auth", description = "Endpoints related to authentication")
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
+    private final AuthService authService;
+
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
+
+    @PostMapping(
+        path = "/callback",
+        consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Operation(
+        summary = "OAuth callback",
+        description = "Get access token by providing code from GitHub"
+    )
+    public ResponseEntity<OAuthAccessToken> callback(@RequestBody MultiValueMap<String, String> formData) throws OAuthException {
+        OAuthAccessToken accessToken = authService.handleOAuthCallback(formData.getFirst("code"));
+        return ResponseEntity.ok().body(accessToken);
+    }
+
     @GetMapping("/me")
-    public Map<String, Object> me(@AuthenticationPrincipal OAuth2User principal) {
-        return Collections.singletonMap("name", principal.getAttribute("name"));
+    @Operation(
+        summary = "Get user info",
+        description = "Get user info by providing access token",
+        security = @SecurityRequirement(name = "github")
+    )
+    public ResponseEntity<GHUser> me(@Parameter(hidden = true) @RequestHeader("Authorization") String accessToken) throws OAuthException {
+        return ResponseEntity.ok().body(authService.getUserInfo(accessToken));
     }
 
 }
