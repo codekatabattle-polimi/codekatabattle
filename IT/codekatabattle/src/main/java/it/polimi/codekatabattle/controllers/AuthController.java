@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.polimi.codekatabattle.exceptions.OAuthException;
 import it.polimi.codekatabattle.models.github.GHUser;
+import it.polimi.codekatabattle.models.oauth.AuthOrigin;
 import it.polimi.codekatabattle.models.oauth.OAuthAccessToken;
 import it.polimi.codekatabattle.services.AuthService;
 import org.springframework.http.MediaType;
@@ -33,8 +34,8 @@ public class AuthController {
         summary = "OAuth callback",
         description = "Get access token by providing code from GitHub"
     )
-    public ResponseEntity<OAuthAccessToken> callback(@RequestBody MultiValueMap<String, String> formData) throws OAuthException {
-        OAuthAccessToken accessToken = authService.handleOAuthCallback(formData.getFirst("code"));
+    public ResponseEntity<OAuthAccessToken> callback(@RequestBody MultiValueMap<String, String> formData, @RequestHeader("Origin") String origin) throws OAuthException {
+        OAuthAccessToken accessToken = authService.handleOAuthCallback(formData.getFirst("code"), authService.getAuthOriginFromOriginHeader(origin));
         return ResponseEntity.ok().body(accessToken);
     }
 
@@ -44,8 +45,8 @@ public class AuthController {
         description = "Get user info by providing access token",
         security = @SecurityRequirement(name = "github")
     )
-    public ResponseEntity<GHUser> me(@Parameter(hidden = true) @RequestHeader("Authorization") String accessToken) throws OAuthException {
-        return ResponseEntity.ok().body(authService.getUserInfo(accessToken));
+    public ResponseEntity<GHUser> me(@Parameter(hidden = true) @RequestHeader("Authorization") String accessToken, @RequestHeader("Origin") String origin) throws OAuthException {
+        return ResponseEntity.ok().body(authService.getUserInfo(accessToken, authService.getAuthOriginFromOriginHeader(origin)));
     }
 
 }
