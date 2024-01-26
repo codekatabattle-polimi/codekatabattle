@@ -1,9 +1,8 @@
-import { GithubLoginButton } from "./components/GithubLoginButton.tsx";
+import { ReactNode, useEffect, useState } from "react";
 import { AuthService, GHUser, OpenAPI } from "./services/openapi";
-import { useEffect, useState } from "react";
-import { AuthContext } from "./context/AuthContext.ts";
+import { AuthContext } from "./context/AuthContext";
 
-function App() {
+export function AppWrapper({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<GHUser | null>(null);
     const [token, setToken] = useState<string | null>(null);
 
@@ -30,12 +29,7 @@ function App() {
 
     return (
         <AuthContext.Provider value={{ user, setUser, token, setToken }}>
-            <h1 className="text-3xl font-bold">Welcome to CodeKataBattle!</h1>
-            <h2 className="text-2xl">Improve your programming skills online</h2>
-
-            <GithubLoginButton/>
+            {children}
         </AuthContext.Provider>
     )
 }
-
-export default App
