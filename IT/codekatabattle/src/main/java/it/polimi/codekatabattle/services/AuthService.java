@@ -12,4 +12,6 @@ public interface AuthService {
     GHUser getUserInfo(String accessToken, AuthOrigin authOrigin) throws OAuthException;
 
     AuthOrigin getAuthOriginFromOriginHeader(String origin);
+
+    void checkAccessToken(String accessToken, String origin) throws OAuthException;
 }

@@ -1,6 +1,8 @@
 package it.polimi.codekatabattle.config;
 
 import it.polimi.codekatabattle.exceptions.OAuthException;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.xml.bind.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,6 +29,18 @@ public class RestControllerExceptionHandler {
     @ExceptionHandler(OAuthException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public OAuthException handleOAuthException(OAuthException ex) {
+        return ex;
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ValidationException handleValidationException(ValidationException ex) {
+        return ex;
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public EntityNotFoundException handleEntityNotFoundException(EntityNotFoundException ex) {
         return ex;
     }
 

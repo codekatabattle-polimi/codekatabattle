@@ -1,14 +1,17 @@
 package it.polimi.codekatabattle.models.github;
 
+import lombok.Data;
+
+@Data
 public class GHUser {
-    public int id;
-    public String login;
-    public String node_id;
-    public String avatar_url;
-    public String gravatar_id;
-    public String url;
-    public String html_url;
-    public String repos_url;
-    public String type;
-    public boolean site_admin;
+    private int id;
+    private String login;
+    private String node_id;
+    private String avatar_url;
+    private String gravatar_id;
+    private String url;
+    private String html_url;
+    private String repos_url;
+    private String type;
+    private boolean site_admin;
 }

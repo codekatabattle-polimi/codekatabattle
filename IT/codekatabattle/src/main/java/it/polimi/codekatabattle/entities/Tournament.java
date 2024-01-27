@@ -12,7 +12,10 @@ import java.util.Set;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Getter
 @Setter
-public abstract class Tournament extends BaseEntity {
+public class Tournament extends BaseEntity {
+
+    @Column
+    private String creator;
 
     @Column
     private String title;
