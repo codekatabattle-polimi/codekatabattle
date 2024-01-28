@@ -12,3 +12,36 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+#box {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+}
+#box2 {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 9%;
+  width: 50%;
+  height: 50%;
+  display: grid;
+}
+.search-hover {
+  border: 1px solid #ccc;
+  outline: none;
+  background-size: 22px;
+  background-position: 13px;
+  border-radius: 10px;
+  width: 50px;
+  height: 50px;
+  padding: 25px;
+  transition: all 0.5s;
+}
+.search-hover:hover {
+  width: 300px;
+  padding-left: 50px;
+}

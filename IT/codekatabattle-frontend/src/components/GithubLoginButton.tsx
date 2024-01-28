@@ -1,6 +1,8 @@
 import { AuthService, OpenAPI } from "../services/openapi";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext.ts";
+import signIn from "../assets/signin.jpg";
+import imageToAdd from "../assets/ckb-logo.jpg";
 
 function generateRandom(len: number): string {
     const arr = new Uint8Array(len / 2)
@@ -14,6 +16,7 @@ export const GithubLoginButton = () => {
     useEffect(() => {
         fetchGitHubToken();
     }, []);
+
 
     async function requestGitHubIdentity() {
         const clientId: string = import.meta.env.VITE_GITHUB_CLIENT_ID;
@@ -73,23 +76,53 @@ export const GithubLoginButton = () => {
         localStorage.removeItem("token");
     }
 
+
     if (user) {
         return (
-            <>
-                <h1 className="text-2xl">
-                    Hello, {user.login}!
-                </h1>
 
-                <a className="text-2xl cursor-pointer text-blue-500 underline" onClick={() => logout()}>
-                    Logout
-                </a>
-            </>
+                    <div id="box2" style={{
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}>
+                        <center><img src={imageToAdd} className="mask mask-squircle" alt="helo"
+                                     style={{width: "30%"}}></img></center>
+                        <center>
+                            <div><h1 className="text-3xl font-bold" style={{color: "#000000"}}>Welcome to
+                                CodeKataBattle!</h1></div>
+                            <h2 className="text-2xl" style={{color: "#696969"}}>Improve your programming skills
+                                online</h2></center>
+
+                        <h1 className="text-2xl">
+                            Hello, {user.login}!
+                        </h1>
+
+                        <a className="text-2xl cursor-pointer text-blue-500 underline" onClick={() => logout()}>
+                            Logout
+                        </a>
+                    </div>
+
         );
     }
 
     return (
-        <a className="text-2xl cursor-pointer text-blue-500 underline" onClick={() => requestGitHubIdentity()}>
-        Login with GitHub
-        </a>
+
+
+            <div id="box2" style={{
+                alignItems: 'center',
+                justifyContent: 'center'
+            }}>
+                <center><img src={imageToAdd} className="mask mask-squircle" alt="helo" style={{width: "30%"}}></img>
+                </center>
+                <center>
+                    <div><h1 className="text-3xl font-bold" style={{color: "#000000"}}>Welcome to CodeKataBattle!</h1>
+                    </div>
+                    <h2 className="text-2xl" style={{color: "#696969"}}>Improve your programming skills online</h2>
+                </center>
+                <a className="text-2xl cursor-pointer text-blue-500 underline" onClick={() => requestGitHubIdentity()}>
+                    <img src={signIn} style={{width: "50%"}}></img>
+                </a>
+
+            </div>
+
     )
 }

@@ -4,7 +4,8 @@ import { OpenAPI } from "./services/openapi";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AppWrapper } from "./AppWrapper.tsx";
 
-import { RootRoute } from './routes/RootRoute.tsx';
+//import { RootRoute } from './routes/RootRoute.tsx';
+import { HomePage } from './routes/HomePage.tsx';
 
 import './main.css';
 
@@ -14,7 +15,7 @@ document.title = "CodeKataBattle";
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <RootRoute/>,
+        element: <HomePage/>,
     },
 ]);
 
