@@ -5,8 +5,8 @@ export function HomePage() {
 
 return(
     <>
-        <PageCore/>
         <NavBar/>
+        <PageCore/>
     </>
 )
 
