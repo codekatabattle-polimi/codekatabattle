@@ -82,13 +82,13 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public AuthOrigin getAuthOriginFromOriginHeader(String origin) {
-        return origin.contains("localhost:5173") ? AuthOrigin.FRONTEND : AuthOrigin.SWAGGER;
+    public AuthOrigin getAuthOriginFromHostHeader(String host) {
+        return host.contains("localhost:5173") ? AuthOrigin.FRONTEND : AuthOrigin.SWAGGER;
     }
 
     @Override
     public void checkAccessToken(String accessToken, String origin) throws OAuthException {
-        this.getUserInfo(accessToken, this.getAuthOriginFromOriginHeader(origin));
+        this.getUserInfo(accessToken, this.getAuthOriginFromHostHeader(origin));
     }
 
 }
