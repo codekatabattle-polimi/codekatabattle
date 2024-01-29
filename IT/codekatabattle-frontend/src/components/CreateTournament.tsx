@@ -13,8 +13,9 @@ interface ICreateTournamentForm{
     FTD: string
     maxNumberOfStudents: number
     tournamentPolicy: Policy
+
 }
-export default function CreateTournament() {
+export default function CreateTournament() { // Manca l'aggiunta di badges e TC
     const {
         register,
         handleSubmit,
