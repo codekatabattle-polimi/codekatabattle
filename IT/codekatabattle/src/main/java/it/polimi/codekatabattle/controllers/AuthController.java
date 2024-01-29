@@ -35,7 +35,7 @@ public class AuthController {
     )
     public ResponseEntity<OAuthAccessToken> callback(
         @RequestBody MultiValueMap<String, String> formData,
-        @Parameter(hidden = true) @RequestHeader("Origin") String origin
+        @Parameter(hidden = true) @RequestHeader(value = "Origin", required = false) String origin
     ) throws OAuthException {
         OAuthAccessToken accessToken = authService.handleOAuthCallback(formData.getFirst("code"), authService.getAuthOriginFromOriginHeader(origin));
         return ResponseEntity.ok().body(accessToken);
@@ -49,7 +49,7 @@ public class AuthController {
     )
     public ResponseEntity<GHUser> me(
         @Parameter(hidden = true) @RequestHeader("Authorization") String accessToken,
-        @Parameter(hidden = true) @RequestHeader("Origin") String origin
+        @Parameter(hidden = true) @RequestHeader(value = "Origin", required = false) String origin
     ) throws OAuthException {
         return ResponseEntity.ok().body(authService.getUserInfo(accessToken, authService.getAuthOriginFromOriginHeader(origin)));
     }
