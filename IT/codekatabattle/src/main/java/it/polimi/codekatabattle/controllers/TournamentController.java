@@ -44,7 +44,7 @@ public class TournamentController {
         security = @SecurityRequirement(name = "github")
     )
     public ResponseEntity<Tournament> create(
-        @Valid TournamentDTO tournament,
+        @RequestBody @Valid TournamentDTO tournament,
         @Parameter(hidden = true) @RequestHeader("Authorization") String accessToken,
         @Parameter(hidden = true) @RequestHeader("Host") String host
     ) throws OAuthException {
@@ -75,8 +75,8 @@ public class TournamentController {
         description = "Find paginated tournaments by specifying page number and page size"
     )
     public ResponseEntity<Page<Tournament>> findAll(
-        @RequestParam(name = "page", defaultValue = "0") @Positive int page,
-        @RequestParam(name = "size", defaultValue = "10") @Positive int size
+        @RequestParam(name = "page", defaultValue = "0") int page,
+        @RequestParam(name = "size", defaultValue = "10") int size
     ) {
         return ResponseEntity.ok().body(this.tournamentService.findAll(Pageable.ofSize(size).withPage(page)));
     }
