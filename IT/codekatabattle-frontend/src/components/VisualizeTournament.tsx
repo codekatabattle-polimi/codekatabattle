@@ -35,7 +35,7 @@ export const VisualizeTournament= () => {
                         <div tabIndex={0} role="button">
                             <div style={{color: "lightgray"}} className=" font-bold badge badge-success">enrollament</div>
                         </div>
-                        <div style={{paddingTop: "20%"}}>
+                        <div style={{paddingTop: "10%"}}>
                             <ul tabIndex={0}
                                 className="dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52 badge-success badge-outline">
                                 <p> The tournament starts at 10/9/2008 </p>
@@ -45,7 +45,7 @@ export const VisualizeTournament= () => {
                 </div>
             </ul>
             <div style={{padding: "1%"}}>
-                <div className="collapse bg-base-200">
+                <div className="collapse collapse-arrow border border-base-300 bg-base-200">
                     <input type="checkbox"/>
                     <div className="collapse-title text-xl font-medium">
                         Description
