@@ -1,5 +1,6 @@
 package it.polimi.codekatabattle.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,8 +11,9 @@ import lombok.Setter;
 @Setter
 public class TournamentParticipant extends BaseEntity {
 
-    @ManyToOne
-    @JoinColumn(name = "tournament_id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tournament_id", nullable = false)
+    @JsonBackReference
     private Tournament tournament;
 
     @Column

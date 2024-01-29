@@ -12,7 +12,6 @@ import it.polimi.codekatabattle.services.AuthService;
 import it.polimi.codekatabattle.services.TournamentService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -48,20 +47,19 @@ public class TournamentController {
         @Parameter(hidden = true) @RequestHeader("Authorization") String accessToken,
         @Parameter(hidden = true) @RequestHeader(value = "Origin", required = false) String origin
     ) throws OAuthException {
-        this.authService.checkAccessToken(accessToken, origin);
-        return ResponseEntity.ok().body(this.tournamentService.create(tournament));
+        GHUser user = this.authService.getUserInfo(accessToken, this.authService.getAuthOriginFromOriginHeader(origin));
+        return ResponseEntity.ok().body(this.tournamentService.create(tournament, user));
     }
 
     @GetMapping(
         path = "/{id}",
-        consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Operation(
         summary = "Find tournament by id",
         description = "Find a tournament by id"
     )
-    public ResponseEntity<Tournament> findById(@PathVariable("id") @Positive Long id) throws EntityNotFoundException {
+    public ResponseEntity<Tournament> findById(@PathVariable("id") Long id) throws EntityNotFoundException {
         return ResponseEntity.ok().body(this.tournamentService.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Tournament not found by id " + id)));
     }
@@ -81,7 +79,7 @@ public class TournamentController {
         return ResponseEntity.ok().body(this.tournamentService.findAll(Pageable.ofSize(size).withPage(page)));
     }
 
-    @PostMapping(
+    @PutMapping(
         path = "/{id}/join",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -91,7 +89,7 @@ public class TournamentController {
         security = @SecurityRequirement(name = "github")
     )
     public ResponseEntity<Tournament> join(
-        @PathVariable("id") @Positive Long id,
+        @PathVariable("id") Long id,
         @Parameter(hidden = true) @RequestHeader("Authorization") String accessToken,
         @Parameter(hidden = true) @RequestHeader(value = "Origin", required = false) String origin
     ) throws OAuthException, EntityNotFoundException {
@@ -99,7 +97,7 @@ public class TournamentController {
         return ResponseEntity.ok().body(this.tournamentService.join(id, user));
     }
 
-    @PostMapping(
+    @PutMapping(
         path = "/{id}/leave",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -109,7 +107,7 @@ public class TournamentController {
         security = @SecurityRequirement(name = "github")
     )
     public ResponseEntity<Tournament> leave(
-        @PathVariable("id") @Positive Long id,
+        @PathVariable("id") Long id,
         @Parameter(hidden = true) @RequestHeader("Authorization") String accessToken,
         @Parameter(hidden = true) @RequestHeader(value = "Origin", required = false) String origin
     ) throws OAuthException, EntityNotFoundException {
@@ -128,8 +126,8 @@ public class TournamentController {
         security = @SecurityRequirement(name = "github")
     )
     public ResponseEntity<Tournament> updateById(
-        @PathVariable("id") @Positive Long id,
-        @Valid TournamentDTO tournament,
+        @PathVariable("id") Long id,
+        @Valid @RequestBody TournamentDTO tournament,
         @Parameter(hidden = true) @RequestHeader("Authorization") String accessToken,
         @Parameter(hidden = true) @RequestHeader(value = "Origin", required = false) String origin
     ) throws OAuthException, EntityNotFoundException {
@@ -147,7 +145,7 @@ public class TournamentController {
         security = @SecurityRequirement(name = "github")
     )
     public ResponseEntity<Tournament> deleteById(
-        @PathVariable("id") @Positive Long id,
+        @PathVariable("id") Long id,
         @Parameter(hidden = true) @RequestHeader("Authorization") String accessToken,
         @Parameter(hidden = true) @RequestHeader(value = "Origin", required = false) String origin
     ) throws OAuthException, EntityNotFoundException {

@@ -23,8 +23,10 @@ public class TournamentServiceImpl extends CrudServiceImpl<Tournament> implement
         this.tournamentRepository = tournamentRepository;
     }
 
-    public Tournament create(@Valid @NotNull TournamentDTO tournament) throws ValidationException {
-        return this.save(tournament.toEntity());
+    public Tournament create(@Valid @NotNull TournamentDTO tournament, @NotNull GHUser creator) throws ValidationException {
+        Tournament entity = tournament.toEntity();
+        entity.setCreator(creator.getLogin());
+        return this.save(entity);
     }
 
     @Override
@@ -33,14 +35,20 @@ public class TournamentServiceImpl extends CrudServiceImpl<Tournament> implement
         Tournament tournament = this.findById(tournamentId)
             .orElseThrow(() -> new EntityNotFoundException("Tournament not found by id " + tournamentId));
 
-        if (tournament.hasStarted()) {
-            throw new ValidationException("Tournament has already started");
+        if (!tournament.hasStarted()) {
+            throw new ValidationException("Tournament has not started yet, it is not possible to join");
         }
         if (tournament.hasEnded()) {
             throw new ValidationException("Tournament has ended");
         }
+        if (tournament.getMaxParticipants() != null && tournament.getParticipants().size() + 1 > tournament.getMaxParticipants()) {
+            throw new ValidationException("Tournament is full");
+        }
         if (tournament.getParticipants().stream().anyMatch(p -> p.getUsername().equals(user.getLogin()))) {
             throw new ValidationException("User is already participating in this tournament");
+        }
+        if (tournament.getCreator().equals(user.getLogin())) {
+            throw new ValidationException("Tournament creator can't join it");
         }
 
         TournamentParticipant participant = new TournamentParticipant();
@@ -58,17 +66,19 @@ public class TournamentServiceImpl extends CrudServiceImpl<Tournament> implement
         Tournament tournament = this.findById(tournamentId)
             .orElseThrow(() -> new EntityNotFoundException("Tournament not found by id " + tournamentId));
 
-        if (tournament.hasStarted()) {
-            throw new ValidationException("Tournament has already started");
+        TournamentParticipant participant = tournament.getParticipants().stream()
+            .filter(p -> p.getUsername().equals(user.getLogin()))
+            .findFirst()
+            .orElse(null);
+
+        if (tournament.getParticipants().stream().noneMatch(p -> p.getUsername().equals(user.getLogin()))) {
+            throw new ValidationException("User is not participating in this tournament");
         }
         if (tournament.hasEnded()) {
             throw new ValidationException("Tournament has ended");
         }
-        if (tournament.getParticipants().stream().noneMatch(p -> p.getUsername().equals(user.getLogin()))) {
-            throw new ValidationException("User is not participating in this tournament");
-        }
 
-        tournament.getParticipants().removeIf(p -> p.getUsername().equals(user.getLogin()));
+        tournament.getParticipants().remove(participant);
         return this.save(tournament);
     }
 
@@ -82,10 +92,10 @@ public class TournamentServiceImpl extends CrudServiceImpl<Tournament> implement
             throw new ValidationException("Only the creator of the tournament can update it");
         }
         if (tournamentToUpdate.hasStarted()) {
-            throw new ValidationException("Tournament has already started");
+            throw new ValidationException("Tournament has already started, can't be updated");
         }
         if (tournamentToUpdate.hasEnded()) {
-            throw new ValidationException("Tournament has ended");
+            throw new ValidationException("Tournament has ended, can't be updated");
         }
 
         tournamentToUpdate.setTitle(tournament.getTitle());
@@ -104,12 +114,6 @@ public class TournamentServiceImpl extends CrudServiceImpl<Tournament> implement
 
         if (!tournamentToDelete.getCreator().equals(deleter.getLogin())) {
             throw new ValidationException("Only the creator of the tournament can delete it");
-        }
-        if (tournamentToDelete.hasStarted()) {
-            throw new ValidationException("Tournament has already started");
-        }
-        if (tournamentToDelete.hasEnded()) {
-            throw new ValidationException("Tournament has ended");
         }
 
         this.tournamentRepository.deleteById(tournamentId);

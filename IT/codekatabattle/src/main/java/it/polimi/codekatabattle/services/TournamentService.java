@@ -10,7 +10,7 @@ import jakarta.validation.constraints.NotNull;
 
 public interface TournamentService extends CrudService<Tournament> {
 
-    Tournament create(@Valid @NotNull TournamentDTO tournament) throws ValidationException;
+    Tournament create(TournamentDTO tournament, GHUser creator) throws ValidationException;
 
     Tournament join(Long tournamentId, GHUser user) throws EntityNotFoundException, ValidationException;
 
