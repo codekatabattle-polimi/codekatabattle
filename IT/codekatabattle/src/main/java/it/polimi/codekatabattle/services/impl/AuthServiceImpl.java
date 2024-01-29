@@ -50,6 +50,9 @@ public class AuthServiceImpl implements AuthService {
         if (response.getStatusCode().isError()) {
             throw new OAuthException("Failed to obtain access token from GitHub");
         }
+        if (response.getBody() == null || response.getBody().access_token == null) {
+            throw new OAuthException("Invalid response body");
+        }
 
         return response.getBody();
     }
@@ -82,8 +85,15 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public AuthOrigin getAuthOriginFromOriginHeader(String host) {
-        return host.contains("localhost:5173") ? AuthOrigin.FRONTEND : AuthOrigin.SWAGGER;
+    public AuthOrigin getAuthOriginFromOriginHeader(String origin) {
+        if (origin == null) {
+            return AuthOrigin.SWAGGER;
+        }
+        if (origin.contains("localhost:5173")) {
+            return AuthOrigin.FRONTEND;
+        }
+
+        return AuthOrigin.SWAGGER;
     }
 
     @Override

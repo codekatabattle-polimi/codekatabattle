@@ -1,9 +1,9 @@
 import avatar2 from "../assets/avatar2.png";
 import avatar3 from "../assets/avatar3.png";
 import {LogoutButton} from "./LogoutButton.tsx";
+import {Link} from "react-router-dom";
 
 export const NavBar= () => {
-
         return (
 
             <div className="navbar bg-base-300">
@@ -28,7 +28,7 @@ export const NavBar= () => {
                                        className="drawer-overlay"></label>
                                 <ul className="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
                                     <li><a>My Tournaments</a></li>
-                                    <li><a>Create Tournaments</a></li>
+                                    <li><Link to="/tournament/create">Create Tournaments</Link></li>
                                     <li><a>My Profile</a></li>
 
                                 </ul>
