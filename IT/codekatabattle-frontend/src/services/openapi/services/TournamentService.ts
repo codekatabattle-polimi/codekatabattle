@@ -43,7 +43,7 @@ export class TournamentService {
      */
     public static updateById(
         id: number,
-        requestBody?: TournamentDTO,
+        requestBody: TournamentDTO,
     ): CancelablePromise<Tournament> {
         return __request(OpenAPI, {
             method: 'PUT',
@@ -74,6 +74,54 @@ export class TournamentService {
         return __request(OpenAPI, {
             method: 'DELETE',
             url: '/tournament/{id}',
+            path: {
+                'id': id,
+            },
+            errors: {
+                400: `Bad Request`,
+                401: `Unauthorized`,
+                404: `Not Found`,
+                500: `Internal Server Error`,
+            },
+        });
+    }
+    /**
+     * Leave a tournament
+     * Leave a tournament by providing tournament id and GitHub access token
+     * @param id
+     * @returns Tournament OK
+     * @throws ApiError
+     */
+    public static leave(
+        id: number,
+    ): CancelablePromise<Tournament> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/tournament/{id}/leave',
+            path: {
+                'id': id,
+            },
+            errors: {
+                400: `Bad Request`,
+                401: `Unauthorized`,
+                404: `Not Found`,
+                500: `Internal Server Error`,
+            },
+        });
+    }
+    /**
+     * Join a tournament
+     * Join a tournament by providing tournament id and GitHub access token
+     * @param id
+     * @returns Tournament OK
+     * @throws ApiError
+     */
+    public static join(
+        id: number,
+    ): CancelablePromise<Tournament> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/tournament/{id}/join',
             path: {
                 'id': id,
             },
@@ -127,54 +175,6 @@ export class TournamentService {
             url: '/tournament',
             body: requestBody,
             mediaType: 'application/json',
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                404: `Not Found`,
-                500: `Internal Server Error`,
-            },
-        });
-    }
-    /**
-     * Leave a tournament
-     * Leave a tournament by providing tournament id and GitHub access token
-     * @param id
-     * @returns Tournament OK
-     * @throws ApiError
-     */
-    public static leave(
-        id: number,
-    ): CancelablePromise<Tournament> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/tournament/{id}/leave',
-            path: {
-                'id': id,
-            },
-            errors: {
-                400: `Bad Request`,
-                401: `Unauthorized`,
-                404: `Not Found`,
-                500: `Internal Server Error`,
-            },
-        });
-    }
-    /**
-     * Join a tournament
-     * Join a tournament by providing tournament id and GitHub access token
-     * @param id
-     * @returns Tournament OK
-     * @throws ApiError
-     */
-    public static join(
-        id: number,
-    ): CancelablePromise<Tournament> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/tournament/{id}/join',
-            path: {
-                'id': id,
-            },
             errors: {
                 400: `Bad Request`,
                 401: `Unauthorized`,

@@ -7,11 +7,19 @@ export type Tournament = {
     id?: number;
     createdAt?: string;
     updatedAt?: string;
-    creator?: string;
-    title?: string;
+    creator: string;
+    title: string;
     description?: string;
-    startsAt?: string;
-    endsAt?: string;
+    startsAt: string;
+    endsAt: string;
+    privacy: Tournament.privacy;
+    maxParticipants?: number;
     participants?: Array<TournamentParticipant>;
 };
+export namespace Tournament {
+    export enum privacy {
+        PUBLIC = 'PUBLIC',
+        PRIVATE = 'PRIVATE',
+    }
+}
 

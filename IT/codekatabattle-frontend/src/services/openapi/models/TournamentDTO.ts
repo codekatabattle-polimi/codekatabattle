@@ -7,5 +7,13 @@ export type TournamentDTO = {
     description: string;
     startsAt?: string;
     endsAt?: string;
+    privacy: TournamentDTO.privacy;
+    maxParticipants?: number;
 };
+export namespace TournamentDTO {
+    export enum privacy {
+        PUBLIC = 'PUBLIC',
+        PRIVATE = 'PRIVATE',
+    }
+}
 
