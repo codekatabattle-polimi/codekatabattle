@@ -16,7 +16,7 @@ public class BattleEntry extends BaseEntity {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "participant_id", referencedColumnName = "id")
-    private Participant participant;
+    private TournamentParticipant participant;
 
     @Column
     private float score;

@@ -8,18 +8,14 @@ import lombok.Setter;
 @Table(name = "participants")
 @Getter
 @Setter
-public class Participant extends BaseEntity {
+public class BattleParticipant extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "participant_id", insertable = false, updatable = false)
-    private Tournament tournament;
+    private Battle battle;
 
     @Column
     private String username;
-
-    @Column
-    @Enumerated(EnumType.STRING)
-    private ParticipantType type;
 
     @Column
     private float score;

@@ -9,7 +9,6 @@ import java.util.Set;
 
 @Entity
 @Table(name = "tournaments")
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Getter
 @Setter
 public class Tournament extends BaseEntity {
@@ -30,7 +29,7 @@ public class Tournament extends BaseEntity {
     private LocalDateTime endsAt;
 
     @OneToMany(mappedBy = "tournament")
-    private Set<Participant> participants;
+    private Set<TournamentParticipant> participants;
 
     public boolean hasStarted() {
         return startsAt.isBefore(LocalDateTime.now());

@@ -1,7 +1,6 @@
 package it.polimi.codekatabattle.services.impl;
 
-import it.polimi.codekatabattle.entities.Participant;
-import it.polimi.codekatabattle.entities.ParticipantType;
+import it.polimi.codekatabattle.entities.TournamentParticipant;
 import it.polimi.codekatabattle.entities.Tournament;
 import it.polimi.codekatabattle.models.dto.TournamentDTO;
 import it.polimi.codekatabattle.models.github.GHUser;
@@ -44,10 +43,9 @@ public class TournamentServiceImpl extends CrudServiceImpl<Tournament> implement
             throw new ValidationException("User is already participating in this tournament");
         }
 
-        Participant participant = new Participant();
+        TournamentParticipant participant = new TournamentParticipant();
         participant.setTournament(tournament);
         participant.setUsername(user.getLogin());
-        participant.setType(ParticipantType.TOURNAMENT);
         participant.setScore(0);
 
         tournament.getParticipants().add(participant);
