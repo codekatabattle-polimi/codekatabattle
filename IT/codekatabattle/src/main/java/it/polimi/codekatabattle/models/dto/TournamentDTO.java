@@ -12,11 +12,9 @@ import java.time.LocalDateTime;
 public class TournamentDTO {
 
     @NotBlank
-    @Max(100)
     private String title;
 
     @NotBlank
-    @Max(5000)
     private String description;
 
     @Future

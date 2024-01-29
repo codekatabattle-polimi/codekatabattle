@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type OAuthException = {
+export type EntityNotFoundException = {
     cause?: {
         stackTrace?: Array<{
             classLoaderName?: string;
