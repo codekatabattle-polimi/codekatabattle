@@ -1,10 +1,39 @@
 import Placeholder from "../assets/Placeholder_Tournament_Image.jpg"
 import {TournamentLeaderboard} from "./TournamentLeaderboard.tsx";
+import {useEffect, useState} from "react";
+import {Tournament, TournamentService} from "../services/openapi";
+import {useParams} from "react-router-dom";
 
 
 
 export const VisualizeTournament= () => {
-    const tournamentTitle= "Tournament Title";
+    const {id} = useParams();
+    const [tournament, setTournament] = useState<Tournament | null>(null);
+    const [error, setError] = useState<Error | null>(null);
+
+    useEffect(() => {
+        fetchTournament();
+    }, [id]);
+
+    if (!id) {
+        return (
+            <>Id not found</>
+        )
+    }
+    async function fetchTournament(){
+        try {
+            const tournament = await TournamentService.findById(+id!);
+            setTournament(tournament);
+        } catch (error) {
+            setError(error as Error);
+        }
+    }
+    if(error){
+        return(
+            <>{error.message}</>
+        )
+    }
+    const tournamentTitle= tournament?.title;
     return(
         <>
             <ul style={{width: "50%"}} className="menu menu-vertical lg:menu-horizontal">
