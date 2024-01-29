@@ -11,7 +11,7 @@ import lombok.Setter;
 public class TournamentParticipant extends BaseEntity {
 
     @ManyToOne
-    @JoinColumn(name = "participant_id", insertable = false, updatable = false)
+    @JoinColumn(name = "tournament_id", insertable = false, updatable = false)
     private Tournament tournament;
 
     @Column
