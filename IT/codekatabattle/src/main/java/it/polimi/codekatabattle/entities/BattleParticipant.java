@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "participants")
+@Table(name = "battle_participants")
 @Getter
 @Setter
 public class BattleParticipant extends BaseEntity {
