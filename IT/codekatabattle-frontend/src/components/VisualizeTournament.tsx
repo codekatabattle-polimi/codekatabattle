@@ -3,6 +3,8 @@ import {TournamentLeaderboard} from "./TournamentLeaderboard.tsx";
 import {useEffect, useState} from "react";
 import {Tournament, TournamentService} from "../services/openapi";
 import {useParams} from "react-router-dom";
+import {NavBar} from "./NavBar.tsx";
+
 
 
 
@@ -28,14 +30,68 @@ export const VisualizeTournament= () => {
             setError(error as Error);
         }
     }
-    if(error){
-        return(
+
+    function tournamentStatus() {
+
+
+        if (tournament?.startsAt != undefined && tournament?.endsAt != undefined) {
+            const startDate = new Date(tournament.startsAt);
+            const endDate = new Date(tournament.endsAt);
+            const now = new Date();
+
+            let colorBadge : string;
+            let colorText : string;
+            let status : string;
+            let message : string;
+
+        if (now < startDate) {
+            colorBadge = " font-bold badge badge-success";
+            colorText = "dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52 badge-success badge-outline";
+            status = "enrollment";
+            message = "The tournament starts at " + tournament.startsAt;
+        }
+         else if (now < endDate){
+            colorBadge = " font-bold badge badge-warning";
+            colorText = "dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52 badge-warning badge-outline";
+            status = "ongoing";
+            message = "The tournament ends at " + tournament.endsAt;
+         }
+         else {
+            colorBadge = " font-bold badge badge-error";
+            colorText = "dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52 badge-warning badge-error";
+            status = "terminated";
+            message = "The tournament has ended! :(";
+        }
+
+         return (
+                <div style={{paddingLeft: "1%", paddingTop: "3%"}}>
+                    <div className="dropdown dropdown-bottom">
+                        <div tabIndex={0} role="button">
+                            <div style={{color: "lightgray"}} className={colorBadge}> {status}
+                            </div>
+                        </div>
+                        <div style={{paddingTop: "10%"}}>
+                            <ul tabIndex={0} className={colorText}>
+                                <p> {message} </p>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            )
+
+
+    }
+    }
+
+    if (error) {
+        return (
             <>{error.message}</>
         )
     }
-    const tournamentTitle= tournament?.title;
-    return(
+
+    return (
         <>
+            <NavBar/>
             <ul style={{width: "50%"}} className="menu menu-vertical lg:menu-horizontal">
                 <div style={{padding: "1%"}} className="avatar">
                     <div className="w-14 rounded-full">
@@ -43,7 +99,7 @@ export const VisualizeTournament= () => {
                     </div>
                 </div>
 
-                <h2 className="text-3xl font-bold" style={{padding: "1%", paddingTop: "2%"}}> {tournamentTitle}</h2>
+                <h2 className="text-3xl font-bold" style={{padding: "1%", paddingTop: "2%"}}> {tournament?.title}</h2>
 
                 <div style={{paddingLeft: "1%", paddingTop: "3%"}}>
                     <div className="dropdown dropdown-end">
@@ -58,20 +114,7 @@ export const VisualizeTournament= () => {
                         </div>
                     </div>
                 </div>
-
-                <div style={{paddingLeft: "1%", paddingTop: "3%"}}>
-                    <div className="dropdown dropdown-bottom">
-                        <div tabIndex={0} role="button">
-                            <div style={{color: "lightgray"}} className=" font-bold badge badge-success">enrollament</div>
-                        </div>
-                        <div style={{paddingTop: "10%"}}>
-                            <ul tabIndex={0}
-                                className="dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52 badge-success badge-outline">
-                                <p> The tournament starts at 10/9/2008 </p>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                {tournamentStatus()}
             </ul>
             <div style={{padding: "1%"}}>
                 <div className="collapse collapse-arrow border border-base-300 bg-base-200">
@@ -80,14 +123,7 @@ export const VisualizeTournament= () => {
                         Description
                     </div>
                     <div className="collapse-content">
-                        <p>In the Age of Ancients the world was unformed, shrouded by fog. A land of gray crags,
-                            Archtrees
-                            and Everlasting Dragons. But then there was Fire and with fire came disparity. Heat and
-                            cold,
-                            life and death, and of course, light and dark. Then from the dark, They came, and found the
-                            Souls of Lords within the flame. Nito, the First of the Dead, The Witch of Izalith and her
-                            Daughters of Chaos, Gwyn, the Lord of Sunlight, and his faithful knights. And the Furtive Pygmy,
-                            so easily forgotten.</p>
+                        <p>{tournament?.description}</p>
                     </div>
                 </div>
             </div>
