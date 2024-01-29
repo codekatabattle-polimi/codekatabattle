@@ -46,9 +46,9 @@ public class TournamentController {
     public ResponseEntity<Tournament> create(
         @RequestBody @Valid TournamentDTO tournament,
         @Parameter(hidden = true) @RequestHeader("Authorization") String accessToken,
-        @Parameter(hidden = true) @RequestHeader("Host") String host
+        @Parameter(hidden = true) @RequestHeader("Origin") String origin
     ) throws OAuthException {
-        this.authService.checkAccessToken(accessToken, host);
+        this.authService.checkAccessToken(accessToken, origin);
         return ResponseEntity.ok().body(this.tournamentService.create(tournament));
     }
 
@@ -93,9 +93,9 @@ public class TournamentController {
     public ResponseEntity<Tournament> join(
         @PathVariable("id") @Positive Long id,
         @Parameter(hidden = true) @RequestHeader("Authorization") String accessToken,
-        @Parameter(hidden = true) @RequestHeader("Host") String host
+        @Parameter(hidden = true) @RequestHeader("Origin") String origin
     ) throws OAuthException, EntityNotFoundException {
-        GHUser user = this.authService.getUserInfo(accessToken, this.authService.getAuthOriginFromHostHeader(host));
+        GHUser user = this.authService.getUserInfo(accessToken, this.authService.getAuthOriginFromOriginHeader(origin));
         return ResponseEntity.ok().body(this.tournamentService.join(id, user));
     }
 
@@ -111,9 +111,9 @@ public class TournamentController {
     public ResponseEntity<Tournament> leave(
         @PathVariable("id") @Positive Long id,
         @Parameter(hidden = true) @RequestHeader("Authorization") String accessToken,
-        @Parameter(hidden = true) @RequestHeader("Host") String host
+        @Parameter(hidden = true) @RequestHeader("Origin") String origin
     ) throws OAuthException, EntityNotFoundException {
-        GHUser user = this.authService.getUserInfo(accessToken, this.authService.getAuthOriginFromHostHeader(host));
+        GHUser user = this.authService.getUserInfo(accessToken, this.authService.getAuthOriginFromOriginHeader(origin));
         return ResponseEntity.ok().body(this.tournamentService.leave(id, user));
     }
 
@@ -131,9 +131,9 @@ public class TournamentController {
         @PathVariable("id") @Positive Long id,
         @Valid TournamentDTO tournament,
         @Parameter(hidden = true) @RequestHeader("Authorization") String accessToken,
-        @Parameter(hidden = true) @RequestHeader("Host") String host
+        @Parameter(hidden = true) @RequestHeader("Origin") String origin
     ) throws OAuthException, EntityNotFoundException {
-        GHUser user = this.authService.getUserInfo(accessToken, this.authService.getAuthOriginFromHostHeader(host));
+        GHUser user = this.authService.getUserInfo(accessToken, this.authService.getAuthOriginFromOriginHeader(origin));
         return ResponseEntity.ok().body(this.tournamentService.updateById(id, tournament, user));
     }
 
@@ -149,9 +149,9 @@ public class TournamentController {
     public ResponseEntity<Tournament> deleteById(
         @PathVariable("id") @Positive Long id,
         @Parameter(hidden = true) @RequestHeader("Authorization") String accessToken,
-        @Parameter(hidden = true) @RequestHeader("Host") String host
+        @Parameter(hidden = true) @RequestHeader("Origin") String origin
     ) throws OAuthException, EntityNotFoundException {
-        GHUser user = this.authService.getUserInfo(accessToken, this.authService.getAuthOriginFromHostHeader(host));
+        GHUser user = this.authService.getUserInfo(accessToken, this.authService.getAuthOriginFromOriginHeader(origin));
         return ResponseEntity.ok().body(this.tournamentService.deleteById(id, user));
     }
 
