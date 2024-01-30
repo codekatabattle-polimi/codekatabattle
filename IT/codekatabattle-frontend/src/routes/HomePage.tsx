@@ -1,14 +1,14 @@
 
 import {useContext} from "react";
 import {AuthContext} from "../context/AuthContext.ts";
-import {VisualizeTournament} from "../components/VisualizeTournament.tsx";
 import {GithubLoginButton} from "../components/GithubLoginButton.tsx";
+import {NavBar} from "../components/NavBar.tsx";
 export function HomePage() {
     const {user}=useContext(AuthContext);
     if(user){
         return(
             <>
-                <><VisualizeTournament/></>
+                <><NavBar/></>
 
             </>
         )
