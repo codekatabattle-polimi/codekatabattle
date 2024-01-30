@@ -49,7 +49,7 @@ export const VisualizeTournament= () => {
 
     const TournamentLeaderboard = () => {
         return (
-            <div style={{padding: "1%"}}>
+            <div style={{padding: "1%", width:"45%"}}>
                 <div className="collapse collapse-arrow border border-base-300 bg-base-200">
                     <input type="checkbox"/>
                     <div className="collapse-title text-xl font-medium">
@@ -79,14 +79,25 @@ export const VisualizeTournament= () => {
         )
     }
 
+    function colorOfWinner( x: number ){
+        let r : string;
+        if(x==0){
+            r="bg-base-300";
+        }
+        else r="bg-base-200";
+
+        return r;
+    }
+
     function tournamentLeaderboard() {
         if(tournament?.participants) {
             const participants = tournament.participants, partList: JSX.Element[] = [];
+
             participants.forEach((participant, index) => {
                 partList.push(
-                    <tr className="bg-base-200">
-                    <th style={{width: "30%", alignItems: "center"}}>{index+1}</th>
-                    <td style={{width: "30%"}}>
+                    <tr className={colorOfWinner(index)}>
+                    <th style={{alignItems: "center"}}>{index+1}</th>
+                    <td>
                         <div className="flex items-center gap-3">
                             <div className="avatar">
                                 <div className="mask mask-squircle w-12 h-12">
@@ -101,8 +112,6 @@ export const VisualizeTournament= () => {
                     </td>
                     <td>{participant.score}</td>
                 </tr>);
-
-
             })
 
             return partList;
