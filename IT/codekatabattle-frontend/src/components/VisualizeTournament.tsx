@@ -1,4 +1,5 @@
 import Placeholder from "../assets/Placeholder_Tournament_Image.jpg"
+import Avatar from "../assets/avatar2.png"
 import {useEffect, useState} from "react";
 import {Tournament, TournamentService} from "../services/openapi";
 import {useParams} from "react-router-dom";
@@ -215,18 +216,31 @@ export const VisualizeTournament= () => {
         <>
 
             <div style={{alignSelf: "end", top:"8%", position:"fixed", width:"100%"}}>
-                <ul style={{width: "50%"}} className="menu menu-vertical lg:menu-horizontal">
+                <ul style={{width: "100%"}} className="menu menu-vertical lg:menu-horizontal">
                     <div style={{padding: "1%"}} className="avatar">
-                        <div className="w-14 rounded-full">
+                        <div className="w-16 h-16 rounded-full">
                             <img src={Placeholder}/>
                         </div>
                     </div>
 
                     <h2 className="text-3xl font-bold"
-                        style={{padding: "1%", paddingTop: "2%"}}> {tournament?.title}</h2>
+                        style={{paddingTop: "2%"}}> {tournament?.title}</h2>
+
 
                     {tournamentPrivacy()}
                     {tournamentStatus()}
+                    <div style={{paddingRight:"47.6%" }}></div>
+
+                    <ul style={{paddingTop: "1%", width:"25%"}} className="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box border border-base-300">
+                        <div  className="avatar">
+                            <div className="w-20 h-20 rounded-box">
+                                <img src={Avatar}/>
+                            </div>
+                        </div>
+
+                        <h2 className="text-3xl font-bold"
+                            style={{padding:"1%", paddingTop: "2%"}}> {tournament?.creator}</h2>
+                    </ul>
                 </ul>
                 <div style={{padding: "1%"}}>
                     <div className="collapse collapse-arrow border border-base-300 bg-base-200">
