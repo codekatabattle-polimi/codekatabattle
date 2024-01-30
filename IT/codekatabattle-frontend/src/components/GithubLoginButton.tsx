@@ -123,8 +123,14 @@ export const GithubLoginButton = () => {
                 <img src={signIn} style={{width: "50%"}}></img>
             </a>
             <dialog id="my_modal_2" className="modal">
-                <span className="loading loading-spinner text-primary"></span>
+                <div className="modal-box">
+                    <span className="loading loading-spinner text-primary"></span>
+                </div>
+                <form method="dialog" className="modal-backdrop">
+                    <button>close</button>
+                </form>
             </dialog>
+
         </div>
 
     )
