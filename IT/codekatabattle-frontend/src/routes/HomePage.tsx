@@ -1,5 +1,4 @@
 
-import {NavBar} from "../components/NavBar.tsx";
 import {useContext} from "react";
 import {AuthContext} from "../context/AuthContext.ts";
 import {VisualizeTournament} from "../components/VisualizeTournament.tsx";
@@ -9,8 +8,8 @@ export function HomePage() {
     if(user){
         return(
             <>
-                <NavBar/>
-                <VisualizeTournament/>
+                <><VisualizeTournament/></>
+
             </>
         )
     }

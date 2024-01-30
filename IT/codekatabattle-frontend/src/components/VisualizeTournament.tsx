@@ -109,43 +109,49 @@ export const VisualizeTournament= () => {
 
     return (
         <>
-            <NavBar/>
-            <ul style={{width: "50%"}} className="menu menu-vertical lg:menu-horizontal">
-                <div style={{padding: "1%"}} className="avatar">
-                    <div className="w-14 rounded-full">
-                        <img src={Placeholder}/>
-                    </div>
-                </div>
 
-                <h2 className="text-3xl font-bold" style={{padding: "1%", paddingTop: "2%"}}> {tournament?.title}</h2>
-
-                <div style={{paddingLeft: "1%", paddingTop: "3%"}}>
-                    <div className="dropdown dropdown-end">
-                        <div tabIndex={0} role="button">
-                            <div style={{color: "lightgray"}} className=" font-bold badge badge-primary">public</div>
-                        </div>
-                        <div style={{padding: "20%"}}>
-                            <ul tabIndex={0}
-                                className="dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52 badge-primary badge-outline">
-                                <p> Everyone can access to this tournament </p>
-                            </ul>
+            <div style={{alignSelf: "end", top:"8%", position:"fixed", width:"100%"}}>
+                <ul style={{width: "50%"}} className="menu menu-vertical lg:menu-horizontal">
+                    <div style={{padding: "1%"}} className="avatar">
+                        <div className="w-14 rounded-full">
+                            <img src={Placeholder}/>
                         </div>
                     </div>
-                </div>
-                {tournamentStatus()}
-            </ul>
-            <div style={{padding: "1%"}}>
-                <div className="collapse collapse-arrow border border-base-300 bg-base-200">
-                    <input type="checkbox"/>
-                    <div className="collapse-title text-xl font-medium">
-                        Description
+
+                    <h2 className="text-3xl font-bold"
+                        style={{padding: "1%", paddingTop: "2%"}}> {tournament?.title}</h2>
+
+                    <div style={{paddingLeft: "1%", paddingTop: "3%"}}>
+                        <div className="dropdown dropdown-end">
+                            <div tabIndex={0} role="button">
+                                <div style={{color: "lightgray"}} className=" font-bold badge badge-primary">public
+                                </div>
+                            </div>
+                            <div style={{padding: "20%"}}>
+                                <ul tabIndex={0}
+                                    className="dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52 badge-primary badge-outline">
+                                    <p> Everyone can access to this tournament </p>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                    <div className="collapse-content">
-                        <p>{tournament?.description}</p>
+                    {tournamentStatus()}
+                </ul>
+                <div style={{padding: "1%"}}>
+                    <div className="collapse collapse-arrow border border-base-300 bg-base-200">
+                        <input type="checkbox"/>
+                        <div className="collapse-title text-xl font-medium">
+                            Description
+                        </div>
+                        <div className="collapse-content">
+                            <p>{tournament?.description}</p>
+                        </div>
                     </div>
                 </div>
+                <TournamentLeaderboard/>
             </div>
-            <TournamentLeaderboard/>
+            <div style={{top: "0%", position:"fixed", width:"100%", height:"10%"}}><NavBar/></div>
         </>
+
     )
 }
