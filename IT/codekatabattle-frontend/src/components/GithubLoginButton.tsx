@@ -19,6 +19,7 @@ export const GithubLoginButton = () => {
 
 
     async function requestGitHubIdentity() {
+        (document.getElementById('my_modal_2') as HTMLDialogElement).showModal();
         const clientId: string = import.meta.env.VITE_GITHUB_CLIENT_ID;
         const redirectUri: string = import.meta.env.VITE_GITHUB_REDIRECT_URI;
 
@@ -107,22 +108,24 @@ export const GithubLoginButton = () => {
     return (
 
 
-            <div id="box2" style={{
-                alignItems: 'center',
-                justifyContent: 'center'
-            }}>
-                <center><img src={imageToAdd} className="mask mask-squircle" alt="helo" style={{width: "30%"}}></img>
-                </center>
-                <center>
-                    <div><h1 className="text-3xl font-bold" style={{color: "#000000"}}>Welcome to CodeKataBattle!</h1>
-                    </div>
-                    <h2 className="text-2xl" style={{color: "#696969"}}>Improve your programming skills online</h2>
-                </center>
-                <a className="text-2xl cursor-pointer text-blue-500 underline" onClick={() => requestGitHubIdentity()}>
-                    <img src={signIn} style={{width: "50%"}}></img>
-                </a>
-
-            </div>
+        <div id="box2" style={{
+            alignItems: 'center',
+            justifyContent: 'center'
+        }}>
+            <center><img src={imageToAdd} className="mask mask-squircle" alt="helo" style={{width: "30%"}}></img>
+            </center>
+            <center>
+                <div><h1 className="text-3xl font-bold" style={{color: "#000000"}}>Welcome to CodeKataBattle!</h1>
+                </div>
+                <h2 className="text-2xl" style={{color: "#696969"}}>Improve your programming skills online</h2>
+            </center>
+            <a className="text-2xl cursor-pointer text-blue-500 underline" onClick={() => requestGitHubIdentity()}>
+                <img src={signIn} style={{width: "50%"}}></img>
+            </a>
+            <dialog id="my_modal_2" className="modal">
+                <span className="loading loading-spinner text-primary"></span>
+            </dialog>
+        </div>
 
     )
 }

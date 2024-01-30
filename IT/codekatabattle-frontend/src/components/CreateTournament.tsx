@@ -89,13 +89,6 @@ export default function CreateTournament() { // Manca l'aggiunta di badges e TC
                 </div>
             </form>
             <div style={{top: "0%", position: "fixed", width: "100%", height: "10%"}}><NavBar/></div>
-            {/* Open the modal using document.getElementById('ID').showModal() method */}
-            <button className="btn"
-                    onClick={() => (document.getElementById('my_modal_2') as HTMLDialogElement).showModal()}>open modal
-            </button>
-            <dialog id="my_modal_2" className="modal">
-                <span className="loading loading-spinner text-primary"></span>
-            </dialog>
         </>
     )
 }
