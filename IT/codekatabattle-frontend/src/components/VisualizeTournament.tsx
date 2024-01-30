@@ -90,13 +90,14 @@ export const VisualizeTournament= () => {
     }
 
     function tournamentLeaderboard() {
-        if(tournament?.participants) {
-            const participants = tournament.participants, partList: JSX.Element[] = [];
+        if (!tournament?.participants) {
+            return <></>;
+        }
 
-            participants.forEach((participant, index) => {
-                partList.push(
-                    <tr className={colorOfWinner(index)}>
-                    <th style={{alignItems: "center"}}>{index+1}</th>
+        return (
+            tournament.participants?.sort((a, b) => (b?.score ?? 0) - (a?.score ?? 0)).map(((participant, index) => (
+                <tr className={colorOfWinner(index)}>
+                    <th style={{ alignItems: "center" }}>{index + 1}</th>
                     <td>
                         <div className="flex items-center gap-3">
                             <div className="avatar">
@@ -111,11 +112,9 @@ export const VisualizeTournament= () => {
                         </div>
                     </td>
                     <td>{participant.score}</td>
-                </tr>);
-            })
-
-            return partList;
-        }
+                </tr>
+            )))
+        );
     }
 
         function tournamentStatus() {
