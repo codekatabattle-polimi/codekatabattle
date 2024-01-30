@@ -4,8 +4,7 @@ import {Tournament, TournamentService} from "../services/openapi";
 import {useParams} from "react-router-dom";
 import {NavBar} from "./NavBar.tsx";
 import avatar2 from "../assets/avatar1.png";
-
-
+import privacy = Tournament.privacy;
 
 
 export const VisualizeTournament= () => {
@@ -116,32 +115,69 @@ export const VisualizeTournament= () => {
             )))
         );
     }
+    function tournamentPrivacy() {
 
-        function tournamentStatus() {
+        if(tournament?.privacy == undefined)
+            return (<></>)
+        let label : string;
+        let message : string;
+        let colorLable : string;
+        let colorMessage : string;
+
+        if(tournament.privacy == privacy.PUBLIC){
+            colorLable=" font-bold badge badge-primary"
+            label="public"
+            colorMessage= "dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52 badge-primary badge-outline"
+            message="Everyone can access to this tournament"
+        }else{
+            colorLable=" font-bold badge badge-secondary"
+            label="private"
+            colorMessage= "dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52 badge-secondary badge-outline"
+            message="The creator must accept you to let you in"
+        }
+
+        return (<div style={{paddingLeft: "1%", paddingTop: "3%"}}>
+            <div className="dropdown dropdown-end">
+                <div tabIndex={0} role="button">
+                    <div style={{color: "lightgray"}} className={colorLable}>{label}
+                    </div>
+                </div>
+                <div style={{padding: "20%"}}>
+                    <ul tabIndex={0}
+                        className={colorMessage}>
+                        <p> {message} </p>
+                    </ul>
+                </div>
+            </div>
+        </div>)
+    }
+
+    function tournamentStatus() {
+        if (tournament?.startsAt == undefined && tournament?.endsAt == undefined)
+            return (<></>)
 
 
-            if (tournament?.startsAt != undefined && tournament?.endsAt != undefined) {
-                const startDate = new Date(tournament.startsAt);
-                const endDate = new Date(tournament.endsAt);
-                const now = new Date();
+        const startDate = new Date(tournament.startsAt);
+        const endDate = new Date(tournament.endsAt);
+        const now = new Date();
 
-                let colorBadge: string;
-                let colorText: string;
-                let status: string;
-                let message: string;
+        let colorBadge: string;
+        let colorText: string;
+        let status: string;
+        let message: string;
 
-                if (compareDate(now, endDate) == 1) {
-                    colorBadge = " font-bold badge badge-error";
-                    colorText = "dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52 badge-error badge-outline";
-                    status = "terminated";
-                    message = "The tournament has ended! :(";
+        if (compareDate(now, endDate) == 1) {
+            colorBadge = " font-bold badge badge-error";
+            colorText = "dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52 badge-error badge-outline";
+            status = "terminated";
+            message = "The tournament has ended! :(";
 
 
-                } else if (compareDate(now, startDate) == 1 && compareDate(now, endDate) != 1) {
-                    colorBadge = " font-bold badge badge-warning";
-                    colorText = "dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52 badge-warning badge-outline";
-                    status = "ongoing";
-                    message = "The tournament ends at " + endDate.getFullYear() + "/" + (endDate.getMonth()+1) + "/" + endDate.getDate();
+        } else if (compareDate(now, startDate) == 1 && compareDate(now, endDate) != 1) {
+            colorBadge = " font-bold badge badge-warning";
+            colorText = "dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52 badge-warning badge-outline";
+            status = "ongoing";
+            message = "The tournament ends at " + endDate.getFullYear() + "/" + (endDate.getMonth()+1) + "/" + endDate.getDate();
          }
          else {
             colorBadge = " font-bold badge badge-success";
@@ -149,7 +185,6 @@ export const VisualizeTournament= () => {
             status = "enrollment";
             message = "The tournament starts at " + startDate.getFullYear() + "/" + (startDate.getMonth()+1) + "/" + startDate.getDate();
         }
-
          return (
                 <div style={{paddingLeft: "1%", paddingTop: "3%"}}>
                     <div className="dropdown dropdown-bottom">
@@ -168,7 +203,7 @@ export const VisualizeTournament= () => {
 
 
     }
-    }
+
 
     if (error) {
         return (
@@ -190,20 +225,7 @@ export const VisualizeTournament= () => {
                     <h2 className="text-3xl font-bold"
                         style={{padding: "1%", paddingTop: "2%"}}> {tournament?.title}</h2>
 
-                    <div style={{paddingLeft: "1%", paddingTop: "3%"}}>
-                        <div className="dropdown dropdown-end">
-                            <div tabIndex={0} role="button">
-                                <div style={{color: "lightgray"}} className=" font-bold badge badge-primary">public
-                                </div>
-                            </div>
-                            <div style={{padding: "20%"}}>
-                                <ul tabIndex={0}
-                                    className="dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52 badge-primary badge-outline">
-                                    <p> Everyone can access to this tournament </p>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                    {tournamentPrivacy()}
                     {tournamentStatus()}
                 </ul>
                 <div style={{padding: "1%"}}>
