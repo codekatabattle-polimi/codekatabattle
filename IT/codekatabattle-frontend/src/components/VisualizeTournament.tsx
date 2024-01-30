@@ -1,9 +1,9 @@
 import Placeholder from "../assets/Placeholder_Tournament_Image.jpg"
-import {TournamentLeaderboard} from "./TournamentLeaderboard.tsx";
 import {useEffect, useState} from "react";
 import {Tournament, TournamentService} from "../services/openapi";
 import {useParams} from "react-router-dom";
 import {NavBar} from "./NavBar.tsx";
+import avatar2 from "../assets/avatar1.png";
 
 
 
@@ -47,32 +47,93 @@ export const VisualizeTournament= () => {
         return 0;
     }
 
-    function tournamentStatus() {
+    const TournamentLeaderboard = () => {
+        return (
+            <div style={{padding: "1%"}}>
+                <div className="collapse collapse-arrow border border-base-300 bg-base-200">
+                    <input type="checkbox"/>
+                    <div className="collapse-title text-xl font-medium">
+                        Leaderboard
+                    </div>
+                    <div className="collapse-content">
+                        <div className="overflow-x-auto">
+                            <table className="table">
+                                {/* head */}
+                                <thead>
+                                <tr>
+                                    <th>Position</th>
+                                    <th>User</th>
+                                    <th>Score</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {tournamentLeaderboard()}
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        )
+    }
+
+    function tournamentLeaderboard() {
+        if(tournament?.participants) {
+            const participants = tournament.participants, partList: JSX.Element[] = [];
+            participants.forEach((participant, index) => {
+                partList.push(
+                    <tr className="bg-base-200">
+                    <th style={{width: "30%", alignItems: "center"}}>{index+1}</th>
+                    <td style={{width: "30%"}}>
+                        <div className="flex items-center gap-3">
+                            <div className="avatar">
+                                <div className="mask mask-squircle w-12 h-12">
+                                    <img src={avatar2}
+                                         alt="Avatar Tailwind CSS Component"/>
+                                </div>
+                            </div>
+                            <div>
+                                <div className="font-bold">{participant.username}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{participant.score}</td>
+                </tr>);
 
 
-        if (tournament?.startsAt != undefined && tournament?.endsAt != undefined) {
-            const startDate = new Date(tournament.startsAt);
-            const endDate = new Date(tournament.endsAt);
-            const now = new Date();
+            })
 
-            let colorBadge : string;
-            let colorText : string;
-            let status : string;
-            let message : string;
-
-        if (compareDate(now, endDate)==1) {
-            colorBadge = " font-bold badge badge-error";
-            colorText = "dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52 badge-error badge-outline";
-            status = "terminated";
-            message = "The tournament has ended! :(";
-
-
+            return partList;
         }
-         else if (compareDate(now, startDate)==1 && compareDate(now, endDate)!=1){
-            colorBadge = " font-bold badge badge-warning";
-            colorText = "dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52 badge-warning badge-outline";
-            status = "ongoing";
-            message = "The tournament ends at " + endDate.getFullYear() + "/" + (endDate.getMonth()+1) + "/" + endDate.getDate();
+    }
+
+        function tournamentStatus() {
+
+
+            if (tournament?.startsAt != undefined && tournament?.endsAt != undefined) {
+                const startDate = new Date(tournament.startsAt);
+                const endDate = new Date(tournament.endsAt);
+                const now = new Date();
+
+                let colorBadge: string;
+                let colorText: string;
+                let status: string;
+                let message: string;
+
+                if (compareDate(now, endDate) == 1) {
+                    colorBadge = " font-bold badge badge-error";
+                    colorText = "dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52 badge-error badge-outline";
+                    status = "terminated";
+                    message = "The tournament has ended! :(";
+
+
+                } else if (compareDate(now, startDate) == 1 && compareDate(now, endDate) != 1) {
+                    colorBadge = " font-bold badge badge-warning";
+                    colorText = "dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52 badge-warning badge-outline";
+                    status = "ongoing";
+                    message = "The tournament ends at " + endDate.getFullYear() + "/" + (endDate.getMonth()+1) + "/" + endDate.getDate();
          }
          else {
             colorBadge = " font-bold badge badge-success";
