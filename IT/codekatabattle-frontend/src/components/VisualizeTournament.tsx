@@ -31,6 +31,22 @@ export const VisualizeTournament= () => {
         }
     }
 
+    function compareDate(date1:Date, date2:Date){
+        if(date1.getFullYear() > date2.getFullYear())
+            return 1;
+        if(date1.getFullYear() < date2.getFullYear())
+            return 2;
+        if(date1.getMonth() > date2.getMonth())
+            return 1;
+        if(date1.getMonth() < date2.getMonth())
+            return 2;
+        if(date1.getDate() > date2.getDate())
+            return 1;
+        if(date1.getDate() < date2.getDate())
+            return 2;
+        return 0;
+    }
+
     function tournamentStatus() {
 
 
@@ -44,23 +60,25 @@ export const VisualizeTournament= () => {
             let status : string;
             let message : string;
 
-        if (now < startDate) {
-            colorBadge = " font-bold badge badge-success";
-            colorText = "dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52 badge-success badge-outline";
-            status = "enrollment";
-            message = "The tournament starts at " + tournament.startsAt;
+        if (compareDate(now, endDate)==1) {
+            colorBadge = " font-bold badge badge-error";
+            colorText = "dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52 badge-error badge-outline";
+            status = "terminated";
+            message = "The tournament has ended! :(";
+
+
         }
-         else if (now < endDate){
+         else if (compareDate(now, startDate)==1 && compareDate(now, endDate)!=1){
             colorBadge = " font-bold badge badge-warning";
             colorText = "dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52 badge-warning badge-outline";
             status = "ongoing";
-            message = "The tournament ends at " + tournament.endsAt;
+            message = "The tournament ends at " + endDate.getFullYear() + "/" + (endDate.getMonth()+1) + "/" + endDate.getDate();
          }
          else {
-            colorBadge = " font-bold badge badge-error";
-            colorText = "dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52 badge-warning badge-error";
-            status = "terminated";
-            message = "The tournament has ended! :(";
+            colorBadge = " font-bold badge badge-success";
+            colorText = "dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52 badge-success badge-outline";
+            status = "enrollment";
+            message = "The tournament starts at " + startDate.getFullYear() + "/" + (startDate.getMonth()+1) + "/" + startDate.getDate();
         }
 
          return (
