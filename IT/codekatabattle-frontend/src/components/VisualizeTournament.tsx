@@ -105,39 +105,56 @@ export const VisualizeTournament= () => {
 
     const TournamentBattles = () => {
         return (
-            <div style={{padding: "1%", width:"100%"}}>
+            <div style={{padding: "1%", width:"fit-content", height:"fit-content"}}>
                 <div className="collapse collapse-arrow border border-base-300 bg-base-200">
                     <input type="checkbox"/>
                     <div className="collapse-title text-xl font-medium">
-                       Battles
+                       Battles {addBattleButton()}
                     </div>
                     <div className="collapse-content">
                         <div className="overflow-x-auto">
                             <table className="table">
+                                <div style={{height: "fit-content"}} className="boxx">
+                                    <div className="boxx-inner">
 
-                                <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Creator</th>
-                                    <th>Participants</th>
-                                    <th>Language</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {tournamentBattles()}
-                                </tbody>
+                                        <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Creator</th>
+                                            <th>Participants</th>
+                                            <th>Language</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody >
+                                        {tournamentBattles()}
+                                        </tbody>
+                                    </div>
+                                </div>
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
 
-        )
+    )
+    }
+
+    function addBattleButton(){
+        if(tournament?.coordinators && tournament.coordinators.length>0)
+            if(tournament?.coordinators.map((coordinator) => coordinator.username == user?.login).reduce((boola, boolb) => boola || boolb))
+            return (
+                <button className="badge badge-info badge-outline">+</button>
+            )
+        if(user?.login == tournament?.creator)
+            return (
+                <button className="badge badge-info badge-outline">+</button>
+            )
+        return (<></>)
     }
 
     function seeMore(id : number){
         return (
-            <button style={{width:"27%"}} className="btn btn-outline btn-info"> {id} See More →</button>
+            <button style={{width:"100%"}} className="btn btn-outline btn-info"> {id} See More →</button>
         )
     }
 
@@ -165,25 +182,28 @@ export const VisualizeTournament= () => {
 
     const TournamentCoordinators = () => {
         return (
-            <div style={{padding: "1%", width:"45%"}}>
+            <div style={{padding: "1%", width:"fit-content", height:"fit-content"}}>
                 <div className="collapse collapse-arrow border border-base-300 bg-base-200">
                     <input type="checkbox"/>
                     <div className="collapse-title text-xl font-medium">
                         Coordinators
                     </div>
-                    <div className="collapse-content">
-                        <div className="overflow-x-auto">
-                            <table className="table">
-                                {/* head */}
-                                <thead>
-                                <tr>
-                                    <th>User</th>
-                                    <th>N° of Battles</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {tournamentCoordinators()}
-                                </tbody>
+                    <div style={{height:"fit-content"}} className="collapse-content">
+                        <div style={{height:"fit-content"}} className="overflow-x-auto">
+                            <table style={{height:"fit-content"}} className="table">
+                                <div style={{height:"fit-content"}} className="boxx">
+                                    <div className="boxx-inner">
+                                        <thead>
+                                        <tr>
+                                            <th>User</th>
+                                            <th>N° of Battles</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {tournamentCoordinators()}
+                                        </tbody>
+                                    </div>
+                                </div>
                             </table>
                         </div>
                     </div>
@@ -221,25 +241,29 @@ export const VisualizeTournament= () => {
 
     const TournamentLeaderboard = () => {
         return (
-            <div style={{padding: "1%", width:"45%"}}>
+            <div style={{padding: "1%", width:"fit-content", height:"fit-content"}} className="">
                 <div className="collapse collapse-arrow border border-base-300 bg-base-200">
                     <input type="checkbox"/>
                     <div className="collapse-title text-xl font-medium">
                         Leaderboard
                     </div>
                     <div className="collapse-content">
-                        <div className="overflow-x-auto">
-                            <table className="table">
-                                {/* head */}
-                                <thead>
-                                <tr>
-                                    <th>Position</th>
-                                    <th>User</th>
-                                    <th>Score</th>
-                                </tr>
-                                </thead>
+                        <div className="overflow-x-auto ">
+                            <table className="table ">
                                 <tbody>
-                                {tournamentLeaderboard()}
+                                <div style={{height:"fit-content"}} className="boxx">
+                                    <div className="boxx-inner">
+                                        <thead>
+                                        <tr>
+                                            <th>Position</th>
+                                            <th>User</th>
+                                            <th>Score</th>
+                                        </tr>
+                                        </thead>
+                                        {tournamentLeaderboard()}
+                                    </div>
+                                </div>
+
                                 </tbody>
                             </table>
                         </div>
@@ -250,7 +274,7 @@ export const VisualizeTournament= () => {
         )
     }
 
-    function colorOfWinner( x: number ){
+    function colorOfWinner(x: number) {
         let r : string;
         if(x==0){
             r="bg-base-300";
@@ -446,8 +470,9 @@ export const VisualizeTournament= () => {
                 <ul  style={{width:"100%"}} className="menu-lg lg:menu-horizontal bg-base-100 rounded-box">
                     <TournamentLeaderboard/>
                     <TournamentCoordinators/>
+                    <TournamentBattles/>
                 </ul>
-                <TournamentBattles/>
+
             </div>
             <div style={{top: "0%", position:"fixed", width:"100%", height:"10%"}}><NavBar/></div>
         </>

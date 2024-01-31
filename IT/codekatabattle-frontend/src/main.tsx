@@ -10,6 +10,7 @@ import { HomePage } from './routes/HomePage.tsx';
 import './main.css';
 import CreateTournament from "./components/CreateTournament.tsx";
 import {VisualizeTournament} from "./components/VisualizeTournament.tsx";
+import {VisualizeTournaments} from "./components/VisualizeTournaments.tsx";
 
 OpenAPI.BASE = import.meta.env.VITE_API_URL;
 document.title = "CodeKataBattle";
@@ -26,6 +27,11 @@ const router = createBrowserRouter([
     {
         path: "/tournaments/:id",
         element: <VisualizeTournament/>,
+
+    },
+    {
+        path: "/tournaments/view/:page",
+        element: <VisualizeTournaments/>,
 
     },
 
