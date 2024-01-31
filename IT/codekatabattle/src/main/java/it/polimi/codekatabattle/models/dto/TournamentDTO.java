@@ -10,6 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -37,7 +38,7 @@ public class TournamentDTO {
 
     private Integer maxParticipants;
 
-    private Set<String> coordinators;
+    private Set<String> coordinators = new HashSet<>();
 
     public Tournament toEntity() {
         Tournament tournament = new Tournament();
