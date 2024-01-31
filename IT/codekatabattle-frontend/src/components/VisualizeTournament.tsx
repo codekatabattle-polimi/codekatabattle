@@ -1,14 +1,17 @@
 import Placeholder from "../assets/Placeholder_Tournament_Image.jpg"
 import Avatar from "../assets/avatar2.png"
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {Tournament, TournamentService} from "../services/openapi";
 import {useParams} from "react-router-dom";
 import {NavBar} from "./NavBar.tsx";
 import avatar2 from "../assets/avatar1.png";
 import privacy = Tournament.privacy;
+import {AuthContext} from "../context/AuthContext.ts";
+
 
 
 export const VisualizeTournament= () => {
+    const {user}=useContext(AuthContext);
     const {id} = useParams();
     const [tournament, setTournament] = useState<Tournament | null>(null);
     const [error, setError] = useState<Error | null>(null);
@@ -47,6 +50,27 @@ export const VisualizeTournament= () => {
         return 0;
     }
 
+    async function joinTournament(){
+        try{
+            const t = await TournamentService.join(tournament?.id ?? 0)
+            setTournament(t)
+        }catch(error) {
+            setError(error as Error);
+        }
+    }
+
+    function joinButton() {
+        if(tournament?.participants == undefined )
+            return (<></>)
+        if(tournament.creator == (user?.login ?? ""))
+            return (<></>)
+        if(tournament.participants.length == 0)
+            return (<button className="btn btn-success" onClick={() => joinTournament()}>Join</button>)
+        if(tournament.participants.map((partcipant) => partcipant.id == user?.id).reduce((boola, boolb) => boola || boolb) )
+            return (<button className="btn btn-success" onClick={() => joinTournament()}>Join</button>)
+        else return (<></>)
+    }
+
     const TournamentLeaderboard = () => {
         return (
             <div style={{padding: "1%", width:"45%"}}>
@@ -68,7 +92,7 @@ export const VisualizeTournament= () => {
                                 </thead>
                                 <tbody>
                                 {tournamentLeaderboard()}
-
+                                {joinButton()}
                                 </tbody>
                             </table>
                         </div>
