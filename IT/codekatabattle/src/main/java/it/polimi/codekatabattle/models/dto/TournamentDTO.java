@@ -51,6 +51,7 @@ public class TournamentDTO {
         tournament.setCoordinators(coordinators.stream().map(c -> {
             TournamentCoordinator tc = new TournamentCoordinator();
             tc.setUsername(c);
+            tc.setTournament(tournament);
             return tc;
         }).collect(Collectors.toSet()));
         return tournament;

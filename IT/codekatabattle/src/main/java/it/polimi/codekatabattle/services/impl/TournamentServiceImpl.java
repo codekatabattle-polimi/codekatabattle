@@ -35,8 +35,8 @@ public class TournamentServiceImpl extends CrudServiceImpl<Tournament> implement
         Tournament tournament = this.findById(tournamentId)
             .orElseThrow(() -> new EntityNotFoundException("Tournament not found by id " + tournamentId));
 
-        if (!tournament.hasStarted()) {
-            throw new ValidationException("Tournament has not started yet, it is not possible to join");
+        if (tournament.hasStarted()) {
+            throw new ValidationException("Tournament has already started, it is not possible to join");
         }
         if (tournament.hasEnded()) {
             throw new ValidationException("Tournament has ended");
