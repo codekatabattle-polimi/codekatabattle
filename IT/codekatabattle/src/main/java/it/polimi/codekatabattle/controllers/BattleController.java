@@ -4,32 +4,40 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import it.polimi.codekatabattle.entities.Tournament;
+import it.polimi.codekatabattle.entities.Battle;
+import it.polimi.codekatabattle.entities.BattleEntry;
 import it.polimi.codekatabattle.exceptions.OAuthException;
-import it.polimi.codekatabattle.models.dto.TournamentDTO;
+import it.polimi.codekatabattle.models.dto.BattleDTO;
+import it.polimi.codekatabattle.models.dto.BattleEntryDTO;
 import it.polimi.codekatabattle.models.github.GHUser;
 import it.polimi.codekatabattle.services.AuthService;
-import it.polimi.codekatabattle.services.TournamentService;
+import it.polimi.codekatabattle.services.BattleService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
+import org.apache.logging.log4j.util.Strings;
+import org.kohsuke.github.GitHub;
+import org.kohsuke.github.GitHubBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Tournament", description = "Endpoints related to tournaments")
+import java.io.IOException;
+
+@Tag(name = "Battle", description = "Endpoints related to battles")
 @RestController
-@RequestMapping("/tournaments")
-public class TournamentController {
+@RequestMapping("/battles")
+public class BattleController {
 
     private final AuthService authService;
 
-    private final TournamentService tournamentService;
+    private final BattleService battleService;
 
-    public TournamentController(AuthService authService, TournamentService tournamentService) {
+    public BattleController(AuthService authService, BattleService battleService) {
         this.authService = authService;
-        this.tournamentService = tournamentService;
+        this.battleService = battleService;
     }
 
     @PostMapping(
@@ -38,17 +46,17 @@ public class TournamentController {
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Operation(
-        summary = "Create tournament",
-        description = "Create a new tournament",
+        summary = "Create battle",
+        description = "Create a new battle",
         security = @SecurityRequirement(name = "github")
     )
-    public ResponseEntity<Tournament> create(
-        @RequestBody @Valid TournamentDTO tournament,
+    public ResponseEntity<Battle> create(
+        @RequestBody @Valid BattleDTO battle,
         @Parameter(hidden = true) @RequestHeader("Authorization") String accessToken,
         @Parameter(hidden = true) @RequestHeader(value = "Origin", required = false) String origin
-    ) throws OAuthException {
+    ) throws OAuthException, IOException {
         GHUser user = this.authService.getUserInfo(accessToken, this.authService.getAuthOriginFromOriginHeader(origin));
-        return ResponseEntity.ok().body(this.tournamentService.create(tournament, user));
+        return ResponseEntity.ok().body(this.battleService.create(battle, user));
     }
 
     @GetMapping(
@@ -56,12 +64,12 @@ public class TournamentController {
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Operation(
-        summary = "Find tournament by id",
-        description = "Find a tournament by id"
+        summary = "Find battle by id",
+        description = "Find a battle by id"
     )
-    public ResponseEntity<Tournament> findById(@PathVariable("id") Long id) throws EntityNotFoundException {
-        return ResponseEntity.ok().body(this.tournamentService.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Tournament not found by id " + id)));
+    public ResponseEntity<Battle> findById(@PathVariable("id") Long id) throws EntityNotFoundException {
+        return ResponseEntity.ok().body(this.battleService.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Battle not found by id " + id)));
     }
 
     @GetMapping(
@@ -69,14 +77,14 @@ public class TournamentController {
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Operation(
-        summary = "Find paginated tournaments",
-        description = "Find paginated tournaments by specifying page number and page size"
+        summary = "Find paginated battles",
+        description = "Find paginated battles by specifying page number and page size"
     )
-    public ResponseEntity<Page<Tournament>> findAll(
+    public ResponseEntity<Page<Battle>> findAll(
         @RequestParam(name = "page", defaultValue = "0") int page,
         @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok().body(this.tournamentService.findAll(Pageable.ofSize(size).withPage(page)));
+        return ResponseEntity.ok().body(this.battleService.findAll(Pageable.ofSize(size).withPage(page)));
     }
 
     @PutMapping(
@@ -84,17 +92,17 @@ public class TournamentController {
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Operation(
-        summary = "Join a tournament",
-        description = "Join a tournament by providing tournament id and GitHub access token",
+        summary = "Join a battle",
+        description = "Join a battle by providing battle id and GitHub access token",
         security = @SecurityRequirement(name = "github")
     )
-    public ResponseEntity<Tournament> join(
+    public ResponseEntity<Battle> join(
         @PathVariable("id") Long id,
         @Parameter(hidden = true) @RequestHeader("Authorization") String accessToken,
         @Parameter(hidden = true) @RequestHeader(value = "Origin", required = false) String origin
     ) throws OAuthException, EntityNotFoundException {
         GHUser user = this.authService.getUserInfo(accessToken, this.authService.getAuthOriginFromOriginHeader(origin));
-        return ResponseEntity.ok().body(this.tournamentService.join(id, user));
+        return ResponseEntity.ok().body(this.battleService.join(id, user));
     }
 
     @PutMapping(
@@ -102,17 +110,17 @@ public class TournamentController {
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Operation(
-        summary = "Leave a tournament",
-        description = "Leave a tournament by providing tournament id and GitHub access token",
+        summary = "Leave a battle",
+        description = "Leave a battle by providing battle id and GitHub access token",
         security = @SecurityRequirement(name = "github")
     )
-    public ResponseEntity<Tournament> leave(
+    public ResponseEntity<Battle> leave(
         @PathVariable("id") Long id,
         @Parameter(hidden = true) @RequestHeader("Authorization") String accessToken,
         @Parameter(hidden = true) @RequestHeader(value = "Origin", required = false) String origin
     ) throws OAuthException, EntityNotFoundException {
         GHUser user = this.authService.getUserInfo(accessToken, this.authService.getAuthOriginFromOriginHeader(origin));
-        return ResponseEntity.ok().body(this.tournamentService.leave(id, user));
+        return ResponseEntity.ok().body(this.battleService.leave(id, user));
     }
 
     @PutMapping(
@@ -121,18 +129,18 @@ public class TournamentController {
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Operation(
-        summary = "Update tournament",
-        description = "Update a tournament by providing tournament id and new tournament data",
+        summary = "Update battle",
+        description = "Update a battle by providing battle id and new battle data",
         security = @SecurityRequirement(name = "github")
     )
-    public ResponseEntity<Tournament> updateById(
+    public ResponseEntity<Battle> updateById(
         @PathVariable("id") Long id,
-        @Valid @RequestBody TournamentDTO tournament,
+        @Valid @RequestBody BattleDTO battle,
         @Parameter(hidden = true) @RequestHeader("Authorization") String accessToken,
         @Parameter(hidden = true) @RequestHeader(value = "Origin", required = false) String origin
     ) throws OAuthException, EntityNotFoundException {
         GHUser user = this.authService.getUserInfo(accessToken, this.authService.getAuthOriginFromOriginHeader(origin));
-        return ResponseEntity.ok().body(this.tournamentService.updateById(id, tournament, user));
+        return ResponseEntity.ok().body(this.battleService.updateById(id, battle, user));
     }
 
     @DeleteMapping(
@@ -140,17 +148,41 @@ public class TournamentController {
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Operation(
-        summary = "Delete tournament",
-        description = "Delete a tournament by providing tournament id",
+        summary = "Delete battle",
+        description = "Delete a battle by providing battle id",
         security = @SecurityRequirement(name = "github")
     )
-    public ResponseEntity<Tournament> deleteById(
+    public ResponseEntity<Battle> deleteById(
         @PathVariable("id") Long id,
         @Parameter(hidden = true) @RequestHeader("Authorization") String accessToken,
         @Parameter(hidden = true) @RequestHeader(value = "Origin", required = false) String origin
-    ) throws OAuthException, EntityNotFoundException {
+    ) throws OAuthException, EntityNotFoundException, IOException {
         GHUser user = this.authService.getUserInfo(accessToken, this.authService.getAuthOriginFromOriginHeader(origin));
-        return ResponseEntity.ok().body(this.tournamentService.deleteById(id, user));
+        return ResponseEntity.ok().body(this.battleService.deleteById(id, user));
+    }
+
+    @PostMapping(
+        path = "/{id}/submit",
+        consumes = MediaType.APPLICATION_JSON_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Operation(
+        summary = "Submit battle entry",
+        description = "Submit build artifact to be tested and scored by providing battle id and build artifact URL",
+        security = @SecurityRequirement(name = "github")
+    )
+    public ResponseEntity<BattleEntry> submit(
+        @PathVariable("id") Long id,
+        @Valid @RequestBody BattleEntryDTO battleEntry,
+        @RequestHeader("Authorization") String personalAccessToken
+    ) throws ValidationException, EntityNotFoundException, IOException {
+        String githubPAT = personalAccessToken.replace("Bearer ", "");
+        if (Strings.isBlank(githubPAT)) {
+            throw new ValidationException("GitHub personal access token is required");
+        }
+
+        GitHub github = new GitHubBuilder().withOAuthToken(githubPAT).build();
+        return ResponseEntity.ok().body(this.battleService.submit(id, battleEntry, github));
     }
 
 }

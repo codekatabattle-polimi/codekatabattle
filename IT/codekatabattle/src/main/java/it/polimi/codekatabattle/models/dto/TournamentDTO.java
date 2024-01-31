@@ -2,6 +2,7 @@ package it.polimi.codekatabattle.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import it.polimi.codekatabattle.entities.Tournament;
+import it.polimi.codekatabattle.entities.TournamentCoordinator;
 import it.polimi.codekatabattle.entities.TournamentPrivacy;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
@@ -9,6 +10,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static it.polimi.codekatabattle.config.APIConstants.DATETIME_FORMAT;
 
@@ -34,6 +37,8 @@ public class TournamentDTO {
 
     private Integer maxParticipants;
 
+    private Set<String> coordinators;
+
     public Tournament toEntity() {
         Tournament tournament = new Tournament();
         tournament.setTitle(title);
@@ -42,6 +47,11 @@ public class TournamentDTO {
         tournament.setEndsAt(endsAt);
         tournament.setPrivacy(privacy);
         tournament.setMaxParticipants(maxParticipants);
+        tournament.setCoordinators(coordinators.stream().map(c -> {
+            TournamentCoordinator tc = new TournamentCoordinator();
+            tc.setUsername(c);
+            return tc;
+        }).collect(Collectors.toSet()));
         return tournament;
     }
 
