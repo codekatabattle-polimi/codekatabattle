@@ -9,7 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import static it.polimi.codekatabattle.config.APIConstants.DATETIME_FORMAT;
 
@@ -52,11 +53,11 @@ public class Battle extends BaseEntity {
 
     @OneToMany(mappedBy = "battle", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonManagedReference
-    private Set<BattleParticipant> participants;
+    private List<BattleParticipant> participants = new ArrayList<>();
 
     @OneToMany(mappedBy = "battle", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonManagedReference
-    private Set<BattleEntry> entries;
+    private List<BattleEntry> entries = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tournament_id", nullable = false)

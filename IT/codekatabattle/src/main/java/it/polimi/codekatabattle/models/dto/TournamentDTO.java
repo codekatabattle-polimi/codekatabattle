@@ -11,9 +11,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static it.polimi.codekatabattle.config.APIConstants.DATETIME_FORMAT;
@@ -40,7 +38,7 @@ public class TournamentDTO {
 
     private Integer maxParticipants;
 
-    private Set<String> coordinators = new HashSet<>();
+    private List<String> coordinators = new ArrayList<>();
 
     public Tournament toEntity() {
         Tournament tournament = new Tournament();
@@ -55,7 +53,7 @@ public class TournamentDTO {
             tc.setUsername(c);
             tc.setTournament(tournament);
             return tc;
-        }).collect(Collectors.toSet()));
+        }).collect(Collectors.toList()));
         return tournament;
     }
 

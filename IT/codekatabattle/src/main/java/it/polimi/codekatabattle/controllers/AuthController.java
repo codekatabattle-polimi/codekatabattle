@@ -8,10 +8,14 @@ import it.polimi.codekatabattle.exceptions.OAuthException;
 import it.polimi.codekatabattle.models.github.GHUser;
 import it.polimi.codekatabattle.models.oauth.OAuthAccessToken;
 import it.polimi.codekatabattle.services.AuthService;
+import org.kohsuke.github.GitHub;
+import org.kohsuke.github.GitHubBuilder;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @Tag(name = "Auth", description = "Endpoints related to authentication")
 @RestController
@@ -43,7 +47,7 @@ public class AuthController {
 
     @GetMapping("/me")
     @Operation(
-        summary = "Get user info",
+        summary = "Get logged-in user info",
         description = "Get user info by providing access token",
         security = @SecurityRequirement(name = "github")
     )
@@ -52,6 +56,20 @@ public class AuthController {
         @Parameter(hidden = true) @RequestHeader(value = "Origin", required = false) String origin
     ) throws OAuthException {
         return ResponseEntity.ok().body(authService.getUserInfo(accessToken, authService.getAuthOriginFromOriginHeader(origin)));
+    }
+
+    @GetMapping("/user")
+    @Operation(
+        summary = "Get generic user info",
+        description = "Get user info by providing access token and username",
+        security = @SecurityRequirement(name = "github")
+    )
+    public ResponseEntity<GHUser> getUserInfo(
+        @Parameter(hidden = true) @RequestHeader("Authorization") String accessToken,
+        @Parameter(description = "Username", required = true) @RequestParam("username") String username
+    ) throws IOException {
+        GitHub github = new GitHubBuilder().withOAuthToken(accessToken.replace("Bearer ", "")).build();
+        return ResponseEntity.ok().body(authService.getUserInfo(github, username));
     }
 
 }

@@ -4,6 +4,9 @@ import it.polimi.codekatabattle.exceptions.OAuthException;
 import it.polimi.codekatabattle.models.github.GHUser;
 import it.polimi.codekatabattle.models.oauth.AuthOrigin;
 import it.polimi.codekatabattle.models.oauth.OAuthAccessToken;
+import org.kohsuke.github.GitHub;
+
+import java.io.IOException;
 
 public interface AuthService {
 
@@ -12,6 +15,8 @@ public interface AuthService {
     GHUser getUserInfo(String accessToken, AuthOrigin authOrigin) throws OAuthException;
 
     AuthOrigin getAuthOriginFromOriginHeader(String origin);
+
+    GHUser getUserInfo(GitHub github, String username) throws IOException;
 
     void checkAccessToken(String accessToken, String origin) throws OAuthException;
 }
