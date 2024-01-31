@@ -8,8 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import static it.polimi.codekatabattle.config.APIConstants.DATETIME_FORMAT;
 
@@ -50,15 +50,15 @@ public class Tournament extends BaseEntity {
 
     @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonManagedReference
-    private Set<TournamentParticipant> participants = new HashSet<>();
+    private List<TournamentParticipant> participants = new ArrayList<>();
 
     @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonManagedReference
-    private Set<TournamentCoordinator> coordinators = new HashSet<>();
+    private List<TournamentCoordinator> coordinators = new ArrayList<>();
 
     @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonManagedReference
-    private Set<Battle> battles = new HashSet<>();
+    private List<Battle> battles = new ArrayList<>();
 
     public boolean hasStarted() {
         return startsAt.isBefore(LocalDateTime.now());
