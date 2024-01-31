@@ -5,6 +5,7 @@ import {Tournament, TournamentService} from "../services/openapi";
 import {useParams} from "react-router-dom";
 import {NavBar} from "./NavBar.tsx";
 import avatar2 from "../assets/avatar1.png";
+import avatar3 from "../assets/avatar3.png";
 import privacy = Tournament.privacy;
 import {AuthContext} from "../context/AuthContext.ts";
 
@@ -50,6 +51,37 @@ export const VisualizeTournament= () => {
         return 0;
     }
 
+    function joinOrLeaveButton() {
+        if(tournament?.participants == undefined )
+            return (<></>)
+        if(tournament.creator == (user?.login ?? ""))
+            return (<></>)
+        if(tournament.participants.length == 0 || tournament.participants.map((partcipant) => partcipant.id == user?.id).reduce((boola, boolb) => boola || boolb))
+            return (joinButton())
+        if(! tournament.participants.map((partcipant) => partcipant.id == user?.id).reduce((boola, boolb) => boola || boolb))
+            return (leaveButton())
+        else return (<></>)
+    }
+
+
+    async function leaveTournament(){
+        try{
+            const t = await TournamentService.leave(tournament?.id ?? 0)
+            setTournament(t)
+        }catch(error) {
+            setError(error as Error);
+        }
+    }
+
+    function leaveButton() {
+        const now = new Date()
+        const endDate= new Date(tournament?.endsAt ?? now)
+        if(compareDate(now,endDate) == 1)
+            return (<></>)
+        return (<button style={{width:"100%"}} className="btn btn-error" onClick={() => leaveTournament()}>Leave</button>)
+
+    }
+
     async function joinTournament(){
         try{
             const t = await TournamentService.join(tournament?.id ?? 0)
@@ -59,16 +91,72 @@ export const VisualizeTournament= () => {
         }
     }
 
+
+
+
     function joinButton() {
-        if(tournament?.participants == undefined )
+        const now = new Date()
+        const startDate= new Date(tournament?.startsAt ?? now)
+        if(compareDate(now,startDate) == 1 || compareDate(now,startDate) == 0)
             return (<></>)
-        if(tournament.creator == (user?.login ?? ""))
-            return (<></>)
-        if(tournament.participants.length == 0)
-            return (<button className="btn btn-success" onClick={() => joinTournament()}>Join</button>)
-        if(tournament.participants.map((partcipant) => partcipant.id == user?.id).reduce((boola, boolb) => boola || boolb) )
-            return (<button className="btn btn-success" onClick={() => joinTournament()}>Join</button>)
-        else return (<></>)
+        return (<button style={{width:"100%"}} className="btn btn-success" onClick={() => joinTournament()}>Join</button>)
+    }
+
+
+    const TournamentCoordinators = () => {
+        return (
+            <div style={{padding: "1%", width:"45%"}}>
+                <div className="collapse collapse-arrow border border-base-300 bg-base-200">
+                    <input type="checkbox"/>
+                    <div className="collapse-title text-xl font-medium">
+                        Coordinators
+                    </div>
+                    <div className="collapse-content">
+                        <div className="overflow-x-auto">
+                            <table className="table">
+                                {/* head */}
+                                <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>N° of Battles</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {tournamentCoordinators()}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        )
+    }
+
+    function tournamentCoordinators() {
+        if (!tournament?.coordinators) {
+            return <></>;
+        }
+        return (
+            tournament?.coordinators.map(((coordinator) => (
+                <tr className="bg-base-200">
+                    <td>
+                        <div className="flex items-center gap-3">
+                            <div className="avatar">
+                                <div className="mask mask-squircle w-12 h-12">
+                                    <img src={avatar3}
+                                         alt="Avatar Tailwind CSS Component"/>
+                                </div>
+                            </div>
+                            <div>
+                                <div className="font-bold">{coordinator.username}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>10</td>
+                </tr>
+            )))
+        );
     }
 
     const TournamentLeaderboard = () => {
@@ -92,7 +180,6 @@ export const VisualizeTournament= () => {
                                 </thead>
                                 <tbody>
                                 {tournamentLeaderboard()}
-                                {joinButton()}
                                 </tbody>
                             </table>
                         </div>
@@ -211,7 +298,7 @@ export const VisualizeTournament= () => {
             message = "The tournament starts at " + startDate.getFullYear() + "/" + (startDate.getMonth()+1) + "/" + startDate.getDate();
         }
          return (
-                <div style={{paddingLeft: "1%", paddingTop: "3%"}}>
+                <div style={{paddingLeft: "1%", paddingTop: "2%"}}>
                     <div className="dropdown dropdown-bottom">
                         <div tabIndex={0} role="button">
                             <div style={{color: "lightgray"}} className={colorBadge}> {status}
@@ -229,6 +316,50 @@ export const VisualizeTournament= () => {
 
     }
 
+    function upperBar() {
+        return (
+            <div className="navbar bg-base-100">
+                <div className="flex-1">
+                    <div style={{padding: "1%"}} className="avatar">
+                        <div className="w-16 h-16 rounded-full">
+                            <img src={Placeholder}/>
+                        </div>
+                    </div>
+
+                    <h2 className="text-3xl font-bold"
+                        > {tournament?.title}</h2>
+
+
+                    {tournamentPrivacy()}
+                    {tournamentStatus()}
+                </div>
+                <div style={{width:"22%"}} className="flex-none">
+                    <div style={{padding: "2%"}}>
+                        {joinOrLeaveButton()}
+                    </div>
+
+
+                    <ul style={{borderSpacing:"", paddingTop: "1%", width: "100%"}}
+                        className="menu-lg lg:menu-horizontal bg-base-200 rounded-box border border-base-300">
+                        <div style={{paddingRight: "2%" , paddingLeft: "1%"}}>
+                            <h2 className="text-l"
+                                style={{padding: "1%", paddingTop: "2%"}}> Created by: </h2>
+                            <h2 className="text-2xl font-bold"
+                                style={{padding: "1%", paddingTop: "2%"}}> {tournament?.creator}</h2>
+                        </div>
+
+
+                        <div style={{padding:"1%"}} className="avatar">
+                            <div className="w-16 h-16 rounded-box">
+                                <img src={Avatar}/>
+                            </div>
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
 
     if (error) {
         return (
@@ -239,33 +370,8 @@ export const VisualizeTournament= () => {
     return (
         <>
 
-            <div style={{alignSelf: "end", top:"8%", position:"fixed", width:"100%"}}>
-                <ul style={{width: "100%"}} className="menu menu-vertical lg:menu-horizontal">
-                    <div style={{padding: "1%"}} className="avatar">
-                        <div className="w-16 h-16 rounded-full">
-                            <img src={Placeholder}/>
-                        </div>
-                    </div>
-
-                    <h2 className="text-3xl font-bold"
-                        style={{paddingTop: "2%"}}> {tournament?.title}</h2>
-
-
-                    {tournamentPrivacy()}
-                    {tournamentStatus()}
-                    <div style={{paddingRight:"47.6%" }}></div>
-
-                    <ul style={{paddingTop: "1%", width:"25%"}} className="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box border border-base-300">
-                        <div  className="avatar">
-                            <div className="w-20 h-20 rounded-box">
-                                <img src={Avatar}/>
-                            </div>
-                        </div>
-
-                        <h2 className="text-3xl font-bold"
-                            style={{padding:"1%", paddingTop: "2%"}}> {tournament?.creator}</h2>
-                    </ul>
-                </ul>
+            <div style={{alignSelf: "end", top: "8%", position: "fixed", width: "100%"}}>
+                {upperBar()}
                 <div style={{padding: "1%"}}>
                     <div className="collapse collapse-arrow border border-base-300 bg-base-200">
                         <input type="checkbox"/>
@@ -277,7 +383,10 @@ export const VisualizeTournament= () => {
                         </div>
                     </div>
                 </div>
-                <TournamentLeaderboard/>
+                <ul  style={{width:"100%"}} className="menu-lg lg:menu-horizontal bg-base-100 rounded-box">
+                    <TournamentLeaderboard/>
+                    <TournamentCoordinators/>
+                </ul>
             </div>
             <div style={{top: "0%", position:"fixed", width:"100%", height:"10%"}}><NavBar/></div>
         </>

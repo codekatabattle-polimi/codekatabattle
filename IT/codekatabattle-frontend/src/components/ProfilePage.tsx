@@ -1,7 +1,7 @@
-import {useContext} from "react";
-import {AuthContext} from "../context/AuthContext.ts";
+//import {useContext} from "react";
+//import {AuthContext} from "../context/AuthContext.ts";
 
 export const ProfilePage= () => {
-    const {user}=useContext(AuthContext);
+    //const {user}=useContext(AuthContext);
 
 }
