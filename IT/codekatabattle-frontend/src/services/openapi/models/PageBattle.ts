@@ -2,17 +2,17 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { Battle } from './Battle';
 import type { PageableObject } from './PageableObject';
 import type { SortObject } from './SortObject';
-import type { Tournament } from './Tournament';
-export type PageTournament = {
+export type PageBattle = {
     totalElements?: number;
     totalPages?: number;
     pageable?: PageableObject;
     first?: boolean;
     last?: boolean;
     size?: number;
-    content?: Array<Tournament>;
+    content?: Array<Battle>;
     number?: number;
     sort?: SortObject;
     numberOfElements?: number;

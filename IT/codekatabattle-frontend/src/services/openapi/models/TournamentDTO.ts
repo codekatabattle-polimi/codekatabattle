@@ -9,6 +9,7 @@ export type TournamentDTO = {
     endsAt?: string;
     privacy: TournamentDTO.privacy;
     maxParticipants?: number;
+    coordinators?: Array<string>;
 };
 export namespace TournamentDTO {
     export enum privacy {

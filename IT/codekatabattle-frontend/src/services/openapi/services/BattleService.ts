@@ -2,26 +2,28 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { PageTournament } from '../models/PageTournament';
-import type { Tournament } from '../models/Tournament';
-import type { TournamentDTO } from '../models/TournamentDTO';
+import type { Battle } from '../models/Battle';
+import type { BattleDTO } from '../models/BattleDTO';
+import type { BattleEntry } from '../models/BattleEntry';
+import type { BattleEntryDTO } from '../models/BattleEntryDTO';
+import type { PageBattle } from '../models/PageBattle';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-export class TournamentService {
+export class BattleService {
     /**
-     * Find tournament by id
-     * Find a tournament by id
+     * Find battle by id
+     * Find a battle by id
      * @param id
-     * @returns Tournament OK
+     * @returns Battle OK
      * @throws ApiError
      */
-    public static findById(
+    public static findById1(
         id: number,
-    ): CancelablePromise<Tournament> {
+    ): CancelablePromise<Battle> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/tournaments/{id}',
+            url: '/battles/{id}',
             path: {
                 'id': id,
             },
@@ -34,20 +36,20 @@ export class TournamentService {
         });
     }
     /**
-     * Update tournament
-     * Update a tournament by providing tournament id and new tournament data
+     * Update battle
+     * Update a battle by providing battle id and new battle data
      * @param id
      * @param requestBody
-     * @returns Tournament OK
+     * @returns Battle OK
      * @throws ApiError
      */
-    public static updateById(
+    public static updateById1(
         id: number,
-        requestBody: TournamentDTO,
-    ): CancelablePromise<Tournament> {
+        requestBody: BattleDTO,
+    ): CancelablePromise<Battle> {
         return __request(OpenAPI, {
             method: 'PUT',
-            url: '/tournaments/{id}',
+            url: '/battles/{id}',
             path: {
                 'id': id,
             },
@@ -62,18 +64,18 @@ export class TournamentService {
         });
     }
     /**
-     * Delete tournament
-     * Delete a tournament by providing tournament id
+     * Delete battle
+     * Delete a battle by providing battle id
      * @param id
-     * @returns Tournament OK
+     * @returns Battle OK
      * @throws ApiError
      */
-    public static deleteById(
+    public static deleteById1(
         id: number,
-    ): CancelablePromise<Tournament> {
+    ): CancelablePromise<Battle> {
         return __request(OpenAPI, {
             method: 'DELETE',
-            url: '/tournaments/{id}',
+            url: '/battles/{id}',
             path: {
                 'id': id,
             },
@@ -86,18 +88,18 @@ export class TournamentService {
         });
     }
     /**
-     * Leave a tournament
-     * Leave a tournament by providing tournament id and GitHub access token
+     * Leave a battle
+     * Leave a battle by providing battle id and GitHub access token
      * @param id
-     * @returns Tournament OK
+     * @returns Battle OK
      * @throws ApiError
      */
-    public static leave(
+    public static leave1(
         id: number,
-    ): CancelablePromise<Tournament> {
+    ): CancelablePromise<Battle> {
         return __request(OpenAPI, {
             method: 'PUT',
-            url: '/tournaments/{id}/leave',
+            url: '/battles/{id}/leave',
             path: {
                 'id': id,
             },
@@ -110,18 +112,18 @@ export class TournamentService {
         });
     }
     /**
-     * Join a tournament
-     * Join a tournament by providing tournament id and GitHub access token
+     * Join a battle
+     * Join a battle by providing battle id and GitHub access token
      * @param id
-     * @returns Tournament OK
+     * @returns Battle OK
      * @throws ApiError
      */
-    public static join(
+    public static join1(
         id: number,
-    ): CancelablePromise<Tournament> {
+    ): CancelablePromise<Battle> {
         return __request(OpenAPI, {
             method: 'PUT',
-            url: '/tournaments/{id}/join',
+            url: '/battles/{id}/join',
             path: {
                 'id': id,
             },
@@ -134,20 +136,20 @@ export class TournamentService {
         });
     }
     /**
-     * Find paginated tournaments
-     * Find paginated tournaments by specifying page number and page size
+     * Find paginated battles
+     * Find paginated battles by specifying page number and page size
      * @param page
      * @param size
-     * @returns PageTournament OK
+     * @returns PageBattle OK
      * @throws ApiError
      */
-    public static findAll(
+    public static findAll1(
         page?: number,
         size: number = 10,
-    ): CancelablePromise<PageTournament> {
+    ): CancelablePromise<PageBattle> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/tournaments',
+            url: '/battles',
             query: {
                 'page': page,
                 'size': size,
@@ -161,18 +163,51 @@ export class TournamentService {
         });
     }
     /**
-     * Create tournament
-     * Create a new tournament
+     * Create battle
+     * Create a new battle
      * @param requestBody
-     * @returns Tournament OK
+     * @returns Battle OK
      * @throws ApiError
      */
-    public static create(
-        requestBody: TournamentDTO,
-    ): CancelablePromise<Tournament> {
+    public static create1(
+        requestBody: BattleDTO,
+    ): CancelablePromise<Battle> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/tournaments',
+            url: '/battles',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `Bad Request`,
+                401: `Unauthorized`,
+                404: `Not Found`,
+                500: `Internal Server Error`,
+            },
+        });
+    }
+    /**
+     * Submit battle entry
+     * Submit build artifact to be tested and scored by providing battle id and build artifact URL
+     * @param id
+     * @param authorization
+     * @param requestBody
+     * @returns BattleEntry OK
+     * @throws ApiError
+     */
+    public static submit(
+        id: number,
+        authorization: string,
+        requestBody: BattleEntryDTO,
+    ): CancelablePromise<BattleEntry> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/battles/{id}/submit',
+            path: {
+                'id': id,
+            },
+            headers: {
+                'Authorization': authorization,
+            },
             body: requestBody,
             mediaType: 'application/json',
             errors: {
