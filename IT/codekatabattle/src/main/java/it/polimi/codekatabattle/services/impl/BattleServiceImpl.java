@@ -52,7 +52,7 @@ public class BattleServiceImpl extends CrudServiceImpl<Battle> implements Battle
 
         GHRepository repository = this.createBattleRepository(newBattle);
         newBattle.setRepositoryId(repository.getId());
-        newBattle.setRepositoryUrl(repository.getUrl().toString());
+        newBattle.setRepositoryUrl(repository.getHtmlUrl().toString());
 
         return this.battleRepository.save(newBattle);
     }

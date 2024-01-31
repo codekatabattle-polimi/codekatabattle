@@ -8,11 +8,13 @@ import it.polimi.codekatabattle.models.oauth.OAuthAccessToken;
 import it.polimi.codekatabattle.models.oauth.OAuthConfig;
 import it.polimi.codekatabattle.services.AuthService;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.kohsuke.github.GitHub;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -58,7 +60,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public GHUser getUserInfo(String accessToken, AuthOrigin authOrigin) throws OAuthException {
+    public it.polimi.codekatabattle.models.github.GHUser getUserInfo(String accessToken, AuthOrigin authOrigin) throws OAuthException {
         OAuthConfig oauthConfig = getOAuthConfig(authOrigin);
 
         ResponseEntity<GHCheckTokenResponse> response = RestClient.create().post()
@@ -94,6 +96,11 @@ public class AuthServiceImpl implements AuthService {
         }
 
         return AuthOrigin.SWAGGER;
+    }
+
+    @Override
+    public GHUser getUserInfo(GitHub github, String username) throws IOException {
+        return GHUser.fromSDKUser(github.getUser(username));
     }
 
     @Override

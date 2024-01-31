@@ -79,6 +79,54 @@ public class TournamentController {
         return ResponseEntity.ok().body(this.tournamentService.findAll(Pageable.ofSize(size).withPage(page)));
     }
 
+    @GetMapping(
+        path = "/created",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Operation(
+        summary = "Find paginated tournaments created by user",
+        description = "Find paginated tournaments created by user by specifying page number and page size"
+    )
+    public ResponseEntity<Page<Tournament>> findAllCreatedByUser(
+        @RequestParam(name = "page", defaultValue = "0") int page,
+        @RequestParam(name = "size", defaultValue = "10") int size,
+        @RequestParam(name = "creator") String creator
+    ) {
+        return ResponseEntity.ok().body(this.tournamentService.findAllByCreator(Pageable.ofSize(size).withPage(page), creator));
+    }
+
+    @GetMapping(
+        path = "/joined",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Operation(
+        summary = "Find paginated tournaments joined by user",
+        description = "Find paginated tournaments joined by user by specifying page number and page size"
+    )
+    public ResponseEntity<Page<Tournament>> findAllJoinedByUser(
+        @RequestParam(name = "page", defaultValue = "0") int page,
+        @RequestParam(name = "size", defaultValue = "10") int size,
+        @RequestParam(name = "participant") String participant
+    ) {
+        return ResponseEntity.ok().body(this.tournamentService.findAllByParticipant(Pageable.ofSize(size).withPage(page), participant));
+    }
+
+    @GetMapping(
+        path = "/coordinated",
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Operation(
+        summary = "Find paginated tournaments coordinated by user",
+        description = "Find paginated tournaments coordinated by user by specifying page number and page size"
+    )
+    public ResponseEntity<Page<Tournament>> findAllCoordinatedByUser(
+        @RequestParam(name = "page", defaultValue = "0") int page,
+        @RequestParam(name = "size", defaultValue = "10") int size,
+        @RequestParam(name = "coordinator") String coordinator
+    ) {
+        return ResponseEntity.ok().body(this.tournamentService.findAllByCoordinator(Pageable.ofSize(size).withPage(page), coordinator));
+    }
+
     @PutMapping(
         path = "/{id}/join",
         produces = MediaType.APPLICATION_JSON_VALUE

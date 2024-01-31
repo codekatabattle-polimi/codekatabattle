@@ -11,6 +11,8 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,10 +25,26 @@ public class TournamentServiceImpl extends CrudServiceImpl<Tournament> implement
         this.tournamentRepository = tournamentRepository;
     }
 
+    @Override
     public Tournament create(@Valid @NotNull TournamentDTO tournament, @NotNull GHUser creator) throws ValidationException {
         Tournament entity = tournament.toEntity();
         entity.setCreator(creator.getLogin());
         return this.save(entity);
+    }
+
+    @Override
+    public Page<Tournament> findAllByCreator(Pageable pageable, String creator) {
+        return this.tournamentRepository.findAllByCreator(pageable, creator);
+    }
+
+    @Override
+    public Page<Tournament> findAllByParticipant(Pageable pageable, String participant) {
+        return this.tournamentRepository.findAllByParticipant(pageable, participant);
+    }
+
+    @Override
+    public Page<Tournament> findAllByCoordinator(Pageable pageable, String coordinator) {
+        return this.tournamentRepository.findAllByCoordinator(pageable, coordinator);
     }
 
     @Override

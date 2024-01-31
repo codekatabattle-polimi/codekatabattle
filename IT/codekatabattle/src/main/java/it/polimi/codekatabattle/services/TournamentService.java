@@ -4,13 +4,19 @@ import it.polimi.codekatabattle.entities.Tournament;
 import it.polimi.codekatabattle.models.dto.TournamentDTO;
 import it.polimi.codekatabattle.models.github.GHUser;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
-import jakarta.validation.constraints.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface TournamentService extends CrudService<Tournament> {
 
     Tournament create(TournamentDTO tournament, GHUser creator) throws ValidationException;
+
+    Page<Tournament> findAllByCreator(Pageable pageable, String creator);
+
+    Page<Tournament> findAllByParticipant(Pageable pageable, String participant);
+
+    Page<Tournament> findAllByCoordinator(Pageable pageable, String coordinator);
 
     Tournament join(Long tournamentId, GHUser user) throws EntityNotFoundException, ValidationException;
 
