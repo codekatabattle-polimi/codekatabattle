@@ -45,3 +45,20 @@
   width: 300px;
   padding-left: 50px;
 }
+
+div.boxx
+{
+  width:fit-content; height:400px;
+  padding:1px 0;
+  font-size:10px
+}
+div.boxx-inner
+{
+  height: fit-content;
+  max-height: 400px;
+  overflow: auto;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;
+  margin:25px 24px 0;
+  padding-right:2px
+}
