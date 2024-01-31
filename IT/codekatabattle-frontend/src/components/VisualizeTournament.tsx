@@ -56,9 +56,9 @@ export const VisualizeTournament= () => {
             return (<></>)
         if(tournament.creator == (user?.login ?? ""))
             return (<></>)
-        if(tournament.participants.length == 0 || tournament.participants.map((partcipant) => partcipant.id == user?.id).reduce((boola, boolb) => boola || boolb))
+        if(tournament.participants.length == 0 || !tournament.participants.map((partcipant) => partcipant.username == user?.login).reduce((boola, boolb) => boola || boolb))
             return (joinButton())
-        if(! tournament.participants.map((partcipant) => partcipant.id == user?.id).reduce((boola, boolb) => boola || boolb))
+        if(tournament.participants.map((partcipant) => partcipant.username == user?.login).reduce((boola, boolb) => boola || boolb))
             return (leaveButton())
         else return (<></>)
     }
@@ -102,6 +102,66 @@ export const VisualizeTournament= () => {
         return (<button style={{width:"100%"}} className="btn btn-success" onClick={() => joinTournament()}>Join</button>)
     }
 
+
+    const TournamentBattles = () => {
+        return (
+            <div style={{padding: "1%", width:"100%"}}>
+                <div className="collapse collapse-arrow border border-base-300 bg-base-200">
+                    <input type="checkbox"/>
+                    <div className="collapse-title text-xl font-medium">
+                       Battles
+                    </div>
+                    <div className="collapse-content">
+                        <div className="overflow-x-auto">
+                            <table className="table">
+
+                                <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Creator</th>
+                                    <th>Participants</th>
+                                    <th>Language</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {tournamentBattles()}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        )
+    }
+
+    function seeMore(id : number){
+        return (
+            <button style={{width:"27%"}} className="btn btn-outline btn-info"> {id} See More →</button>
+        )
+    }
+
+    function tournamentBattles() {
+        if (!tournament?.battles) {
+            return <></>;
+        }
+
+        return (
+            tournament.battles?.map(((battle) => (
+                <tr>
+                    <td>
+                        <div className="font-bold">{battle.title}</div>
+                    </td>
+                    <td>
+                        <div className="font-bold">{battle.creator}</div>
+                    </td>
+                    <td>{(battle.participants?.length ?? 0)}</td>
+                    <td>{(battle.language)}</td>
+                    <td>{seeMore((battle.id ?? 0))}</td>
+                </tr>
+            )))
+        );
+    }
 
     const TournamentCoordinators = () => {
         return (
@@ -387,6 +447,7 @@ export const VisualizeTournament= () => {
                     <TournamentLeaderboard/>
                     <TournamentCoordinators/>
                 </ul>
+                <TournamentBattles/>
             </div>
             <div style={{top: "0%", position:"fixed", width:"100%", height:"10%"}}><NavBar/></div>
         </>
