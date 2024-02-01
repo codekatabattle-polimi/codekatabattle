@@ -183,4 +183,94 @@ export class TournamentService {
             },
         });
     }
+    /**
+     * Find paginated tournaments joined by user
+     * Find paginated tournaments joined by user by specifying page number and page size
+     * @param participant
+     * @param page
+     * @param size
+     * @returns PageTournament OK
+     * @throws ApiError
+     */
+    public static findAllJoinedByUser(
+        participant: string,
+        page?: number,
+        size: number = 10,
+    ): CancelablePromise<PageTournament> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/tournaments/joined',
+            query: {
+                'page': page,
+                'size': size,
+                'participant': participant,
+            },
+            errors: {
+                400: `Bad Request`,
+                401: `Unauthorized`,
+                404: `Not Found`,
+                500: `Internal Server Error`,
+            },
+        });
+    }
+    /**
+     * Find paginated tournaments created by user
+     * Find paginated tournaments created by user by specifying page number and page size
+     * @param creator
+     * @param page
+     * @param size
+     * @returns PageTournament OK
+     * @throws ApiError
+     */
+    public static findAllCreatedByUser(
+        creator: string,
+        page?: number,
+        size: number = 10,
+    ): CancelablePromise<PageTournament> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/tournaments/created',
+            query: {
+                'page': page,
+                'size': size,
+                'creator': creator,
+            },
+            errors: {
+                400: `Bad Request`,
+                401: `Unauthorized`,
+                404: `Not Found`,
+                500: `Internal Server Error`,
+            },
+        });
+    }
+    /**
+     * Find paginated tournaments coordinated by user
+     * Find paginated tournaments coordinated by user by specifying page number and page size
+     * @param coordinator
+     * @param page
+     * @param size
+     * @returns PageTournament OK
+     * @throws ApiError
+     */
+    public static findAllCoordinatedByUser(
+        coordinator: string,
+        page?: number,
+        size: number = 10,
+    ): CancelablePromise<PageTournament> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/tournaments/coordinated',
+            query: {
+                'page': page,
+                'size': size,
+                'coordinator': coordinator,
+            },
+            errors: {
+                400: `Bad Request`,
+                401: `Unauthorized`,
+                404: `Not Found`,
+                500: `Internal Server Error`,
+            },
+        });
+    }
 }

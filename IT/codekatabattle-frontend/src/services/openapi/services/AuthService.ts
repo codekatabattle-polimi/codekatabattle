@@ -33,7 +33,31 @@ export class AuthService {
         });
     }
     /**
-     * Get user info
+     * Get generic user info
+     * Get user info by providing access token and username
+     * @param username Username
+     * @returns GHUser OK
+     * @throws ApiError
+     */
+    public static getUserInfo(
+        username: string,
+    ): CancelablePromise<GHUser> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/auth/user',
+            query: {
+                'username': username,
+            },
+            errors: {
+                400: `Bad Request`,
+                401: `Unauthorized`,
+                404: `Not Found`,
+                500: `Internal Server Error`,
+            },
+        });
+    }
+    /**
+     * Get logged-in user info
      * Get user info by providing access token
      * @returns GHUser OK
      * @throws ApiError

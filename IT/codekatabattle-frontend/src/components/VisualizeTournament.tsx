@@ -2,7 +2,7 @@ import Placeholder from "../assets/Placeholder_Tournament_Image.jpg"
 import Avatar from "../assets/avatar2.png"
 import {useContext, useEffect, useState} from "react";
 import {Tournament, TournamentService} from "../services/openapi";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {NavBar} from "./NavBar.tsx";
 import avatar2 from "../assets/avatar1.png";
 import avatar3 from "../assets/avatar3.png";
@@ -16,6 +16,7 @@ export const VisualizeTournament= () => {
     const {id} = useParams();
     const [tournament, setTournament] = useState<Tournament | null>(null);
     const [error, setError] = useState<Error | null>(null);
+    const navigate= useNavigate();
 
     useEffect(() => {
         fetchTournament();
@@ -109,9 +110,11 @@ export const VisualizeTournament= () => {
                 <div className="collapse collapse-arrow border border-base-300 bg-base-200">
                     <input type="checkbox"/>
                     <div className="collapse-title text-xl font-medium">
-                       Battles {addBattleButton()}
+                       Battles
                     </div>
+
                     <div className="collapse-content">
+                        {addBattleButton()}
                         <div className="overflow-x-auto">
                             <table className="table">
                                 <div style={{height: "fit-content"}} className="boxx">
@@ -139,22 +142,36 @@ export const VisualizeTournament= () => {
     )
     }
 
+    function openBattleEditor(){
+        if (!tournament)
+            return
+        const path = "/tournaments/" + tournament.id?.toString() + "/battle/create";
+        navigate(path);
+    }
+
+    function openBattle(battleId: number){
+        if (!tournament)
+            return
+        const path = "/tournaments/" + tournament.id?.toString() + "/battles/" + battleId.toString();
+        navigate(path);
+    }
+
     function addBattleButton(){
         if(tournament?.coordinators && tournament.coordinators.length>0)
             if(tournament?.coordinators.map((coordinator) => coordinator.username == user?.login).reduce((boola, boolb) => boola || boolb))
             return (
-                <button className="badge badge-info badge-outline">+</button>
+                <button onClick={()=>{openBattleEditor()}} className="badge badge-info badge-outline">+</button>
             )
         if(user?.login == tournament?.creator)
             return (
-                <button className="badge badge-info badge-outline">+</button>
+                <button onClick={()=>{openBattleEditor()}} className="badge badge-info badge-outline">+</button>
             )
         return (<></>)
     }
 
     function seeMore(id : number){
         return (
-            <button style={{width:"100%"}} className="btn btn-outline btn-info"> {id} See More →</button>
+            <button onClick={()=>{openBattle(id)}} style={{width:"100%"}} className="btn btn-outline btn-info"> See More →</button>
         )
     }
 

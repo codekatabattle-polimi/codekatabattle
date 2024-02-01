@@ -9,9 +9,11 @@ export type { OpenAPIConfig } from './core/OpenAPI';
 
 export { Battle } from './models/Battle';
 export { BattleDTO } from './models/BattleDTO';
-export type { BattleEntry } from './models/BattleEntry';
+export { BattleEntry } from './models/BattleEntry';
 export type { BattleEntryDTO } from './models/BattleEntryDTO';
 export type { BattleParticipant } from './models/BattleParticipant';
+export type { BattleTest } from './models/BattleTest';
+export type { BattleTestResult } from './models/BattleTestResult';
 export type { ErrorDetails } from './models/ErrorDetails';
 export type { GHUser } from './models/GHUser';
 export type { MultiValueMapStringString } from './models/MultiValueMapStringString';
