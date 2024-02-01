@@ -20,7 +20,9 @@ jobs:
           cache: maven
           
       - name: Build with Maven
+        working-directory: ./IT/codekatabattle
         run: mvn -B package --file pom.xml
 
       - name: Run tests
+        working-directory: ./IT/codekatabattle
         run: mvn test
