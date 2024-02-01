@@ -119,7 +119,7 @@ export const VisualizeTournaments= () => {
         if (tournaments.content == null) return (<></>);
         return (tournaments.content.map((t: Tournament) => (
 
-                <div className="stats shadow " style={{width: "100%"}}>
+                <div className="stats shadow " style={{width: "100%"}} onClick={()=>to(t.id?.toString())}>
 
                         <div className="stat " style={{overflow: "auto"}}>
                             <div className="stat-title text-xs">Title</div>
