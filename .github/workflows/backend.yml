@@ -22,7 +22,6 @@ jobs:
       - name: Build with Maven
         working-directory: ./IT/codekatabattle
         run: mvn -B package --file pom.xml
-
-      - name: Run tests
-        working-directory: ./IT/codekatabattle
-        run: mvn test
+        env:
+          CKB_GITHUB_PAT: ${{ secrets.CKB_GITHUB_PAT }}
+          CKB_GITHUB_TEST_PAT: ${{ secrets.CKB_GITHUB_TEST_PAT }}
