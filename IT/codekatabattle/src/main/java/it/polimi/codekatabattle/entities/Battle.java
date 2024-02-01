@@ -58,7 +58,7 @@ public class Battle extends BaseEntity {
     private List<BattleTest> tests = new ArrayList<>();
 
     @Column
-    private float timelinessBaseScore = 100;
+    private int timelinessBaseScore = 0;
 
     @OneToMany(mappedBy = "battle", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonManagedReference

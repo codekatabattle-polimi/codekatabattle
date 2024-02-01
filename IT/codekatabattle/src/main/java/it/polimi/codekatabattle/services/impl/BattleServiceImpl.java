@@ -181,6 +181,7 @@ public class BattleServiceImpl extends CrudServiceImpl<Battle> implements Battle
     private String getKataTemplateFromBattleLanguage(@NotNull BattleLanguage language) {
         return switch (language) {
             case GOLANG -> "kata-template-golang";
+            case PYTHON -> "kata-template-python";
         };
     }
 

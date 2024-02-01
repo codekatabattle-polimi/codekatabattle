@@ -43,6 +43,8 @@ public class BattleDTO {
 
     List<BattleTest> tests = new ArrayList<>();
 
+    private int timelinessBaseScore = 0;
+
     public Battle toEntity() {
         Battle battle = new Battle();
         battle.setTitle(title);
@@ -52,6 +54,7 @@ public class BattleDTO {
         battle.setLanguage(language);
         battle.setEnableSAT(enableSAT);
         battle.setTests(tests);
+        battle.setTimelinessBaseScore(timelinessBaseScore);
         return battle;
     }
 
