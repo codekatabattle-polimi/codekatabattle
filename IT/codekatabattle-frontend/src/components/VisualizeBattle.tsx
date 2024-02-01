@@ -370,25 +370,19 @@ export const VisualizeBattle= () => {
                         </div>
                     </div>
                 </div>
-                <div style={{padding: "1%"}}>
-                    <div className="collapse collapse-arrow border border-base-300 bg-base-200">
-                        <input type="checkbox"/>
-                        <div className="collapse-title text-xl font-medium">
-                            Repository link
-                        </div>
-                        <div className="collapse-content">
-                            <p>{battle?.repositoryUrl}</p>
-                        </div>
-                    </div>
-                </div>
+
 
                 <ul style={{width: "100%"}} className="menu-lg lg:menu-horizontal bg-base-100 rounded-box">
+                    <a href={battle?.repositoryUrl}
+                       style={{paddingTop:"1%", paddingLeft:"1%" ,width:"12%"}}>
+                        <div className="bg-info rounded-xl border-base-300 " style={{height:"78%", width:"100%"}}><p className="font-bold text-base-300" style={{paddingLeft:"8%", paddingTop:"10%"}}>Repository Link ↘</p></div>
+                    </a>
                     <BattleLeaderboard/>
                     <BattleTest/>
 
                 </ul>
                 <div style={{paddingLeft: "1%"}}>
-                    <div  className="stats shadow bg-base-200 border border-base-300">
+                    <div className="stats shadow bg-base-200 border border-base-300">
 
                         <div className="stat">
                             <div className="stat-title">Gain up to</div>
