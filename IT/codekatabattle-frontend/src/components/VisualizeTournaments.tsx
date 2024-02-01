@@ -3,6 +3,8 @@ import {useEffect, useState} from "react";
 import {NavBar} from "./NavBar.tsx";
 import earth from "../assets/earth.png"
 import {useNavigate, useParams} from "react-router-dom";
+import student from "../assets/reading.png";
+import educator from "../assets/educator.png";
 
 export const VisualizeTournaments= () => {
     const {page} = useParams();
@@ -16,7 +18,7 @@ export const VisualizeTournaments= () => {
 
     async function fetchTournaments(){
         try {
-            const tournaments = await TournamentService.findAll(+page!,13);
+            const tournaments = await TournamentService.findAll(+page!,5);
             setTournaments(tournaments);
         } catch (error) {
             setError(error as Error);
@@ -117,11 +119,65 @@ export const VisualizeTournaments= () => {
         if (tournaments.content == null) return (<></>);
         return (tournaments.content.map((t: Tournament) => (
 
-            <tr className="hover" onClick={() => to(t.id?.toString())}>
-                <td>{t.title}</td>
-                <td>{(t.participants?.length ?? 0)}</td>
-                <td>{t.creator}</td>
-            </tr>
+                <div className="stats shadow " style={{width: "100%"}}>
+
+                        <div className="stat " style={{overflow: "auto"}}>
+                            <div className="stat-title text-xs">Title</div>
+                            <div className="stat-value text-2xl">{t.title}
+                            </div>
+                        </div>
+
+
+                    <div className="stat" style={{overflow: "auto"}}>
+                        <div className="stat-title text-xs">Total Coordinators</div>
+                        <div className="navbar " style={{}}>
+                            <div className=" stat-value text-secondary text-2xl"
+                                 style={{width: "20%"}}>{t.coordinators?.length ?? 0}</div>
+                            <img className="" src={educator} style={{position: "relative", width: "15%", left: "65%"}}/>
+                        </div>
+                        <div className="stat-desc"></div>
+                    </div>
+                    <div className="stat" style={{overflow: "auto"}}>
+                        <div className="stat-title text-xs">Total Participants</div>
+                        <div className="navbar " style={{}}>
+                            <div className=" stat-value text-primary text-2xl"
+                                 style={{width: "20%"}}>{(t.participants?.length ?? 0)}</div>
+                            <img className="" src={student} style={{position: "relative", width: "15%", left: "65%"}}/>
+                        </div>
+                        <div className="stat-desc"></div>
+                    </div>
+
+                    <div className="stat" style={{overflow: "auto"}}>
+                        <div className="stat-figure"style={{paddingTop:"25%"}}>
+                            <div
+                                className="stat-desc">{(t.maxParticipants ?? 1000) - (t.participants?.length ?? 0)} available
+                                spot
+                            </div>
+                        </div>
+                        <div className="stat-title text-xs" style={{paddingBottom: "4%"}}>Occupation</div>
+                        <div className="stat-value text-secondary">
+                            <div className="radial-progress text-secondary"
+                                 style={{"--value": (t.participants?.length ?? 0) / (t.maxParticipants ?? 1000), "--size":"3rem"} as React.CSSProperties}
+                                 role="progressbar"><p
+                                className="text-xs">{Math.min(Math.ceil((t.participants?.length ?? 0) / (t.maxParticipants ?? 1000)),100)}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="stat" style={{overflow: "auto"}}>
+                        <div className="stat-figure text-secondary">
+                            <div className="avatar online">
+                                <div className="w-16 rounded-full">
+                                    <img src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="stat-title" style={{paddingTop:"10%"}}>created by</div>
+                        <div className="stat-desc text-primary">{t.creator}</div>
+                    </div>
+
+                </div>
+
         )))
     }
 
@@ -129,31 +185,17 @@ export const VisualizeTournaments= () => {
     if (tournaments == null) return (<>Niente tornei</>);
     return (
         <>
-            <div style={{alignSelf: "end", top: "8%",position:"fixed", width: "100%"}}>
+            <div style={{alignSelf: "end", top: "8%", position: "fixed", width: "100%"}}>
 
                 <ul className="menu menu-vertical lg:menu-horizontal " style={{width: "100%"}}>
                     <img src={earth} style={{width: "3%", height: "3%", paddingLeft: "1%", paddingTop: "0.1%"}}/>
                     <h1 className="text-3xl font-bold"
                         style={{paddingLeft: "0.5%", paddingBottom: "0.5%"}}>Tournament</h1>
                 </ul>
-                <div className="overflow-x-auto">
-                    <table className="table">
-                        <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Number of participants</th>
-                            <th>Creator</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {tournamentRows()}
-                        </tbody>
-                    </table>
-                </div>
-
+                {tournamentRows()}
                 <div className="flex flex-col w-full">
                     <div className="divider">
-                                {buttomPage()}
+                        {buttomPage()}
                     </div>
                 </div>
             </div>
