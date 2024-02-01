@@ -98,7 +98,70 @@ export const VisualizeBattle= () => {
             return (<></>)
         return (<button style={{width:"100%"}} className="btn btn-success" onClick={() => joinBattle()}>Join</button>)
     }
+    const BattleTest = () => {
+        return (
+            <div style={{padding: "1%", width:"fit-content", height:"fit-content"}} className="">
+                <div className="collapse collapse-arrow border border-base-300 bg-base-200">
+                    <input type="checkbox"/>
+                    <div className="collapse-title text-xl font-medium">
+                        Tests
+                    </div>
+                    <div className="collapse-content">
+                        <div className="overflow-x-auto ">
+                            <table className="table ">
+                                <tbody>
+                                <div style={{height: "fit-content"}} className="boxx">
+                                    <div className="boxx-inner">
+                                        <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Input</th>
+                                            <th>Expected output</th>
+                                            <th>Score given</th>
+                                        </tr>
+                                        </thead>
+                                        {battleTest()}
+                                    </div>
 
+                                </div>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    function battleTest() {
+        if (!battle?.tests) {
+            return <></>;
+        }
+
+        return (
+            battle.tests.map(((test) => (
+                <tr>
+                    <th className="font-bold" style={{alignItems: "center"}}>
+                        {test.name}
+                    </th>
+
+                    <th>
+                        <div>{test.input}</div>
+                    </th>
+
+                    <th>
+                        {test.expectedOutput}
+                    </th>
+
+
+                    <th>
+                        {test.givesScore}
+                    </th>
+                </tr>
+            )))
+        );
+    }
 
     const BattleLeaderboard = () => {
         return (
@@ -321,7 +384,20 @@ export const VisualizeBattle= () => {
 
                 <ul style={{width: "100%"}} className="menu-lg lg:menu-horizontal bg-base-100 rounded-box">
                     <BattleLeaderboard/>
+                    <BattleTest/>
+
                 </ul>
+                <div style={{paddingLeft: "1%"}}>
+                    <div  className="stats shadow bg-base-200 border border-base-300">
+
+                        <div className="stat">
+                            <div className="stat-title">Gain up to</div>
+                            <div className="stat-value">{battle?.timelinessBaseScore} extra point</div>
+                            <div className="stat-desc">for submitting your final version as soon as possible!</div>
+                        </div>
+
+                    </div>
+                </div>
 
             </div>
             <div style={{top: "0%", position: "fixed", width: "100%", height: "10%"}}><NavBar/></div>

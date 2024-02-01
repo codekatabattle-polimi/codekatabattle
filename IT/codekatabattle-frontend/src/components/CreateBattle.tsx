@@ -12,11 +12,11 @@ export default function CreateBattle() {
     const [battle, setBattle] = useState<Battle | null>(null);
     const [error, setError] = useState<Error | null>(null);
     const navigate= useNavigate();
-    const tId = useParams();
+    const params = useParams();
 
     async function fetchCreateBattle(data: BattleDTO) {
         try {
-            data.tournamentId = +tId;
+            data.tournamentId = +params.tId!;
             if(data.language.toString()=="PYTHON")
                 data.language=BattleDTO.language.PYTHON;
             if(data.language.toString()=="GOLANG")
@@ -24,6 +24,7 @@ export default function CreateBattle() {
             (document.getElementById('my_modal_2') as HTMLDialogElement).showModal();
             const battle = await BattleService.create1(data);
             setBattle(battle);
+            navigate("/tournaments/" + params.tId + "/battles/" + battle.id?.toString())
         } catch (error) {
             setError(error as Error);
         }
@@ -213,7 +214,7 @@ export default function CreateBattle() {
                         <div className="form-control" style={{width: "18%", paddingLeft: "2%"}}>
                             <label className="label cursor-pointer bg-base-200 rounded-b-btn textarea textarea-primary">
                                 <span className="label-text font-bold" style={{paddingLeft: "1%"}}>SAT:</span>
-                                <input  {...register("enableSAT")} type="checkbox" className="toggle" value="PUBLIC"/>
+                                <input  {...register("enableSAT")} type="checkbox" className="toggle" value="true"/>
                             </label>
                         </div>
                     </ul>
