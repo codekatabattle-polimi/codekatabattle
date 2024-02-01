@@ -18,5 +18,4 @@ public interface AuthService {
 
     GHUser getUserInfo(GitHub github, String username) throws IOException;
 
-    void checkAccessToken(String accessToken, String origin) throws OAuthException;
 }

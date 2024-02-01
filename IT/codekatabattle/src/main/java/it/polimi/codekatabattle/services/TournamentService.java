@@ -12,6 +12,8 @@ public interface TournamentService extends CrudService<Tournament> {
 
     Tournament create(TournamentDTO tournament, GHUser creator) throws ValidationException;
 
+    Page<Tournament> findAllPublic(Pageable pageable);
+
     Page<Tournament> findAllByCreator(Pageable pageable, String creator);
 
     Page<Tournament> findAllByParticipant(Pageable pageable, String participant);

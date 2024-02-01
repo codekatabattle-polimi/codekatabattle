@@ -39,5 +39,13 @@ Docker is needed because the integration tests use a PostgreSQL database running
 Run the following command:
 
 ```shell
+export CKB_GITHUB_TEST_PAT="{{Replace with your own PAT here}}"
 ./mvnw test
+```
+
+A GitHub PAT is needed in order to run the integration tests. You can learn how to create one [here](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
+
+Without a valid PAT, the integration tests will fail with the following exception:
+```
+java.lang.IllegalArgumentException: Could not resolve placeholder 'CKB_GITHUB_TEST_PAT' in value "${CKB_GITHUB_TEST_PAT}"
 ```

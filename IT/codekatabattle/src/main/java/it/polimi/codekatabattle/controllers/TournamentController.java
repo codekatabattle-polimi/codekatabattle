@@ -12,6 +12,7 @@ import it.polimi.codekatabattle.services.AuthService;
 import it.polimi.codekatabattle.services.TournamentService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -76,7 +77,7 @@ public class TournamentController {
         @RequestParam(name = "page", defaultValue = "0") int page,
         @RequestParam(name = "size", defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok().body(this.tournamentService.findAll(Pageable.ofSize(size).withPage(page)));
+        return ResponseEntity.ok().body(this.tournamentService.findAllPublic(Pageable.ofSize(size).withPage(page)));
     }
 
     @GetMapping(
@@ -140,7 +141,7 @@ public class TournamentController {
         @PathVariable("id") Long id,
         @Parameter(hidden = true) @RequestHeader("Authorization") String accessToken,
         @Parameter(hidden = true) @RequestHeader(value = "Origin", required = false) String origin
-    ) throws OAuthException, EntityNotFoundException {
+    ) throws OAuthException, EntityNotFoundException, ValidationException {
         GHUser user = this.authService.getUserInfo(accessToken, this.authService.getAuthOriginFromOriginHeader(origin));
         return ResponseEntity.ok().body(this.tournamentService.join(id, user));
     }

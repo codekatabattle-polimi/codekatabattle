@@ -16,6 +16,7 @@ import org.kohsuke.github.GHMyself;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -23,7 +24,8 @@ import java.io.IOException;
 @Service
 public class BattleServiceImpl extends CrudServiceImpl<Battle> implements BattleService {
 
-    private final static String GITHUB_PAT = "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";
+    @Value("${ckb.github.pat}")
+    private String githubPAT;
 
     private final BattleRepository battleRepository;
 
@@ -153,7 +155,7 @@ public class BattleServiceImpl extends CrudServiceImpl<Battle> implements Battle
 
     @Override
     public GHRepository createBattleRepository(Battle battle) throws IOException {
-        GitHub github = new GitHubBuilder().withOAuthToken(GITHUB_PAT).build();
+        GitHub github = new GitHubBuilder().withOAuthToken(githubPAT).build();
         GHRepository repository = github.createRepository(battle.getTitle())
             .description(battle.getDescription())
             .private_(false)
@@ -186,7 +188,7 @@ public class BattleServiceImpl extends CrudServiceImpl<Battle> implements Battle
             return;
         }
 
-        GitHub github = new GitHubBuilder().withOAuthToken(GITHUB_PAT).build();
+        GitHub github = new GitHubBuilder().withOAuthToken(githubPAT).build();
         GHRepository repository = github.getRepositoryById(battle.getRepositoryId());
         repository.delete();
     }

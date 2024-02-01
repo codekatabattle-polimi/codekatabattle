@@ -9,6 +9,8 @@ import it.polimi.codekatabattle.models.oauth.OAuthConfig;
 import it.polimi.codekatabattle.services.AuthService;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.kohsuke.github.GitHub;
+import org.kohsuke.github.GitHubBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,17 +24,27 @@ import java.util.Objects;
 @Service
 public class AuthServiceImpl implements AuthService {
 
-    private static final String SWAGGER_CLIENT_ID = "d65691ca61e893487d6b";
-    private static final String SWAGGER_CLIENT_SECRET = "933446e8338a421d40a1abcf713727859324ddbd";
+    @Value("${github.api.version}")
+    private String githubApiVersion = "2022-11-28";
 
-    private static final String FRONTEND_CLIENT_ID = "0009d4a156ae3816fb0d";
-    private static final String FRONTEND_CLIENT_SECRET = "d46e8b6fd4579f009335f1db8f164ded589b4e4a";
+    @Value("${github.swagger.client-id}")
+    private String swaggerClientId;
 
-    private static final String API_VERSION = "2022-11-28";
+    @Value("${github.swagger.client-secret}")
+    private String swaggerClientSecret;
+
+    @Value("${github.frontend.client-id}")
+    private String frontendClientId;
+
+    @Value("${github.frontend.client-secret}")
+    private String frontendClientSecret;
+
+    @Value("${ckb.test}")
+    private Boolean isTest;
 
     private final HashMap<AuthOrigin, OAuthConfig> oauthConfigMap = new HashMap<>() {{
-        put(AuthOrigin.SWAGGER, new OAuthConfig(SWAGGER_CLIENT_ID, SWAGGER_CLIENT_SECRET));
-        put(AuthOrigin.FRONTEND, new OAuthConfig(FRONTEND_CLIENT_ID, FRONTEND_CLIENT_SECRET));
+        put(AuthOrigin.SWAGGER, new OAuthConfig(swaggerClientId, swaggerClientSecret));
+        put(AuthOrigin.FRONTEND, new OAuthConfig(frontendClientId, frontendClientSecret));
     }};
 
     private OAuthConfig getOAuthConfig(AuthOrigin authOrigin) {
@@ -60,13 +72,24 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public it.polimi.codekatabattle.models.github.GHUser getUserInfo(String accessToken, AuthOrigin authOrigin) throws OAuthException {
+    public GHUser getUserInfo(String accessToken, AuthOrigin authOrigin) throws OAuthException {
+        if (isTest) {
+            // While inside a test environment, we use the PAT to authenticate with GitHub instead of the GitHub application.
+            // This requires a different API endpoint call.
+            try {
+                GitHub github = new GitHubBuilder().withOAuthToken(accessToken.replace("Bearer ", "")).build();
+                return GHUser.fromSDKUser(github.getMyself());
+            } catch (IOException ex) {
+                throw new OAuthException(ex.getMessage());
+            }
+        }
+
         OAuthConfig oauthConfig = getOAuthConfig(authOrigin);
 
         ResponseEntity<GHCheckTokenResponse> response = RestClient.create().post()
             .uri(String.format("https://api.github.com/applications/%s/token", oauthConfig.getClientId()))
             .header("Authorization", "Basic " + Base64.encodeBase64String(String.format("%s:%s", oauthConfig.getClientId(), oauthConfig.getClientSecret()).getBytes()))
-            .header("X-GitHub-Api-Version", API_VERSION)
+            .header("X-GitHub-Api-Version", githubApiVersion)
             .body(Map.of("access_token", accessToken.replace("Bearer ", "")))
             .retrieve()
             .toEntity(GHCheckTokenResponse.class);
@@ -79,7 +102,7 @@ public class AuthServiceImpl implements AuthService {
             throw new OAuthException("Invalid response body");
         }
 
-        if (!Objects.equals(body.app.client_id, SWAGGER_CLIENT_ID) && !Objects.equals(body.app.client_id, FRONTEND_CLIENT_ID)) {
+        if (!Objects.equals(body.app.client_id, swaggerClientId) && !Objects.equals(body.app.client_id, frontendClientId)) {
             throw new OAuthException("Access token does not come from a valid CodeKataBattle application");
         }
 
@@ -101,11 +124,6 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public GHUser getUserInfo(GitHub github, String username) throws IOException {
         return GHUser.fromSDKUser(github.getUser(username));
-    }
-
-    @Override
-    public void checkAccessToken(String accessToken, String origin) throws OAuthException {
-        this.getUserInfo(accessToken, this.getAuthOriginFromOriginHeader(origin));
     }
 
 }

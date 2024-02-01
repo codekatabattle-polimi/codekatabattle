@@ -33,6 +33,11 @@ public class TournamentServiceImpl extends CrudServiceImpl<Tournament> implement
     }
 
     @Override
+    public Page<Tournament> findAllPublic(Pageable pageable) {
+        return this.tournamentRepository.findAllPublic(pageable);
+    }
+
+    @Override
     public Page<Tournament> findAllByCreator(Pageable pageable, String creator) {
         return this.tournamentRepository.findAllByCreator(pageable, creator);
     }
@@ -120,6 +125,8 @@ public class TournamentServiceImpl extends CrudServiceImpl<Tournament> implement
         tournamentToUpdate.setDescription(tournament.getDescription());
         tournamentToUpdate.setStartsAt(tournament.getStartsAt());
         tournamentToUpdate.setEndsAt(tournament.getEndsAt());
+        tournamentToUpdate.setPrivacy(tournament.getPrivacy());
+        tournamentToUpdate.setMaxParticipants(tournament.getMaxParticipants());
 
         return this.save(tournamentToUpdate);
     }
