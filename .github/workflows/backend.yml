@@ -1,0 +1,31 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches: ['master']
+    paths: ['IT/codekatabattle/**/*']
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+          
+      - name: Build with Maven
+        working-directory: ./IT/codekatabattle
+        run: mvn -B package --file pom.xml -DskipTests
+        
+      - name: Run Tests with Maven
+        working-directory: ./IT/codekatabattle
+        run: mvn test
+        env:
+          CKB_GITHUB_PAT: ${{ secrets.CKB_GITHUB_PAT }}
+          CKB_GITHUB_TEST_PAT: ${{ secrets.CKB_GITHUB_TEST_PAT }}
