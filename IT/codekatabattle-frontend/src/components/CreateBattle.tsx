@@ -166,7 +166,7 @@ export default function CreateBattle() {
                     </div>
 
                     <div style={{padding: "1%", width: "33.33%"}}>
-                        <input className="textarea textarea-primary bg-base-200" placeholder="Max number of students..."
+                        <input className="textarea textarea-primary bg-base-200" placeholder="Time liness base score..."
                                style={{width: "100%"}}
                                {...register("timelinessBaseScore", {required: true, pattern: /^[0-9]+$/i})}
                                aria-invalid={errors.timelinessBaseScore ? "true" : "false"}

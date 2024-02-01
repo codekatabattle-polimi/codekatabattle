@@ -6,6 +6,7 @@ import {NavBar} from "./NavBar.tsx";
 import avatar2 from "../assets/avatar1.png";
 import {AuthContext} from "../context/AuthContext.ts";
 import language = Battle.language;
+import fight from "../assets/judo.png";
 
 
 export const VisualizeBattle= () => {
@@ -313,35 +314,44 @@ export const VisualizeBattle= () => {
     function upperBar() {
         return (
             <div className="navbar bg-base-100">
-                <div style={{paddingLeft:"1%"}}className="flex-1">
-                    <h2 className="text-3xl font-bold"
-                        > {battle?.title}</h2>
-                    {battleLanguage()}
-                    {battleStatus()}
+                <div className="flex-1 navbar-start">
 
-                </div>
-                <div style={{width:"22%"}} className="flex-none">
                     <div style={{padding: "1%"}}>
-                        {joinOrLeaveButton()}
+                        <div className="w-10 h-10 rounded-full">
+                            <img src={fight}/>
+                        </div>
                     </div>
 
-
-                    <ul style={{borderSpacing:"", paddingTop: "1%", width: "100%"}}
-                        className="menu-lg lg:menu-horizontal bg-base-200 rounded-box border border-base-300">
-                        <div style={{paddingRight: "2%" , paddingLeft: "1%"}}>
-                            <h2 className="text-l"
-                                style={{padding: "1%", paddingTop: "2%"}}> Created by: </h2>
-                            <h2 className="text-2xl font-bold"
-                                style={{padding: "1%", paddingTop: "2%"}}> {battle?.creator}</h2>
-                        </div>
-
-
-                        <div style={{padding:"1%"}} className="avatar">
-                            <div className="w-16 h-16 rounded-box">
-                                <img src={Avatar}/>
+                    <h2 className="text-3xl font-bold"
+                    > {battle?.title}</h2>
+                    {battleLanguage()}
+                    {battleStatus()}
+                </div>
+                <div style={{width: "22%"}} className="flex-none navbar-end">
+                    <div style={{padding: "2%"}}>
+                        {joinOrLeaveButton()}
+                    </div>
+                    <ul className="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box">
+                        <a>
+                            <div style={{paddingRight: "10%", paddingLeft: "1%"}}>
+                                <h2 className="text-l"
+                                    style={{padding: "1%", paddingTop: "2%"}}> Created by: </h2>
+                                <h2 className="text-2xl font-bold"
+                                    style={{padding: "1%", paddingTop: "2%"}}> {battle?.creator}</h2>
                             </div>
-                        </div>
+                        </a>
+                        <li><a></a></li>
+                        <a>
+                            <div style={{padding: "1%"}} className="avatar">
+                                <div className="w-16 h-16 rounded-box" style={{position: "relative", right: "0%"}}>
+                                    <img src={Avatar}/>
+                                </div>
+                            </div>
+                        </a>
+
+
                     </ul>
+
                 </div>
             </div>
         )
@@ -370,25 +380,21 @@ export const VisualizeBattle= () => {
                         </div>
                     </div>
                 </div>
-                <div style={{padding: "1%"}}>
-                    <div className="collapse collapse-arrow border border-base-300 bg-base-200">
-                        <input type="checkbox"/>
-                        <div className="collapse-title text-xl font-medium">
-                            Repository link
-                        </div>
-                        <div className="collapse-content">
-                            <p>{battle?.repositoryUrl}</p>
-                        </div>
-                    </div>
-                </div>
+
 
                 <ul style={{width: "100%"}} className="menu-lg lg:menu-horizontal bg-base-100 rounded-box">
+                    <a href={battle?.repositoryUrl}
+                       style={{paddingTop: "1%", paddingLeft: "1%", width: "12%", height:"99%"}}>
+                        <div className="bg-info rounded-xl border-base-300 " style={{height: "78%", width: "100%"}}><p
+                            className="font-bold text-base-300"
+                            style={{paddingLeft: "8%", paddingTop: "10%",paddingBottom: "10%"}}>Repository Link ↘</p></div>
+                    </a>
                     <BattleLeaderboard/>
                     <BattleTest/>
 
                 </ul>
                 <div style={{paddingLeft: "1%"}}>
-                    <div  className="stats shadow bg-base-200 border border-base-300">
+                    <div className="stats shadow bg-base-200 border border-base-300">
 
                         <div className="stat">
                             <div className="stat-title">Gain up to</div>
