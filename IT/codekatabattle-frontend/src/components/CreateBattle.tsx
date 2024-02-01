@@ -1,5 +1,5 @@
 import {SubmitHandler, useForm} from "react-hook-form";
-import {Battle, BattleDTO, BattleService} from "../services/openapi";
+import {Battle, BattleDTO, BattleService, BattleTest} from "../services/openapi";
 import {NavBar} from "./NavBar.tsx";
 import {useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
@@ -28,7 +28,59 @@ export default function CreateBattle() {
         }
     }
 
-    const onSubmit: SubmitHandler<BattleDTO> = (data) => fetchCreateBattle(data);
+
+
+    const AddTestForm = () => {
+        const { register,  handleSubmit } = useForm<BattleTest>();
+
+        return (
+            <dialog   id="my_modal_3" className="modal">
+                <div className="modal-box h-11/12 max-h-5xl">
+                    <p className="font-bold text-xl">Add test</p>
+                    {/*Test form*/}
+                    <div className="overflow-x-auto">
+                        <form onSubmit={handleSubmit(onSubmit2)}>
+                            <div style={{padding: "2%"}}>
+                                <input style={{width:"100%"}} className="textarea textarea-primary " {...register("name", {required: true})}
+                                        placeholder="Test name..." /></div>
+                            <input className="textarea textarea-primary" {...register("input", {required: true})}
+                                   placeholder="Test input..." style={{width: "100%", paddingBottom:"1%"}}/>
+                            <input
+                                className="textarea textarea-primary" {...register("expectedOutput", {required: true})}
+                                placeholder="Expected output..." style={{width: "100%", paddingBottom:"1%"}}/>
+                            <input className="textarea textarea-primary" {...register("givesScore", {required: true})}
+                                   placeholder="Score given..." style={{width: "100%", paddingBottom:"1%"}}/>
+                            <div className="form-control" style={{width: "18%", paddingLeft: "2%"}}>
+                                <label
+                                    className="label cursor-pointer bg-base-200 rounded-box textarea textarea-primary">
+                                    <span className="label-text font-bold" style={{paddingLeft: "1%"}}>Public:</span>
+                                    <input  {...register("public")} type="checkbox" className="toggle" value="true"/>
+                                </label>
+
+                            </div>
+                            <button className="btn btn-primary">
+                                <input type="submit" value="Submit"/>
+                            </button>
+                        </form>
+
+                    </div>
+                    {/*botton close*/}
+                    <div className="modal-action">
+                    <form method="dialog">
+                            {/* if there is a button in form, it will close the modal */}
+                            <button className="btn">Close</button>
+                        </form>
+                    </div>
+                </div>
+                <form method="dialog" className="modal-backdrop">
+                    <button>close</button>
+                </form>
+            </dialog>
+        )
+    }
+
+    const onSubmit1: SubmitHandler<BattleDTO> = (data) => fetchCreateBattle(data);
+    const onSubmit2: SubmitHandler<BattleTest> = (data ) => console.log(data);
 
     if (error) {
         return (
@@ -44,13 +96,13 @@ export default function CreateBattle() {
     return (
         /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
         <>
-            <form onSubmit={handleSubmit(onSubmit)}
+            <form onSubmit={handleSubmit(onSubmit1)}
                   style={{alignSelf: "end", top: "8%", position: "fixed", width: "100%"}}>
                 <h1 className="text-3xl font-bold" style={{padding: "1.5%"}}>Create Battle</h1>
                 <ul className="menu menu-vertical lg:menu-horizontal " style={{width: "100%"}}>
                     <div style={{padding: "1%", width: "33.33%"}}>
                         <input className="textarea textarea-primary" {...register("title", {required: true})}
-                               placeholder="Tournament Title..." style={{width: "100%"}}/>
+                               placeholder="Battle Title..." style={{width: "100%"}}/>
                     </div>
 
 
@@ -99,7 +151,7 @@ export default function CreateBattle() {
                             </label>
                         </div>
                     </ul>
-                    <label style={{paddingLeft:"0.5%"}} className="form-control w-full max-w-xs">
+                    <label style={{paddingLeft: "0.5%"}} className="form-control w-full max-w-xs">
                         <div className="label">
                             <span className="label-text">Select the language</span>
                         </div>
@@ -112,6 +164,15 @@ export default function CreateBattle() {
                         </div>
                     </label>
                 </div>
+
+                <div style={{padding: "1%"}}>
+                    <p className="badge badge-primary badge-outline"
+                       onClick={() => (document.getElementById('my_modal_3') as HTMLDialogElement).showModal()}>+ Add
+                        test</p>
+                </div>
+
+                <AddTestForm/>
+
                 <div style={{padding: "1.5%"}}>
                     <button className="btn btn-primary">
                         <input type="submit" value="Submit"/>
