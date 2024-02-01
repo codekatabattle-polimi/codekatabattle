@@ -1,6 +1,12 @@
-# CodeKataBattle - Improve your programming skills online
+<div align="center">
+  <img width="100" height="100" alt="CKB Logo" src="https://github.com/codekatabattle-polimi/OrciuoloVitelloGiallongo/blob/master/IT/codekatabattle-frontend/src/assets/ckb-logo.jpg?raw=true">
+  
+  <h1>CodeKataBattle<br>Improve your programming skills online</h1>
 
-Software Engineering 2 AY 2023/2024 - Politecnico di Milano
+  Project Assignment for Course: Software Engineering 2 - AY 2023/2024 - Politecnico di Milano
+
+  Reference Professor: Matteo Giovanni Rossi
+</div>
 
 ## RASD
 
@@ -21,3 +27,11 @@ Nicolò Giallongo - 10764261
 Giovanni Orciuolo - 10994077
 
 Giuseppe Vitello - 10766482
+
+## Folder Structure
+
+- **.github/workflows**: Contains GitHub Actions to automatically deploy the MVP implementation
+- **Alloy**: Contains Alloy models
+- **DeliveryFolder**: Contains rendered documents to be delivered
+- **IT/codekatabattle**: Contains the MVP backend
+- **IT/codekatabattle-frontend**: Contains the MVP frontend
