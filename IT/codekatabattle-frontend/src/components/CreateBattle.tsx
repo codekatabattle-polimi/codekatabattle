@@ -35,32 +35,44 @@ export default function CreateBattle() {
 
         return (
             <dialog   id="my_modal_3" className="modal">
-                <div className="modal-box h-11/12 max-h-5xl">
+                <div className="modal-box">
                     <p className="font-bold text-xl">Add test</p>
                     {/*Test form*/}
                     <div className="overflow-x-auto">
                         <form onSubmit={handleSubmit(onSubmit2)}>
                             <div style={{padding: "2%"}}>
-                                <input style={{width:"100%"}} className="textarea textarea-primary " {...register("name", {required: true})}
-                                        placeholder="Test name..." /></div>
-                            <input className="textarea textarea-primary" {...register("input", {required: true})}
-                                   placeholder="Test input..." style={{width: "100%", paddingBottom:"1%"}}/>
-                            <input
-                                className="textarea textarea-primary" {...register("expectedOutput", {required: true})}
-                                placeholder="Expected output..." style={{width: "100%", paddingBottom:"1%"}}/>
-                            <input className="textarea textarea-primary" {...register("givesScore", {required: true})}
-                                   placeholder="Score given..." style={{width: "100%", paddingBottom:"1%"}}/>
-                            <div className="form-control" style={{width: "18%", paddingLeft: "2%"}}>
+                                <input style={{width: "100%"}}
+                                       className="textarea textarea-primary " {...register("name", {required: true})}
+                                       placeholder="Test name..."/>
+                            </div>
+                            <div style={{padding: "2%"}}>
+                                <input
+                                    className="textarea textarea-primary" {...register("input", {required: true})}
+                                    placeholder="Test input..." style={{width: "100%"}}/>
+                            </div>
+                            <div style={{padding: "2%"}}>
+                                <input
+                                    className="textarea textarea-primary" {...register("expectedOutput", {required: true})}
+                                    placeholder="Expected output..." style={{width: "100%"}}/>
+                            </div>
+                            <div style={{padding: "2%"}}>
+                                <input
+                                    className="textarea textarea-primary" {...register("givesScore", {required: true})}
+                                    placeholder="Score given..." style={{width: "100%", paddingBottom: "1%"}}/>
+                            </div>
+                            <div className="form-control" style={{width: "30%", padding: "2%"}}>
                                 <label
                                     className="label cursor-pointer bg-base-200 rounded-box textarea textarea-primary">
-                                    <span className="label-text font-bold" style={{paddingLeft: "1%"}}>Public:</span>
-                                    <input  {...register("public")} type="checkbox" className="toggle" value="true"/>
+                                    <span className="label-text font-bold"
+                                          style={{paddingLeft: "1%"}}>Public:</span>
+                                    <input  {...register("public")} type="checkbox" className="toggle"
+                                            value="true"/>
                                 </label>
 
                             </div>
-                            <button className="btn btn-primary">
-                                <input type="submit" value="Submit"/>
-                            </button>
+                                <button className="btn btn-primary">
+                                    <input type="submit" value="Submit"/>
+                                </button>
                         </form>
 
                     </div>
@@ -79,8 +91,49 @@ export default function CreateBattle() {
         )
     }
 
+    function testAdded() {
+        if (!battle?.tests) {
+            return <></>;
+        }
+
+        return (
+            battle.tests.map(((test) => (
+                <tr>
+                    <th className="font-bold" style={{alignItems: "center"}}>
+                        {test.name}
+                    </th>
+
+                    <th>
+                        <div>{test.input}</div>
+                    </th>
+
+                    <th>
+                        {test.expectedOutput}
+                    </th>
+
+
+                    <th>
+                        {test.givesScore}
+                    </th>
+
+
+                    <th>
+                        {test.public}
+                    </th>
+                </tr>
+            )))
+        );
+    }
+
+    function addTest(data:BattleTest){
+        if(!battle?.tests)
+            return
+        battle?.tests?.push(data)
+
+    }
+
     const onSubmit1: SubmitHandler<BattleDTO> = (data) => fetchCreateBattle(data);
-    const onSubmit2: SubmitHandler<BattleTest> = (data ) => console.log(data);
+    const onSubmit2: SubmitHandler<BattleTest> = (data ) =>{addTest(data)};
 
     if (error) {
         return (
@@ -165,13 +218,34 @@ export default function CreateBattle() {
                     </label>
                 </div>
 
-                <div style={{padding: "1%"}}>
+                <div style={{paddingLeft: "1.5%"}}>
                     <p className="badge badge-primary badge-outline"
                        onClick={() => (document.getElementById('my_modal_3') as HTMLDialogElement).showModal()}>+ Add
                         test</p>
                 </div>
 
                 <AddTestForm/>
+
+                <table className="table ">
+                    <tbody>
+                    <div style={{height: "fit-content"}} className="boxx">
+                        <div className="boxx-inner">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Input</th>
+                                <th>Expected output</th>
+                                <th>Score given</th>
+                                <th>Public</th>
+                            </tr>
+                            </thead>
+                            {testAdded()}
+                        </div>
+
+                    </div>
+
+                    </tbody>
+                </table>
 
                 <div style={{padding: "1.5%"}}>
                     <button className="btn btn-primary">
