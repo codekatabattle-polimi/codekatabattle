@@ -3,12 +3,15 @@ package it.polimi.codekatabattle.models.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import it.polimi.codekatabattle.entities.Battle;
 import it.polimi.codekatabattle.entities.BattleLanguage;
+import it.polimi.codekatabattle.entities.BattleTest;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static it.polimi.codekatabattle.config.APIConstants.DATETIME_FORMAT;
 
@@ -38,6 +41,8 @@ public class BattleDTO {
     @NotNull
     private Boolean enableSAT;
 
+    List<BattleTest> tests = new ArrayList<>();
+
     public Battle toEntity() {
         Battle battle = new Battle();
         battle.setTitle(title);
@@ -46,6 +51,7 @@ public class BattleDTO {
         battle.setEndsAt(endsAt);
         battle.setLanguage(language);
         battle.setEnableSAT(enableSAT);
+        battle.setTests(tests);
         return battle;
     }
 

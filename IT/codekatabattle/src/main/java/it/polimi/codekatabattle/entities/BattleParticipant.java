@@ -20,6 +20,6 @@ public class BattleParticipant extends BaseEntity {
     private String username;
 
     @Column
-    private float score;
+    private float score = 0;
 
 }

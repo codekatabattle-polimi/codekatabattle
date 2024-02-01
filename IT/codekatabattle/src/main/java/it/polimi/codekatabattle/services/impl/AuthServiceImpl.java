@@ -42,12 +42,12 @@ public class AuthServiceImpl implements AuthService {
     @Value("${ckb.test}")
     private Boolean isTest;
 
-    private final HashMap<AuthOrigin, OAuthConfig> oauthConfigMap = new HashMap<>() {{
-        put(AuthOrigin.SWAGGER, new OAuthConfig(swaggerClientId, swaggerClientSecret));
-        put(AuthOrigin.FRONTEND, new OAuthConfig(frontendClientId, frontendClientSecret));
-    }};
-
     private OAuthConfig getOAuthConfig(AuthOrigin authOrigin) {
+        final HashMap<AuthOrigin, OAuthConfig> oauthConfigMap = new HashMap<>() {{
+            put(AuthOrigin.SWAGGER, new OAuthConfig(swaggerClientId, swaggerClientSecret));
+            put(AuthOrigin.FRONTEND, new OAuthConfig(frontendClientId, frontendClientSecret));
+        }};
+
         return oauthConfigMap.get(authOrigin);
     }
 

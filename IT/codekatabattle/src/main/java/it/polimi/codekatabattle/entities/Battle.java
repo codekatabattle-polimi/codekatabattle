@@ -3,10 +3,12 @@ package it.polimi.codekatabattle.entities;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -50,6 +52,13 @@ public class Battle extends BaseEntity {
 
     @Column
     private Boolean enableSAT = false;
+
+    @Column(columnDefinition = "jsonb")
+    @Type(JsonType.class)
+    private List<BattleTest> tests = new ArrayList<>();
+
+    @Column
+    private float timelinessBaseScore = 100;
 
     @OneToMany(mappedBy = "battle", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonManagedReference

@@ -44,13 +44,17 @@ public class BattleServiceImpl extends CrudServiceImpl<Battle> implements Battle
         Tournament tournament = this.tournamentService.findById(battle.getTournamentId())
             .orElseThrow(() -> new ValidationException("Tournament not found by id " + battle.getTournamentId()));
 
-        if (!tournament.getCreator().equals(creator.getLogin()) || tournament.getCoordinators().stream().noneMatch(c -> c.getUsername().equals(creator.getLogin()))) {
+        if (!tournament.getCreator().equals(creator.getLogin()) && tournament.getCoordinators().stream().noneMatch(c -> c.getUsername().equals(creator.getLogin()))) {
             throw new ValidationException("Only the creator of the tournament or one of the coordinators can create battles in it");
+        }
+        if (battle.getTests().stream().map(BattleTest::getName).distinct().count() != battle.getTests().size()) {
+            throw new ValidationException("Two battle tests with the same name are not allowed");
         }
 
         Battle newBattle = battle.toEntity();
         newBattle.setCreator(creator.getLogin());
         newBattle.setTournament(tournament);
+        newBattle = this.battleRepository.save(newBattle);
 
         GHRepository repository = this.createBattleRepository(newBattle);
         newBattle.setRepositoryId(repository.getId());
@@ -156,22 +160,20 @@ public class BattleServiceImpl extends CrudServiceImpl<Battle> implements Battle
     @Override
     public GHRepository createBattleRepository(Battle battle) throws IOException {
         GitHub github = new GitHubBuilder().withOAuthToken(githubPAT).build();
-        GHRepository repository = github.createRepository(battle.getTitle())
+        GHRepository repository = github.createRepository(battle.getTitle().toLowerCase())
+            .owner("codekatabattle-polimi")
             .description(battle.getDescription())
             .private_(false)
-            .allowForking(true)
-            .issues(false)
-            .projects(false)
-            .downloads(false)
-            .wiki(false)
-            .allowMergeCommit(false)
-            .allowRebaseMerge(false)
-            .allowSquashMerge(false)
             .fromTemplateRepository("codekatabattle-polimi", getKataTemplateFromBattleLanguage(battle.getLanguage()))
             .create();
 
-        repository.createVariable("API_BASE_URL", "https://api.codekatabattle.orciuolo.it");
-        repository.createVariable("BATTLE_ID", battle.getId().toString());
+        try {
+            repository.createVariable("API_BASE_URL", "https://api.codekatabattle.orciuolo.it");
+            repository.createVariable("BATTLE_ID", battle.getId().toString());
+        } catch (Exception e) {
+            this.deleteBattleRepository(battle);
+            throw e;
+        }
 
         return repository;
     }
