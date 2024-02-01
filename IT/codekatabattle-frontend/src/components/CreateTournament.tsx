@@ -5,6 +5,7 @@ import {NavBar} from "./NavBar.tsx";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import avatar3 from "../assets/avatar3.png"
+import pencil from "../assets/pencil.png";
 
 export default function CreateTournament() { // Manca l'aggiunta di badges e TC
     const usernames=["giuseppe","nick","giovanni"];
@@ -72,15 +73,18 @@ export default function CreateTournament() { // Manca l'aggiunta di badges e TC
         <>
             <form onSubmit={handleSubmit(onSubmit)}
                   style={{alignSelf: "end", top: "8%", position: "fixed", width: "100%"}}>
-                <h1 className="text-3xl font-bold" style={{padding: "1.5%"}}>Create Tournament</h1>
+                <ul className="menu menu-vertical lg:menu-horizontal " style={{width: "100%"}}>
+                    <img src={pencil} style={{width: "2.5%", height: "2.5%", paddingLeft: "1%", paddingTop: "2%"}}/>
+                    <h1 className="text-3xl font-bold" style={{paddingTop: "1.5%", paddingLeft: "0.5%"}}>Create Tournament</h1>
+                </ul>
                 <ul className="menu menu-vertical lg:menu-horizontal " style={{width: "100%"}}>
                     <div style={{padding: "1%", width: "33.33%"}}>
-                        <input className="textarea textarea-primary" {...register("title", {required: true})}
+                        <input className="textarea textarea-primary bg-base-200" {...register("title", {required: true})}
                                placeholder="Tournament Title..." style={{width: "100%"}}/>
                     </div>
 
                     <div style={{padding: "1%", width: "33.33%"}}>
-                        <input className="textarea textarea-primary" placeholder="Max number of students..."
+                        <input className="textarea textarea-primary bg-base-200" placeholder="Max number of students..."
                                style={{width: "100%"}}
                                {...register("maxParticipants", {required: true, pattern: /^[0-9]+$/i})}
                                aria-invalid={errors.maxParticipants ? "true" : "false"}
@@ -92,8 +96,8 @@ export default function CreateTournament() { // Manca l'aggiunta di badges e TC
 
                 </ul>
 
-                <div style={{padding: "1.5%"}}>
-                    <input className="textarea textarea-primary" {...register("description")}
+                <div style={{paddingBottom: "1.5%",paddingLeft:"1.5%"}}>
+                    <input className="textarea textarea-primary bg-base-200" {...register("description")}
                            style={{width: "99%"}} placeholder="Description..."/>
                 </div>
                 <div style={{paddingLeft: "1%"}}>
@@ -101,7 +105,7 @@ export default function CreateTournament() { // Manca l'aggiunta di badges e TC
                         className="menu menu-vertical lg:menu-horizontal">
                         <div style={{width: "33%", paddingRight: "2%"}}>
                             <ul style={{width: "100%", paddingTop: "2%", paddingBottom: "2%", height: "100%"}}
-                                className="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box textarea textarea-primary">
+                                className="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-b-btn textarea textarea-primary">
                                 <div className="font-bold" style={{paddingRight: "1%", paddingTop: "1%"}}>Enrollment
                                     deadline:
                                 </div>
@@ -114,7 +118,7 @@ export default function CreateTournament() { // Manca l'aggiunta di badges e TC
 
                         <div style={{width: "33%"}}>
                             <ul style={{width: "100%", paddingTop: "2%", paddingBottom: "2%", height: "100%"}}
-                                className="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box textarea textarea-primary">
+                                className="menu menu-vertical lg:menu-horizontal bg-base-200  rounded-b-btn textarea textarea-primary">
                                 <div className="font-bold" style={{paddingRight: "1%", paddingTop: "1%"}}>Final
                                     deadline:
                                 </div>
@@ -126,17 +130,19 @@ export default function CreateTournament() { // Manca l'aggiunta di badges e TC
                         </div>
 
                         <div className="form-control" style={{width: "18%", paddingLeft: "2%"}}>
-                            <label className="label cursor-pointer bg-base-200 rounded-box textarea textarea-primary">
+                            <label className="label cursor-pointer bg-base-200 rounded-b-btn textarea textarea-primary">
                                 <span className="label-text font-bold" style={{paddingLeft: "1%"}}>Public:</span>
                                 <input  {...register("privacy")} type="checkbox" className="toggle" value="PUBLIC"/>
                             </label>
                         </div>
                     </ul>
-                    <div style={{ padding: "1%"}}>
-                        <p  className="badge badge-primary badge-outline" onClick={()=>(document.getElementById('my_modal_3') as HTMLDialogElement).showModal()}>+ Add coordinator</p>
+                    <div style={{padding: "0.5%"}}>
+                        <p className="badge badge-primary badge-outline bg-base-200"
+                           onClick={() => (document.getElementById('my_modal_3') as HTMLDialogElement).showModal()}>+
+                            Add coordinator</p>
                     </div>
                 </div>
-                <div style={{padding: "1.5%"}}>
+                <div style={{paddingLeft: "1.5%",paddingTop:"1%"}}>
                     <button className="btn btn-primary">
                         <input type="submit" value="Submit"/>
                     </button>

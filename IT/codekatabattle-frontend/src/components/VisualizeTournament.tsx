@@ -1,4 +1,4 @@
-import Placeholder from "../assets/Placeholder_Tournament_Image.jpg"
+import trophy from "../assets/trophy.png"
 import Avatar from "../assets/avatar2.png"
 import {useContext, useEffect, useState} from "react";
 import {Tournament, TournamentService} from "../services/openapi";
@@ -399,7 +399,7 @@ export const VisualizeTournament= () => {
             message = "The tournament starts at " + startDate.getFullYear() + "/" + (startDate.getMonth()+1) + "/" + startDate.getDate();
         }
          return (
-                <div style={{paddingLeft: "1%", paddingTop: "2%"}}>
+                <div style={{paddingLeft: "1%", paddingTop: "1.5%"}}>
                     <div className="dropdown dropdown-bottom">
                         <div tabIndex={0} role="button">
                             <div style={{color: "lightgray"}} className={colorBadge}> {status}
@@ -420,42 +420,44 @@ export const VisualizeTournament= () => {
     function upperBar() {
         return (
             <div className="navbar bg-base-100">
-                <div className="flex-1">
-                    <div style={{padding: "1%"}} className="avatar">
-                        <div className="w-16 h-16 rounded-full">
-                            <img src={Placeholder}/>
+                <div className="flex-1 navbar-start">
+
+                    <div style={{padding: "1%"}} >
+                        <div className="w-8 h-8 rounded-full">
+                            <img src={trophy}/>
                         </div>
                     </div>
 
                     <h2 className="text-3xl font-bold"
                         > {tournament?.title}</h2>
-
-
                     {tournamentPrivacy()}
                     {tournamentStatus()}
                 </div>
-                <div style={{width:"22%"}} className="flex-none">
+                <div style={{width:"22%"}} className="flex-none navbar-end">
                     <div style={{padding: "2%"}}>
                         {joinOrLeaveButton()}
                     </div>
-
-
-                    <ul style={{borderSpacing:"", paddingTop: "1%", width: "100%"}}
-                        className="menu-lg lg:menu-horizontal bg-base-200 rounded-box border border-base-300">
-                        <div style={{paddingRight: "2%" , paddingLeft: "1%"}}>
-                            <h2 className="text-l"
-                                style={{padding: "1%", paddingTop: "2%"}}> Created by: </h2>
-                            <h2 className="text-2xl font-bold"
-                                style={{padding: "1%", paddingTop: "2%"}}> {tournament?.creator}</h2>
-                        </div>
-
-
-                        <div style={{padding:"1%"}} className="avatar">
-                            <div className="w-16 h-16 rounded-box">
-                                <img src={Avatar}/>
+                    <ul className="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box">
+                        <a>
+                            <div style={{paddingRight: "10%", paddingLeft: "1%"}}>
+                                <h2 className="text-l"
+                                    style={{padding: "1%", paddingTop: "2%"}}> Created by: </h2>
+                                <h2 className="text-2xl font-bold"
+                                    style={{padding: "1%", paddingTop: "2%"}}> {tournament?.creator}</h2>
                             </div>
-                        </div>
+                        </a>
+                        <li><a></a></li>
+                        <a>
+                            <div style={{padding: "1%"}} className="avatar">
+                                <div className="w-16 h-16 rounded-box" style={{position: "relative", right: "0%"}}>
+                                    <img src={Avatar}/>
+                                </div>
+                            </div>
+                        </a>
+
+
                     </ul>
+
                 </div>
             </div>
         )

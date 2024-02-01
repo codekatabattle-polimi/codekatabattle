@@ -3,11 +3,12 @@ import {Battle, BattleDTO, BattleService, BattleTest} from "../services/openapi"
 import {NavBar} from "./NavBar.tsx";
 import {useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
+import pencil from "../assets/pencil.png";
 
 
 export default function CreateBattle() {
 
-    const { register,  handleSubmit } = useForm<BattleDTO>();
+    const { register, formState: { errors }, handleSubmit } = useForm<BattleDTO>();
     const [battle, setBattle] = useState<Battle | null>(null);
     const [error, setError] = useState<Error | null>(null);
     const navigate= useNavigate();
@@ -151,18 +152,33 @@ export default function CreateBattle() {
         <>
             <form onSubmit={handleSubmit(onSubmit1)}
                   style={{alignSelf: "end", top: "8%", position: "fixed", width: "100%"}}>
-                <h1 className="text-3xl font-bold" style={{padding: "1.5%"}}>Create Battle</h1>
+                <ul className="menu menu-vertical lg:menu-horizontal " style={{width: "100%"}}>
+                    <img src={pencil} style={{width: "2.5%", height: "2.5%", paddingLeft: "1%", paddingTop: "2%"}}/>
+                    <h1 className="text-3xl font-bold" style={{paddingTop: "1.5%", paddingLeft: "0.5%"}}>Create
+                        Battle</h1>
+                </ul>
                 <ul className="menu menu-vertical lg:menu-horizontal " style={{width: "100%"}}>
                     <div style={{padding: "1%", width: "33.33%"}}>
-                        <input className="textarea textarea-primary" {...register("title", {required: true})}
-                               placeholder="Battle Title..." style={{width: "100%"}}/>
+                        <input
+                            className="textarea textarea-primary bg-base-200" {...register("title", {required: true})}
+                            placeholder="Battle Title..." style={{width: "100%"}}/>
                     </div>
 
+                    <div style={{padding: "1%", width: "33.33%"}}>
+                        <input className="textarea textarea-primary bg-base-200" placeholder="Max number of students..."
+                               style={{width: "100%"}}
+                               {...register("timelinessBaseScore", {required: true, pattern: /^[0-9]+$/i})}
+                               aria-invalid={errors.timelinessBaseScore ? "true" : "false"}
+                        />
+                    </div>
+                    {errors.timelinessBaseScore?.type === 'required' &&
+                        <p style={{color: "#DC143C", paddingTop: "1.7%"}} className="font-bold" role="alert">Insert a
+                            number!!!</p>}
 
                 </ul>
 
-                <div style={{padding: "1.5%"}}>
-                    <input className="textarea textarea-primary" {...register("description")}
+                <div style={{paddingBottom: "1.5%", paddingLeft: "1.5%"}}>
+                    <input className="textarea textarea-primary bg-base-200" {...register("description")}
                            style={{width: "99%"}} placeholder="Description..."/>
                 </div>
                 <div style={{paddingLeft: "1%"}}>
@@ -170,7 +186,7 @@ export default function CreateBattle() {
                         className="menu menu-vertical lg:menu-horizontal">
                         <div style={{width: "33%", paddingRight: "2%"}}>
                             <ul style={{width: "100%", paddingTop: "2%", paddingBottom: "2%", height: "100%"}}
-                                className="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box textarea textarea-primary">
+                                className="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-b-btn textarea textarea-primary">
                                 <div className="font-bold" style={{paddingRight: "1%", paddingTop: "1%"}}>Enrollment
                                     deadline:
                                 </div>
@@ -181,10 +197,9 @@ export default function CreateBattle() {
                             </ul>
                         </div>
 
-
                         <div style={{width: "33%"}}>
                             <ul style={{width: "100%", paddingTop: "2%", paddingBottom: "2%", height: "100%"}}
-                                className="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box textarea textarea-primary">
+                                className="menu menu-vertical lg:menu-horizontal bg-base-200  rounded-b-btn textarea textarea-primary">
                                 <div className="font-bold" style={{paddingRight: "1%", paddingTop: "1%"}}>Final
                                     deadline:
                                 </div>
@@ -193,22 +208,21 @@ export default function CreateBattle() {
                                     setValueAs: (value) => value + "T09:40:46.268Z"
                                 })}/>
                             </ul>
-
                         </div>
-                        <div className="form-control" style={{width: "fit-content", paddingLeft: "2%"}}>
-                            <label
-                                className="label cursor-pointer bg-base-200 rounded-box textarea textarea-primary">
-                                <span className="label-text font-bold"
-                                      style={{paddingLeft: "1%", paddingRight: "2%"}}>SAT:</span>
-                                <input  {...register("enableSAT")} type="checkbox" className="toggle" value="true"/>
+
+                        <div className="form-control" style={{width: "18%", paddingLeft: "2%"}}>
+                            <label className="label cursor-pointer bg-base-200 rounded-b-btn textarea textarea-primary">
+                                <span className="label-text font-bold" style={{paddingLeft: "1%"}}>SAT:</span>
+                                <input  {...register("enableSAT")} type="checkbox" className="toggle" value="PUBLIC"/>
                             </label>
                         </div>
                     </ul>
-                    <label style={{paddingLeft: "0.5%"}} className="form-control w-full max-w-xs">
+
+                    <label style={{paddingLeft: "0.5%"}} className="form-control w-full max-w-xs ">
                         <div className="label">
                             <span className="label-text">Select the language</span>
                         </div>
-                        <select {...register("language")} className="select select-bordered">
+                        <select {...register("language")} className="select select-bordered bg-base-200 rounded-b-btn textarea textarea-primary">
                             <option disabled selected>no selection</option>
                             <option value="PYTHON">Python</option>
                             <option value="GOLANG">Golang</option>
@@ -216,6 +230,7 @@ export default function CreateBattle() {
                         <div className="label">
                         </div>
                     </label>
+
                 </div>
 
                 <div style={{paddingLeft: "1.5%"}}>
