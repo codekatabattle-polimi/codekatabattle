@@ -53,6 +53,9 @@ public class Battle extends BaseEntity {
     @Column
     private Boolean enableSAT = false;
 
+    @Column
+    private Boolean enableManualEvaluation = false;
+
     @Column(columnDefinition = "jsonb")
     @Type(JsonType.class)
     private List<BattleTest> tests = new ArrayList<>();

@@ -38,10 +38,11 @@ public class BattleDTO {
     @NotNull
     private BattleLanguage language;
 
-    @NotNull
-    private Boolean enableSAT;
-
     List<BattleTest> tests = new ArrayList<>();
+
+    private Boolean enableSAT = false;
+
+    private Boolean enableManualEvaluation = false;
 
     private int timelinessBaseScore = 0;
 
