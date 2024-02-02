@@ -1,5 +1,5 @@
 import {SubmitHandler, useForm} from "react-hook-form";
-import {Battle, BattleDTO, BattleService, BattleTest} from "../services/openapi";
+import { BattleDTO, BattleService, BattleTest} from "../services/openapi";
 import {NavBar} from "./NavBar.tsx";
 import {useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
@@ -9,13 +9,14 @@ import pencil from "../assets/pencil.png";
 export default function CreateBattle() {
 
     const { register, formState: { errors }, handleSubmit } = useForm<BattleDTO>();
-    const [battle, setBattle] = useState<Battle | null>(null);
     const [error, setError] = useState<Error | null>(null);
     const navigate= useNavigate();
     const params = useParams();
+    const [testList, setTestList]=useState<BattleTest[] | null>(null);
 
     async function fetchCreateBattle(data: BattleDTO) {
         try {
+            data.tests = (testList ?? []);
             data.tournamentId = +params.tId!;
             if(data.language.toString()=="PYTHON")
                 data.language=BattleDTO.language.PYTHON;
@@ -23,7 +24,6 @@ export default function CreateBattle() {
                 data.language=BattleDTO.language.GOLANG;
             (document.getElementById('my_modal_2') as HTMLDialogElement).showModal();
             const battle = await BattleService.create1(data);
-            setBattle(battle);
             navigate("/tournaments/" + params.tId + "/battles/" + battle.id?.toString())
         } catch (error) {
             setError(error as Error);
@@ -31,9 +31,31 @@ export default function CreateBattle() {
     }
 
 
+    function loadData(name: string, input: string, expectedOutput: string, givenScore: string, isPublic: string){
+        const test: BattleTest = {name: name, input: input, expectedOutput: expectedOutput, givesScore: +givenScore!, public: true};
+        if(name=="" || input=="" || expectedOutput=="" || givenScore=="")
+            alert("Fill all the fields")
+        else{
+            if (isPublic == "true")
+                test.public=true;
+            else test.public=false;
+            const tests : BattleTest[] = (testList ?? []).concat(test)
+
+            setTestList(tests);
+        }
+
+
+    }
+
 
     const AddTestForm = () => {
-        const { register,  handleSubmit } = useForm<BattleTest>();
+
+        const[name, setName] = useState('');
+        const[input, setInput] = useState('');
+        const[expectedOutput, setExpectedOutput] = useState('');
+        const[givenScore, setGivenScore] = useState('');
+        const[isPublic, setPublic] = useState("false");
+
 
         return (
             <dialog   id="my_modal_3" className="modal">
@@ -41,47 +63,46 @@ export default function CreateBattle() {
                     <p className="font-bold text-xl">Add test</p>
                     {/*Test form*/}
                     <div className="overflow-x-auto">
-                        <form onSubmit={handleSubmit(onSubmit2)}>
                             <div style={{padding: "2%"}}>
                                 <input style={{width: "100%"}}
-                                       className="textarea textarea-primary " {...register("name", {required: true})}
-                                       placeholder="Test name..."/>
+                                       className="textarea textarea-primary " onChange={event => setName(event.target.value)}
+                                       placeholder="Test name..." required/>
                             </div>
                             <div style={{padding: "2%"}}>
                                 <input
-                                    className="textarea textarea-primary" {...register("input", {required: true})}
-                                    placeholder="Test input..." style={{width: "100%"}}/>
+                                    className="textarea textarea-primary" onChange={event => setInput(event.target.value)}
+                                    placeholder="Test input..." style={{width: "100%"}} required/>
                             </div>
                             <div style={{padding: "2%"}}>
                                 <input
-                                    className="textarea textarea-primary" {...register("expectedOutput", {required: true})}
-                                    placeholder="Expected output..." style={{width: "100%"}}/>
+                                    className="textarea textarea-primary" onChange={event => setExpectedOutput(event.target.value)}
+                                    placeholder="Expected output..." style={{width: "100%"}} required/>
                             </div>
                             <div style={{padding: "2%"}}>
                                 <input
-                                    className="textarea textarea-primary" {...register("givesScore", {required: true})}
-                                    placeholder="Score given..." style={{width: "100%", paddingBottom: "1%"}}/>
+                                    className="textarea textarea-primary" onChange={event => setGivenScore(event.target.value)}
+                                    placeholder="Score given..." style={{width: "100%", paddingBottom: "1%"}} required/>
                             </div>
                             <div className="form-control" style={{width: "30%", padding: "2%"}}>
                                 <label
                                     className="label cursor-pointer bg-base-200 rounded-box textarea textarea-primary">
                                     <span className="label-text font-bold"
                                           style={{paddingLeft: "1%"}}>Public:</span>
-                                    <input  {...register("public")} type="checkbox" className="toggle"
+                                    <input  onChange={event => setPublic(event.target.value)} type="checkbox" className="toggle"
                                             value="true"/>
                                 </label>
 
                             </div>
-                                <button className="btn btn-primary">
-                                    <input type="submit" value="Submit"/>
-                                </button>
-                        </form>
+                            <button onClick={() => loadData(name, input, expectedOutput, givenScore, isPublic)}
+                                    className="btn btn-primary">Add test</button>
 
-                    </div>
-                    {/*botton close*/}
-                    <div className="modal-action">
-                    <form method="dialog">
-                            {/* if there is a button in form, it will close the modal */}
+
+                </div>
+    {/*botton close*/
+    }
+        <div className="modal-action">
+        <form method="dialog">
+
                             <button className="btn">Close</button>
                         </form>
                     </div>
@@ -94,12 +115,11 @@ export default function CreateBattle() {
     }
 
     function testAdded() {
-        if (!battle?.tests) {
-            return <></>;
-        }
+        if(testList==null)
+            return (<></>)
 
         return (
-            battle.tests.map(((test) => (
+            testList.map(((test) => (
                 <tr>
                     <th className="font-bold" style={{alignItems: "center"}}>
                         {test.name}
@@ -127,15 +147,8 @@ export default function CreateBattle() {
         );
     }
 
-    function addTest(data:BattleTest){
-        if(!battle?.tests)
-            return
-        battle?.tests?.push(data)
-
-    }
-
     const onSubmit1: SubmitHandler<BattleDTO> = (data) => fetchCreateBattle(data);
-    const onSubmit2: SubmitHandler<BattleTest> = (data ) =>{addTest(data)};
+
 
     if (error) {
         return (
@@ -143,10 +156,6 @@ export default function CreateBattle() {
         );
     }
 
-    if (battle) {
-        const path = "/battles/" + battle.id?.toString();
-        navigate(path);
-    }
 
     return (
         /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
