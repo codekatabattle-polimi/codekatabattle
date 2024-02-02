@@ -1,4 +1,4 @@
-import trophy from "../assets/trophy.png"
+import belt from "../assets/belt.png"
 import Avatar from "../assets/avatar2.png"
 import {useContext, useEffect, useState} from "react";
 import {Tournament, TournamentService} from "../services/openapi";
@@ -423,8 +423,8 @@ export const VisualizeTournament= () => {
                 <div className="flex-1 navbar-start">
 
                     <div style={{padding: "1%"}} >
-                        <div className="w-8 h-8 rounded-full">
-                            <img src={trophy}/>
+                        <div className="w-12 h-12 rounded-full">
+                            <img src={belt}/>
                         </div>
                     </div>
 

@@ -3,7 +3,7 @@ import { BattleDTO, BattleService, BattleTest} from "../services/openapi";
 import {NavBar} from "./NavBar.tsx";
 import {useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
-import pencil from "../assets/pencil.png";
+import nunchaku from "../assets/nunchaku.png";
 
 
 export default function CreateBattle() {
@@ -163,13 +163,16 @@ export default function CreateBattle() {
             <form onSubmit={handleSubmit(onSubmit1)}
                   style={{alignSelf: "end", top: "8%", position: "fixed", width: "100%"}}>
                 <ul className="menu menu-vertical lg:menu-horizontal " style={{width: "100%"}}>
-                    <img src={pencil} style={{width: "2.5%", height: "2.5%", paddingLeft: "1%", paddingTop: "2%"}}/>
+                    <div className="w-12 h-12 rounded-full"
+                         style={{paddingLeft: "0.5%",paddingTop: "1%",}}>
+                        <img src={nunchaku}/>
+                    </div>
                     <h1 className="text-3xl font-bold" style={{paddingTop: "1.5%", paddingLeft: "0.5%"}}>Create
                         Battle</h1>
                 </ul>
                 <ul className="menu menu-vertical lg:menu-horizontal " style={{width: "100%"}}>
                     <div style={{padding: "1%", width: "33.33%"}}>
-                        <input
+                    <input
                             className="textarea textarea-primary bg-base-200" {...register("title", {required: true})}
                             placeholder="Battle Title..." style={{width: "100%"}}/>
                     </div>

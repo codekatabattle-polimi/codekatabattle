@@ -2,6 +2,7 @@ import avatar2 from "../assets/avatar2.png";
 import avatar3 from "../assets/avatar3.png";
 import {LogoutButton} from "./LogoutButton.tsx";
 import {Link} from "react-router-dom";
+import dojo from "../assets/dojo.png";
 
 export const NavBar= () => {
         return (
@@ -38,7 +39,18 @@ export const NavBar= () => {
                     </div>
                 </div>
                 <div className="navbar-center">
-                    <a className="btn btn-ghost text-xl">CodeKataBattle</a>
+                    <Link to="/"><a className="btn btn-ghost text-xl">
+                        <ul className="menu menu-vertical lg:menu-horizontal">
+                            <div className="w-8 h-8 rounded-full"
+                                 style={{paddingLeft: "0.5%"}}>
+                                <img src={dojo}/>
+                            </div>
+                            <a className="text-xl">CodeKataBattle</a>
+                            <div className="w-8 h-8 rounded-full"
+                                 style={{paddingLeft: "0.5%"}}>
+                                <img src={dojo}/>
+                            </div>
+                        </ul></a></Link>
                 </div>
                 <div className="navbar-end">
 

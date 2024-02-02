@@ -5,7 +5,7 @@ import {NavBar} from "./NavBar.tsx";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import avatar3 from "../assets/avatar3.png"
-import pencil from "../assets/pencil.png";
+import nunchaku from "../assets/nunchaku.png";
 
 export default function CreateTournament() { // Manca l'aggiunta di badges e TC
     const usernames=["giuseppe","nick","giovanni"];
@@ -74,12 +74,16 @@ export default function CreateTournament() { // Manca l'aggiunta di badges e TC
             <form onSubmit={handleSubmit(onSubmit)}
                   style={{alignSelf: "end", top: "8%", position: "fixed", width: "100%"}}>
                 <ul className="menu menu-vertical lg:menu-horizontal " style={{width: "100%"}}>
-                    <img src={pencil} style={{width: "2.5%", height: "2.5%", paddingLeft: "1%", paddingTop: "2%"}}/>
-                    <h1 className="text-3xl font-bold" style={{paddingTop: "1.5%", paddingLeft: "0.5%"}}>Create Tournament</h1>
+                    <div className="w-12 h-12 rounded-full"
+                         style={{paddingLeft: "0.5%",paddingTop: "1%",}}>
+                        <img src={nunchaku}/>
+                    </div>
+                    <h1 className="text-3xl font-bold" style={{paddingTop: "1.5%", paddingLeft: "0.5%"}}>Create
+                        Tournament</h1>
                 </ul>
                 <ul className="menu menu-vertical lg:menu-horizontal " style={{width: "100%"}}>
                     <div style={{padding: "1%", width: "33.33%"}}>
-                        <input className="textarea textarea-primary bg-base-200" {...register("title", {required: true})}
+                    <input className="textarea textarea-primary bg-base-200" {...register("title", {required: true})}
                                placeholder="Tournament Title..." style={{width: "100%"}}/>
                     </div>
 
