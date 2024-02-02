@@ -1,40 +1,66 @@
 import {useForm} from "react-hook-form";
 import {SubmitHandler} from "react-hook-form";
-import {Tournament, TournamentDTO, TournamentService} from "../services/openapi";
+import {AuthService, GHUser, Tournament, TournamentDTO, TournamentService} from "../services/openapi";
 import {NavBar} from "./NavBar.tsx";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
-import avatar3 from "../assets/avatar3.png"
 import nunchaku from "../assets/nunchaku.png";
 
 export default function CreateTournament() { // Manca l'aggiunta di badges e TC
-    const usernames=["giuseppe","nick","giovanni"];
+
+    const [username,setUsername]=useState('');
+    const [usernames,setUsernames]=useState<GHUser[]>([]);
     const { register, formState: { errors }, handleSubmit } = useForm<TournamentDTO>();
     const [tournament, setTournament] = useState<Tournament | null>(null);
     const [error, setError] = useState<Error | null>(null);
     const navigate= useNavigate();
+    function existUser(user:string){
+        if(usernames.length!=0)return(usernames.map(((u:GHUser)=>(
+            (u.login==user)
+        ))).reduce(((boola:boolean,boolb:boolean)=>(boola || boolb))));
+        return false;
+    }
+    async function addCoordinator(){
+        try{
+            const ghuser=await AuthService.getUserInfo(username);
+            if(ghuser.login==undefined){
+                alert("the coordinator nickname is undefined")
+                return;
+            }
+            if(existUser(ghuser.login.toString())){
+                alert("The coordinator is in the list");
+                return;
+            }
+            const ghUsers :GHUser[] = usernames.concat(ghuser);
+            setUsernames(ghUsers);
+        }
+        catch (error1) {
+            setError(error1 as Error);
+
+            alert((error?.message ?? "Error"));
+        }
+    }
     function selectCoordinator(){
         if (usernames==null) return(<></>);
         return(
-            usernames.map((username: string)=>(
+            usernames.map((username: GHUser)=>(
                 <>
                     <tr>
                         <th>
                             <label>
-                                <input {...register("coordinators")} type="checkbox" className="checkbox" value={username}/>
+                                <input {...register("coordinators")} type="checkbox" className="checkbox" value={username.login}/>
                             </label>
                         </th>
                         <td>
                             <div className="flex items-center gap-3">
                                 <div className="avatar">
                                     <div className="mask mask-squircle w-12 h-12">
-                                        <img src={avatar3}
+                                        <img src={username.avatar_url}
                                              alt="Avatar Tailwind CSS Component"/>
                                     </div>
                                 </div>
                                 <div>
-                                    <div className="font-bold">{username}</div>
-                                    <div className="text-sm opacity-50">Brazil</div>
+                                    <div className="font-bold">{username.login}</div>
                                 </div>
                             </div>
                         </td>
@@ -50,18 +76,14 @@ export default function CreateTournament() { // Manca l'aggiunta di badges e TC
             else data.privacy = TournamentDTO.privacy.PUBLIC;
             const tournament = await TournamentService.create(data);
             setTournament(tournament);
-        } catch (error) {
-            setError(error as Error);
+        } catch (error1) {
+            setError(error1 as Error);
+            alert((error?.message ?? "Error"));
         }
     }
 
     const onSubmit: SubmitHandler<TournamentDTO> = (data) => fetchCreateTournament(data);
 
-    if (error) {
-        return (
-            <>{error.message}</>
-        );
-    }
 
     if (tournament) {
         const path = "/tournaments/" + tournament.id?.toString();
@@ -156,7 +178,23 @@ export default function CreateTournament() { // Manca l'aggiunta di badges e TC
                 </div>
                 <dialog id="my_modal_3" className="modal">
                     <div className="modal-box">
-                        <p className="font-bold text-xl">Add coordinator</p>
+                        <p className="mb-2 font-bold text-xl">Add coordinator</p>
+                        <div className=" input input-bordered ">
+                            <ul className="menu menu-vertical lg:menu-horizontal" style={{width:"100%"}}>
+                                <input type="text" placeholder="Type here..." style={{width:"80%"}}
+                                       className="bg-base-100 "
+                                       onChange={event => setUsername(event.target.value)}/>
+                                <button className="btm btn-sm btn-ghost btn-circle" style={{right: "70%"}}
+                                        onClick={() => addCoordinator()}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none"
+                                         viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                    </svg>
+                                </button>
+                            </ul>
+                        </div>
+
                         {/*menu coordinator*/}
                         <div className="overflow-x-auto">
                             <table className="table">
