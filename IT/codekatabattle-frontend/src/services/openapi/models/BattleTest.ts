@@ -7,6 +7,12 @@ export type BattleTest = {
     input?: string;
     expectedOutput?: string;
     givesScore?: number;
-    public?: boolean;
+    privacy?: BattleTest.privacy;
 };
+export namespace BattleTest {
+    export enum privacy {
+        PUBLIC = 'PUBLIC',
+        PRIVATE = 'PRIVATE',
+    }
+}
 

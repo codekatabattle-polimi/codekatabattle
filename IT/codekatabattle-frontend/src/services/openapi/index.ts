@@ -12,7 +12,7 @@ export { BattleDTO } from './models/BattleDTO';
 export { BattleEntry } from './models/BattleEntry';
 export type { BattleEntryDTO } from './models/BattleEntryDTO';
 export type { BattleParticipant } from './models/BattleParticipant';
-export type { BattleTest } from './models/BattleTest';
+export { BattleTest } from './models/BattleTest';
 export type { BattleTestResult } from './models/BattleTestResult';
 export type { ErrorDetails } from './models/ErrorDetails';
 export type { GHUser } from './models/GHUser';
