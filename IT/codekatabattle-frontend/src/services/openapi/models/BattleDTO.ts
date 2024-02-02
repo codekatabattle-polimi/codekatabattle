@@ -10,8 +10,9 @@ export type BattleDTO = {
     startsAt?: string;
     endsAt?: string;
     language: BattleDTO.language;
-    enableSAT: boolean;
     tests?: Array<BattleTest>;
+    enableSAT?: boolean;
+    enableManualEvaluation?: boolean;
     timelinessBaseScore?: number;
 };
 export namespace BattleDTO {
