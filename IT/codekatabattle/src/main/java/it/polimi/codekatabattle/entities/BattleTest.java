@@ -10,5 +10,5 @@ public class BattleTest implements Serializable {
     private String input;
     private String expectedOutput;
     private int givesScore;
-    private boolean isPublic;
+    private BattleTestPrivacy privacy;
 }
