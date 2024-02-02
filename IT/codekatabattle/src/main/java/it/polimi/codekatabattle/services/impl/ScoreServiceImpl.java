@@ -3,7 +3,9 @@ package it.polimi.codekatabattle.services.impl;
 import it.polimi.codekatabattle.entities.Battle;
 import it.polimi.codekatabattle.entities.BattleEntry;
 import it.polimi.codekatabattle.entities.BattleEntryStatus;
-import it.polimi.codekatabattle.entities.BattleTestResult;
+import it.polimi.codekatabattle.models.BattleEntryProcessResult;
+import it.polimi.codekatabattle.models.BattleTestResult;
+import it.polimi.codekatabattle.models.SATResult;
 import it.polimi.codekatabattle.repositories.BattleEntryRepository;
 import it.polimi.codekatabattle.services.ExecutorService;
 import it.polimi.codekatabattle.services.ScoreService;
@@ -16,6 +18,7 @@ import org.testcontainers.containers.Container;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -34,15 +37,27 @@ public class ScoreServiceImpl implements ScoreService {
 
     @Override
     @Async
-    public CompletableFuture<List<BattleTestResult>> processBattleEntry(BattleEntry battleEntry, URL artifactUrl) {
-        battleEntry.setStatus(BattleEntryStatus.RUNNING);
+    public CompletableFuture<BattleEntryProcessResult> processBattleEntry(BattleEntry battleEntry, URL artifactUrl) {
+        List<BattleTestResult> testResults = this.executeBattleTests(battleEntry, artifactUrl);
+        Optional<SATResult> satResult = this.executeSAT(battleEntry, artifactUrl);
+
+        BattleEntryProcessResult results = new BattleEntryProcessResult();
+        results.setTestResults(testResults);
+        results.setSatResult(satResult.orElse(null));
+
+        return CompletableFuture.completedFuture(results);
+    }
+
+    @Override
+    public List<BattleTestResult> executeBattleTests(BattleEntry battleEntry, URL artifactUrl) {
+        battleEntry.setStatus(BattleEntryStatus.TESTING);
         this.battleEntryRepository.save(battleEntry);
 
         Battle battle = battleEntry.getBattle();
-        ExecutorService executor = this.getExecutorForBattle(battle);
+        ExecutorService executor = this.getBattleCodeExecutor(battle);
 
         List<BattleTestResult> results = battle.getTests().parallelStream().map(test -> {
-            logger.info("Executing test " + test.getName() + " for battle " + battle.getId() + " and artifact " + artifactUrl);
+            logger.info("Executing test " + test.getName() + " for battle " + battle.getId() + " and artifact " + artifactUrl.toString());
             BattleTestResult btr = new BattleTestResult();
             btr.setName(test.getName());
             btr.setInput(test.getInput());
@@ -75,14 +90,24 @@ public class ScoreServiceImpl implements ScoreService {
             return btr;
         }).toList();
 
-        logger.info("Performed all " + results.size() + " tests for battle " + battle.getId() + " and artifact " + artifactUrl);
-        battleEntry.setTestResults(results);
-        this.battleEntryRepository.save(battleEntry);
-
-        return CompletableFuture.completedFuture(results);
+        logger.info("Performed all " + results.size() + " tests for battle " + battle.getId() + " and artifact " + artifactUrl.toString());
+        return results;
     }
 
-    private ExecutorService getExecutorForBattle(Battle battle) {
+    @Override
+    public Optional<SATResult> executeSAT(BattleEntry battleEntry, URL artifactUrl) {
+        if (!battleEntry.getBattle().getEnableSAT()) {
+            return Optional.empty();
+        }
+
+        battleEntry.setStatus(BattleEntryStatus.ANALYZING);
+        this.battleEntryRepository.save(battleEntry);
+
+        // TODO: Implement SAT execution
+        return Optional.empty();
+    }
+
+    private ExecutorService getBattleCodeExecutor(Battle battle) {
         return switch (battle.getLanguage()) {
             case GOLANG -> new GolangExecutorService();
             case PYTHON -> new PythonExecutorService();

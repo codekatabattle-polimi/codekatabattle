@@ -1,6 +1,7 @@
 package it.polimi.codekatabattle.services.impl;
 
 import it.polimi.codekatabattle.entities.*;
+import it.polimi.codekatabattle.models.BattleTest;
 import it.polimi.codekatabattle.models.dto.BattleDTO;
 import it.polimi.codekatabattle.models.dto.BattleEntryDTO;
 import it.polimi.codekatabattle.models.github.GHUser;

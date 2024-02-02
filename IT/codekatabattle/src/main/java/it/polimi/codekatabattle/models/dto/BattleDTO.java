@@ -3,7 +3,7 @@ package it.polimi.codekatabattle.models.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import it.polimi.codekatabattle.entities.Battle;
 import it.polimi.codekatabattle.entities.BattleLanguage;
-import it.polimi.codekatabattle.entities.BattleTest;
+import it.polimi.codekatabattle.models.BattleTest;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

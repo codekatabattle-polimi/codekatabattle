@@ -1,5 +1,6 @@
-package it.polimi.codekatabattle.entities;
+package it.polimi.codekatabattle.models;
 
+import it.polimi.codekatabattle.entities.BattleTestPrivacy;
 import lombok.Data;
 
 import java.io.Serializable;

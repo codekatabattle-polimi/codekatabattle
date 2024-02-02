@@ -2,6 +2,7 @@ package it.polimi.codekatabattle.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
+import it.polimi.codekatabattle.models.BattleTestResult;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

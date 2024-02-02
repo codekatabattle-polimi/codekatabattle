@@ -1,4 +1,4 @@
-package it.polimi.codekatabattle.entities;
+package it.polimi.codekatabattle.models;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
