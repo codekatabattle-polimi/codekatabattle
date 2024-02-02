@@ -66,22 +66,22 @@ export default function CreateBattle() {
                             <div style={{padding: "2%"}}>
                                 <input style={{width: "100%"}}
                                        className="textarea textarea-primary " onChange={event => setName(event.target.value)}
-                                       placeholder="Test name..." required/>
+                                       placeholder="Test name..." />
                             </div>
                             <div style={{padding: "2%"}}>
                                 <input
                                     className="textarea textarea-primary" onChange={event => setInput(event.target.value)}
-                                    placeholder="Test input..." style={{width: "100%"}} required/>
+                                    placeholder="Test input..." style={{width: "100%"}} />
                             </div>
                             <div style={{padding: "2%"}}>
                                 <input
                                     className="textarea textarea-primary" onChange={event => setExpectedOutput(event.target.value)}
-                                    placeholder="Expected output..." style={{width: "100%"}} required/>
+                                    placeholder="Expected output..." style={{width: "100%"}} />
                             </div>
                             <div style={{padding: "2%"}}>
                                 <input
                                     className="textarea textarea-primary" onChange={event => setGivenScore(event.target.value)}
-                                    placeholder="Score given..." style={{width: "100%", paddingBottom: "1%"}} required/>
+                                    placeholder="Score given..." style={{width: "100%", paddingBottom: "1%"}} />
                             </div>
                             <div className="form-control" style={{width: "30%", padding: "2%"}}>
                                 <label
