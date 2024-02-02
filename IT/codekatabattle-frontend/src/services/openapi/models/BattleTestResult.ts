@@ -2,4 +2,14 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type BattleTestResult = Record<string, any>;
+export type BattleTestResult = {
+    name: string;
+    input: string;
+    output?: string;
+    error?: string;
+    exitCode: number;
+    timeout: boolean;
+    passed: boolean;
+    score?: number;
+};
+

@@ -19,6 +19,7 @@ export type Battle = {
     repositoryId?: number;
     language: Battle.language;
     enableSAT?: boolean;
+    enableManualEvaluation?: boolean;
     tests?: Array<BattleTest>;
     timelinessBaseScore?: number;
     participants?: Array<BattleParticipant>;

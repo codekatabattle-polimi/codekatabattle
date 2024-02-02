@@ -14,8 +14,10 @@ export default function CreateBattle() {
     const params = useParams();
     const [testList, setTestList]=useState<BattleTest[] | null>(null);
 
+
     async function fetchCreateBattle(data: BattleDTO) {
         try {
+            alert((data.tests ?? [])[0].public);
             data.tests = (testList ?? []);
             data.tournamentId = +params.tId!;
             if(data.language.toString()=="PYTHON")
@@ -38,8 +40,8 @@ export default function CreateBattle() {
         else{
             if (isPublic == "true")
                 test.public=true;
-            else test.public=false;
-            const tests : BattleTest[] = (testList ?? []).concat(test)
+            else test.public = false;
+            const tests : BattleTest[] = (testList ?? []).concat(test);
 
             setTestList(tests);
         }
@@ -54,7 +56,7 @@ export default function CreateBattle() {
         const[input, setInput] = useState('');
         const[expectedOutput, setExpectedOutput] = useState('');
         const[givenScore, setGivenScore] = useState('');
-        const[isPublic, setPublic] = useState("false");
+        const[isPublic, setPublic] = useState("");
 
 
         return (
@@ -65,31 +67,31 @@ export default function CreateBattle() {
                     <div className="overflow-x-auto">
                             <div style={{padding: "2%"}}>
                                 <input style={{width: "100%"}}
-                                       className="textarea textarea-primary " onChange={event => setName(event.target.value)}
+                                       className="textarea textarea-primary bg-base-300" onChange={event => setName(event.target.value)}
                                        placeholder="Test name..." />
                             </div>
                             <div style={{padding: "2%"}}>
                                 <input
-                                    className="textarea textarea-primary" onChange={event => setInput(event.target.value)}
+                                    className="textarea textarea-primary bg-base-300" onChange={event => setInput(event.target.value)}
                                     placeholder="Test input..." style={{width: "100%"}} />
                             </div>
                             <div style={{padding: "2%"}}>
                                 <input
-                                    className="textarea textarea-primary" onChange={event => setExpectedOutput(event.target.value)}
+                                    className="textarea textarea-primary bg-base-300" onChange={event => setExpectedOutput(event.target.value)}
                                     placeholder="Expected output..." style={{width: "100%"}} />
                             </div>
                             <div style={{padding: "2%"}}>
                                 <input
-                                    className="textarea textarea-primary" onChange={event => setGivenScore(event.target.value)}
+                                    className="textarea textarea-primary bg-base-300" onChange={event => setGivenScore(event.target.value)}
                                     placeholder="Score given..." style={{width: "100%", paddingBottom: "1%"}} />
                             </div>
                             <div className="form-control" style={{width: "30%", padding: "2%"}}>
                                 <label
-                                    className="label cursor-pointer bg-base-200 rounded-box textarea textarea-primary">
+                                    className="label cursor-pointer bg-base-300 rounded-box textarea textarea-primary">
                                     <span className="label-text font-bold"
                                           style={{paddingLeft: "1%"}}>Public:</span>
-                                    <input  onChange={event => setPublic(event.target.value)} type="checkbox" className="toggle"
-                                            value="true"/>
+                                    <input  onSelect={() => setPublic("true")} type="checkbox" className="toggle"
+                                            />
                                 </label>
 
                             </div>
@@ -112,6 +114,12 @@ export default function CreateBattle() {
                 </form>
             </dialog>
         )
+    }
+
+    function  isPublic(publ : boolean){
+        if (publ)
+            return "Yes"
+        return "No"
     }
 
     function testAdded() {
@@ -140,7 +148,7 @@ export default function CreateBattle() {
 
 
                     <th>
-                        {test.public}
+                        {isPublic((test.public ?? true))}
                     </th>
                 </tr>
             )))
@@ -223,11 +231,24 @@ export default function CreateBattle() {
                             </ul>
                         </div>
 
-                        <div className="form-control" style={{width: "18%", paddingLeft: "2%"}}>
-                            <label className="label cursor-pointer bg-base-200 rounded-b-btn textarea textarea-primary">
-                                <span className="label-text font-bold" style={{paddingLeft: "1%"}}>SAT:</span>
-                                <input  {...register("enableSAT")} type="checkbox" className="toggle" value="true"/>
-                            </label>
+                        <div className="form-control" style={{width: "8%", paddingLeft: "2%"}}>
+                            <div className="form-control">
+                                <label className="cursor-pointer label">
+
+                                    <input {...register("enableSAT")} type="checkbox" className="checkbox checkbox-info"
+                                           value="true"/>SAT
+                                </label>
+                            </div>
+                        </div>
+
+                        <div className="form-control" style={{width: "16%", paddingLeft: "2%"}}>
+                            <div className="form-control">
+                                <label className="cursor-pointer label">
+
+                                    <input {...register("enableManualEvaluation")} type="checkbox" className="checkbox checkbox-info"
+                                           value="true"/>Manual evaluation
+                                </label>
+                            </div>
                         </div>
                     </ul>
 
@@ -235,8 +256,9 @@ export default function CreateBattle() {
                         <div className="label">
                             <span className="label-text">Select the language</span>
                         </div>
-                        <select {...register("language")} className="select select-bordered bg-base-200 rounded-b-btn textarea textarea-primary">
-                            <option disabled selected>no selection</option>
+                        <select {...register("language")}
+                                className="select select-bordered bg-base-200 rounded-b-btn textarea textarea-primary">
+                        <option disabled selected>no selection</option>
                             <option value="PYTHON">Python</option>
                             <option value="GOLANG">Golang</option>
                         </select>

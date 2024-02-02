@@ -45,6 +45,8 @@ export default function CreateTournament() { // Manca l'aggiunta di badges e TC
 
     async function fetchCreateTournament(data: TournamentDTO) {
         try {
+            if(!data.coordinators)
+                data.coordinators=[];
             (document.getElementById('my_modal_2') as HTMLDialogElement).showModal();
             if (data.privacy != "PUBLIC") data.privacy = TournamentDTO.privacy.PRIVATE;
             else data.privacy = TournamentDTO.privacy.PUBLIC;
