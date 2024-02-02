@@ -6,8 +6,8 @@ import type { Battle } from './Battle';
 import type { PageableObject } from './PageableObject';
 import type { SortObject } from './SortObject';
 export type PageBattle = {
-    totalElements?: number;
     totalPages?: number;
+    totalElements?: number;
     size?: number;
     content?: Array<Battle>;
     number?: number;
