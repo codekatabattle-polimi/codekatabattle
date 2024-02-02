@@ -93,8 +93,8 @@ export default function CreateBattle() {
                                 </label>
 
                             </div>
-                            <button onClick={() => loadData(name, input, expectedOutput, givenScore, isPublic)}
-                                    className="btn btn-primary">Add test</button>
+                            <label onClick={() => loadData(name, input, expectedOutput, givenScore, isPublic)}
+                                    className="btn btn-primary">Add test</label>
 
 
                 </div>
