@@ -1,4 +1,4 @@
-package it.polimi.codekatabattle;
+package it.polimi.codekatabattle.integration;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;

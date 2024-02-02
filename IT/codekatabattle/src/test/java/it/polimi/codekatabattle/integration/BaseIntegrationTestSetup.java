@@ -1,4 +1,4 @@
-package it.polimi.codekatabattle;
+package it.polimi.codekatabattle.integration;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.AfterAll;

@@ -1,6 +1,6 @@
 # CodeKataBattle - Backend
 
-This is the backend of the MVP of the CodeKataBattle application. It is a RESTful application made with Spring Boot.
+This is the backend of the MVP of the CodeKataBattle application. It is an application which exposes a RESTful web service made with Spring Boot.
 Please refer to the [ITD](https://github.com/codekatabattle-polimi/OrciuoloVitelloGiallongo/tree/master/DeliveryFolder) for more in-depth specifications regarding the implementation.
 
 ## Getting started
@@ -15,18 +15,26 @@ Please refer to the [ITD](https://github.com/codekatabattle-polimi/OrciuoloVitel
 Run the following commands:
 
 ```shell
-./mvnw install
-./mvnw spring-boot:run
+export CKB_GITHUB_PAT="{{Replace with your own PAT here}}"
+
+mvn install -DskipTests
+mvn spring-boot:run
 ```
 
 Alternatively, it is possible to use IntelliJ IDEA to run the application and manage dependencies directly.
+
+A valid PAT is needed in order to automatically create repositories to be forked when a battle is created.
+Without a valid PAT in the environment variables, the application will exit with the following exception:
+```
+java.lang.IllegalArgumentException: Could not resolve placeholder 'CKB_GITHUB_PAT' in value "${CKB_GITHUB_PAT}"
+```
 
 ## Building for production
 
 Run the following command:
 
 ```shell
-./mvnw compile
+mvn compile
 ```
 
 The build output will be located in the `target/` directory.
@@ -39,6 +47,7 @@ Docker is needed because the integration tests use a PostgreSQL database running
 Run the following command:
 
 ```shell
+export CKB_GITHUB_PAT="{{Replace with your own PAT here}}"
 export CKB_GITHUB_TEST_PAT="{{Replace with your own PAT here}}"
 ./mvnw test
 ```

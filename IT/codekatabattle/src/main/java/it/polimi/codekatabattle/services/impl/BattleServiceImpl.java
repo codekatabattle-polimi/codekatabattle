@@ -4,6 +4,7 @@ import it.polimi.codekatabattle.entities.*;
 import it.polimi.codekatabattle.models.dto.BattleDTO;
 import it.polimi.codekatabattle.models.dto.BattleEntryDTO;
 import it.polimi.codekatabattle.models.github.GHUser;
+import it.polimi.codekatabattle.repositories.BattleEntryRepository;
 import it.polimi.codekatabattle.repositories.BattleRepository;
 import it.polimi.codekatabattle.services.BattleService;
 import it.polimi.codekatabattle.services.ScoreService;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.URI;
 
 @Service
 public class BattleServiceImpl extends CrudServiceImpl<Battle> implements BattleService {
@@ -29,13 +31,16 @@ public class BattleServiceImpl extends CrudServiceImpl<Battle> implements Battle
 
     private final BattleRepository battleRepository;
 
+    private final BattleEntryRepository battleEntryRepository;
+
     private final TournamentService tournamentService;
 
     private final ScoreService scoreService;
 
-    public BattleServiceImpl(BattleRepository battleRepository, TournamentService tournamentService, ScoreService scoreService) {
+    public BattleServiceImpl(BattleRepository battleRepository, BattleEntryRepository battleEntryRepository, TournamentService tournamentService, ScoreService scoreService) {
         super(battleRepository);
         this.battleRepository = battleRepository;
+        this.battleEntryRepository = battleEntryRepository;
         this.tournamentService = tournamentService;
         this.scoreService = scoreService;
     }
@@ -218,14 +223,14 @@ public class BattleServiceImpl extends CrudServiceImpl<Battle> implements Battle
             .findFirst()
             .orElseThrow(() -> new ValidationException("User is not participating in this battle"));
 
-        int score = this.scoreService.scoreArtifact(battleEntry.getArtifactUrl(), battle);
-
         BattleEntry be = new BattleEntry();
         be.setBattle(battle);
         be.setParticipant(participant);
-        be.setScore(score);
+        be.setStatus(BattleEntryStatus.QUEUED);
+        be.setScore(0);
+        this.battleEntryRepository.save(be);
 
-        participant.setScore(score);
+        this.scoreService.processBattleEntry(be, URI.create(battleEntry.getArtifactUrl()).toURL());
         return be;
     }
 
