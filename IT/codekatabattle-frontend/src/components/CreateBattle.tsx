@@ -1,9 +1,10 @@
 import {SubmitHandler, useForm} from "react-hook-form";
-import { BattleDTO, BattleService, BattleTest} from "../services/openapi";
+import {BattleDTO, BattleService, BattleTest} from "../services/openapi";
 import {NavBar} from "./NavBar.tsx";
 import {useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import nunchaku from "../assets/nunchaku.png";
+import privacy = BattleTest.privacy;
 
 
 export default function CreateBattle() {
@@ -17,7 +18,6 @@ export default function CreateBattle() {
 
     async function fetchCreateBattle(data: BattleDTO) {
         try {
-            alert((data.tests ?? [])[0].public);
             data.tests = (testList ?? []);
             data.tournamentId = +params.tId!;
             if(data.language.toString()=="PYTHON")
@@ -32,15 +32,19 @@ export default function CreateBattle() {
         }
     }
 
-
-    function loadData(name: string, input: string, expectedOutput: string, givenScore: string, isPublic: string){
-        const test: BattleTest = {name: name, input: input, expectedOutput: expectedOutput, givesScore: +givenScore!, public: true};
+    const test: BattleTest = {name: "", input: "", expectedOutput: "", givesScore: 0, privacy: privacy.PRIVATE}
+    function loadData(name: string, input: string, expectedOutput: string, givenScore: string, isPublic : string){
         if(name=="" || input=="" || expectedOutput=="" || givenScore=="")
             alert("Fill all the fields")
         else{
-            if (isPublic == "true")
-                test.public=true;
-            else test.public = false;
+            test.name=name;
+            test.input=input;
+            test.expectedOutput=expectedOutput;
+            test.givesScore= +givenScore!;
+            if(isPublic == "PUBLIC")
+                test.privacy= privacy.PUBLIC;
+            else if(isPublic == "PRIVATE")
+                test.privacy= privacy.PRIVATE;
             const tests : BattleTest[] = (testList ?? []).concat(test);
 
             setTestList(tests);
@@ -56,7 +60,7 @@ export default function CreateBattle() {
         const[input, setInput] = useState('');
         const[expectedOutput, setExpectedOutput] = useState('');
         const[givenScore, setGivenScore] = useState('');
-        const[isPublic, setPublic] = useState("");
+        const[isPublic, setPublic] = useState("PRIVATE");
 
 
         return (
@@ -85,25 +89,30 @@ export default function CreateBattle() {
                                     className="textarea textarea-primary bg-base-300" onChange={event => setGivenScore(event.target.value)}
                                     placeholder="Score given..." style={{width: "100%", paddingBottom: "1%"}} />
                             </div>
-                            <div className="form-control" style={{width: "30%", padding: "2%"}}>
-                                <label
-                                    className="label cursor-pointer bg-base-300 rounded-box textarea textarea-primary">
-                                    <span className="label-text font-bold"
-                                          style={{paddingLeft: "1%"}}>Public:</span>
-                                    <input  onSelect={() => setPublic("true")} type="checkbox" className="toggle"
-                                            />
-                                </label>
+                        <div className="form-control" style={{width: "30%", padding: "2%"}}>
+                            <label style={{paddingLeft: "0.5%"}} className="form-control w-full max-w-xs ">
+                                <div className="label">
+                                    <span className="label-text"></span>
+                                </div>
+                                <select onChange={event => {setPublic(event.target.value)}}
+                                        className="select select-bordered bg-base-200 rounded-b-btn textarea textarea-primary">
+                                    <option value={"PUBLIC"}>PUBLIC</option>
+                                    <option disabled selected value={"PRIVATE"}>PRIVATE</option>
+                                </select>
+                                <div className="label">
+                                </div>
+                            </label>
 
-                            </div>
-                            <label onClick={() => loadData(name, input, expectedOutput, givenScore, isPublic)}
-                                    className="btn btn-primary">Add test</label>
+                        </div>
+                        <label onClick={() => loadData(name, input, expectedOutput, givenScore, isPublic)}
+                               className="btn btn-primary">Add test</label>
 
 
-                </div>
-    {/*botton close*/
-    }
-        <div className="modal-action">
-        <form method="dialog">
+                    </div>
+                    {/*botton close*/
+                    }
+                    <div className="modal-action">
+                        <form method="dialog">
 
                             <button className="btn">Close</button>
                         </form>
@@ -116,18 +125,39 @@ export default function CreateBattle() {
         )
     }
 
-    function  isPublic(publ : boolean){
-        if (publ)
-            return "Yes"
-        return "No"
+
+    function remove(index:number){
+        const list= testList;
+        if(!list)
+            return;
+        if(testList?.length-1==index){
+            list.pop();
+            setTestList(list);
+        }
+        else{
+            const t: BattleTest = list[testList?.length-1];
+            list[testList?.length-1]  = list[index];
+            list[index] = t;
+            list.pop();
+            setTestList(list);
+        }
+
+
+    }
+    const removeButton = (index: number) => {
+
+        return (<label className="badge badge-error badge-outline"
+                   onClick={() => remove(index)}>- remove</label>)
+
+
     }
 
     function testAdded() {
-        if(testList==null)
+        if (testList == null)
             return (<></>)
 
         return (
-            testList.map(((test) => (
+            testList.map(((test, index) => (
                 <tr>
                     <th className="font-bold" style={{alignItems: "center"}}>
                         {test.name}
@@ -148,7 +178,11 @@ export default function CreateBattle() {
 
 
                     <th>
-                        {isPublic((test.public ?? true))}
+                        {test.privacy?.toString()}
+                    </th>
+
+                    <th>
+                        {removeButton(index)}
                     </th>
                 </tr>
             )))
@@ -169,7 +203,7 @@ export default function CreateBattle() {
         /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
         <>
             <form onSubmit={handleSubmit(onSubmit1)}
-                  style={{alignSelf: "end", top: "8%", position: "fixed", width: "100%"}}>
+                  style={{alignSelf: "end", top: "8%", width: "100%"}}>
                 <ul className="menu menu-vertical lg:menu-horizontal " style={{width: "100%"}}>
                     <div className="w-12 h-12 rounded-full"
                          style={{paddingLeft: "0.5%",paddingTop: "1%",}}>
@@ -286,7 +320,7 @@ export default function CreateBattle() {
                                 <th>Input</th>
                                 <th>Expected output</th>
                                 <th>Score given</th>
-                                <th>Public</th>
+                                <th>Privacy</th>
                             </tr>
                             </thead>
                             {testAdded()}
