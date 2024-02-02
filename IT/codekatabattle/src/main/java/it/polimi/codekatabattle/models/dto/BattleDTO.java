@@ -53,8 +53,9 @@ public class BattleDTO {
         battle.setStartsAt(startsAt);
         battle.setEndsAt(endsAt);
         battle.setLanguage(language);
-        battle.setEnableSAT(enableSAT);
         battle.setTests(tests);
+        battle.setEnableSAT(enableSAT);
+        battle.setEnableManualEvaluation(enableManualEvaluation);
         battle.setTimelinessBaseScore(timelinessBaseScore);
         return battle;
     }
