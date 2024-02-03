@@ -214,6 +214,8 @@ export default function CreateTournament() { // Manca l'aggiunta di badges e TC
                                 </thead>
                                 <tbody>
                                 {/* row 1 */}
+                                    <input {...register("coordinators")} type="checkbox" className="checkbox" checked={false}
+                                           unselectable="off" hidden/>
                                 {selectCoordinator()}
                                 </tbody>
 
@@ -222,7 +224,7 @@ export default function CreateTournament() { // Manca l'aggiunta di badges e TC
                         </div>
                         {/*botton close*/}
                         <div className="modal-action">
-                            <form method="dialog">
+                        <form method="dialog">
                                 {/* if there is a button in form, it will close the modal */}
                                 <button className="btn">Close</button>
                             </form>
