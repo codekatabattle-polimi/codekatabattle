@@ -34,7 +34,10 @@ export const NavBar= () => {
                                 <label htmlFor="my-drawer" aria-label="close sidebar"
                                        className="drawer-overlay"></label>
                                 <ul className="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
-                                    <li><Link to={"/tournaments/view/0"}>My Tournaments</Link></li>
+                                    <li><Link to={"/all/tournaments/view/0"}>All Tournaments</Link></li>
+                                    <li><Link to={"/joined/tournaments/view/0"}>Joined Tournaments</Link></li>
+                                    <li><Link to={"/created/tournaments/view/0"}>Created Tournaments</Link></li>
+                                    <li><Link to={"/coordinated/tournaments/view/0"}>Coordinated Tournaments</Link></li>
                                     <li><Link to="/tournament/create">Create Tournaments</Link></li>
                                     <li><a>My Profile</a></li>
 
