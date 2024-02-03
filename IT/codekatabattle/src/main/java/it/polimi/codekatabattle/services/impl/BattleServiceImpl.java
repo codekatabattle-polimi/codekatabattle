@@ -4,8 +4,11 @@ import it.polimi.codekatabattle.entities.*;
 import it.polimi.codekatabattle.models.BattleTest;
 import it.polimi.codekatabattle.models.dto.BattleDTO;
 import it.polimi.codekatabattle.models.dto.BattleEntryDTO;
+import it.polimi.codekatabattle.models.dto.BattleParticipantUpdateDTO;
+import it.polimi.codekatabattle.models.dto.BattleUpdateDTO;
 import it.polimi.codekatabattle.models.github.GHUser;
 import it.polimi.codekatabattle.repositories.BattleEntryRepository;
+import it.polimi.codekatabattle.repositories.BattleParticipantRepository;
 import it.polimi.codekatabattle.repositories.BattleRepository;
 import it.polimi.codekatabattle.services.BattleService;
 import it.polimi.codekatabattle.services.ScoreService;
@@ -32,15 +35,18 @@ public class BattleServiceImpl extends CrudServiceImpl<Battle> implements Battle
 
     private final BattleRepository battleRepository;
 
+    private final BattleParticipantRepository battleParticipantRepository;
+
     private final BattleEntryRepository battleEntryRepository;
 
     private final TournamentService tournamentService;
 
     private final ScoreService scoreService;
 
-    public BattleServiceImpl(BattleRepository battleRepository, BattleEntryRepository battleEntryRepository, TournamentService tournamentService, ScoreService scoreService) {
+    public BattleServiceImpl(BattleRepository battleRepository, BattleParticipantRepository battleParticipantRepository, BattleEntryRepository battleEntryRepository, TournamentService tournamentService, ScoreService scoreService) {
         super(battleRepository);
         this.battleRepository = battleRepository;
+        this.battleParticipantRepository = battleParticipantRepository;
         this.battleEntryRepository = battleEntryRepository;
         this.tournamentService = tournamentService;
         this.scoreService = scoreService;
@@ -124,25 +130,49 @@ public class BattleServiceImpl extends CrudServiceImpl<Battle> implements Battle
 
     @Override
     @Transactional
-    public Battle updateById(Long battleId, BattleDTO battle, GHUser updater) throws EntityNotFoundException, ValidationException {
+    public Battle updateById(@NotNull Long battleId, @NotNull BattleUpdateDTO battle, @NotNull GHUser updater) throws EntityNotFoundException, ValidationException {
         Battle battleToUpdate = this.findById(battleId)
             .orElseThrow(() -> new EntityNotFoundException("Battle not found by id " + battleId));
 
         if (!battleToUpdate.getCreator().equals(updater.getLogin())) {
             throw new ValidationException("Only the creator of the battle can update it");
         }
-        if (battleToUpdate.hasStarted()) {
-            throw new ValidationException("Battle has already started, can't be updated");
+
+        battleToUpdate.setStartsAt(battle.getStartsAt());
+        battleToUpdate.setEndsAt(battle.getEndsAt());
+        battleToUpdate.setEnableManualEvaluation(battle.getEnableManualEvaluation());
+
+        return this.save(battleToUpdate);
+    }
+
+    @Override
+    @Transactional
+    public Battle updateBattleParticipantById(
+        @NotNull Long battleId,
+        @NotNull Long battleParticipantId,
+        @NotNull BattleParticipantUpdateDTO battleParticipantUpdate,
+        @NotNull GHUser updater
+    ) throws EntityNotFoundException, ValidationException {
+        Battle battleToUpdate = this.findById(battleId)
+            .orElseThrow(() -> new EntityNotFoundException("Battle not found by id " + battleId));
+
+        if (!battleToUpdate.getCreator().equals(updater.getLogin())) {
+            throw new ValidationException("Only the creator of the battle can update it");
         }
         if (battleToUpdate.hasEnded()) {
             throw new ValidationException("Battle has ended, can't be updated");
         }
+        if (!battleToUpdate.getEnableManualEvaluation()) {
+            throw new ValidationException("Manual evaluation is not enabled for this battle");
+        }
 
-        battleToUpdate.setTitle(battle.getTitle());
-        battleToUpdate.setDescription(battle.getDescription());
-        battleToUpdate.setStartsAt(battle.getStartsAt());
-        battleToUpdate.setEndsAt(battle.getEndsAt());
-        battleToUpdate.setLanguage(battle.getLanguage());
+        BattleParticipant participantToUpdate = battleToUpdate.getParticipants().stream()
+            .filter(p -> p.getId().equals(battleParticipantId))
+            .findFirst()
+            .orElseThrow(() -> new EntityNotFoundException("Battle participant not found by id " + battleParticipantId));
+
+        participantToUpdate.setScore(participantToUpdate.getScore() + battleParticipantUpdate.getScore());
+        this.battleParticipantRepository.save(participantToUpdate);
 
         return this.save(battleToUpdate);
     }
@@ -228,7 +258,6 @@ public class BattleServiceImpl extends CrudServiceImpl<Battle> implements Battle
         be.setBattle(battle);
         be.setParticipant(participant);
         be.setStatus(BattleEntryStatus.QUEUED);
-        be.setScore(0);
         this.battleEntryRepository.save(be);
 
         this.scoreService.processBattleEntry(be, URI.create(battleEntry.getArtifactUrl()).toURL());

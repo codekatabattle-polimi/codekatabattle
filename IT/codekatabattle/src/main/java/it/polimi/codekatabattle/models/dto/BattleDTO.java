@@ -27,7 +27,6 @@ public class BattleDTO {
     @NotBlank
     private String description;
 
-    @Future
     @JsonFormat(pattern=DATETIME_FORMAT)
     private LocalDateTime startsAt;
 

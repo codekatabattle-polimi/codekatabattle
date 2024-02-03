@@ -9,6 +9,8 @@ import it.polimi.codekatabattle.entities.BattleEntry;
 import it.polimi.codekatabattle.exceptions.OAuthException;
 import it.polimi.codekatabattle.models.dto.BattleDTO;
 import it.polimi.codekatabattle.models.dto.BattleEntryDTO;
+import it.polimi.codekatabattle.models.dto.BattleParticipantUpdateDTO;
+import it.polimi.codekatabattle.models.dto.BattleUpdateDTO;
 import it.polimi.codekatabattle.models.github.GHUser;
 import it.polimi.codekatabattle.services.AuthService;
 import it.polimi.codekatabattle.services.BattleService;
@@ -135,12 +137,33 @@ public class BattleController {
     )
     public ResponseEntity<Battle> updateById(
         @PathVariable("id") Long id,
-        @Valid @RequestBody BattleDTO battle,
+        @Valid @RequestBody BattleUpdateDTO battle,
         @Parameter(hidden = true) @RequestHeader("Authorization") String accessToken,
         @Parameter(hidden = true) @RequestHeader(value = "Origin", required = false) String origin
     ) throws OAuthException, EntityNotFoundException {
         GHUser user = this.authService.getUserInfo(accessToken, this.authService.getAuthOriginFromOriginHeader(origin));
         return ResponseEntity.ok().body(this.battleService.updateById(id, battle, user));
+    }
+
+    @PutMapping(
+        path = "/{battleId}/participant/{battleParticipantId}",
+        consumes = MediaType.APPLICATION_JSON_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @Operation(
+        summary = "Update battle",
+        description = "Update a battle participant by providing battle id, participant id and new battle participant data",
+        security = @SecurityRequirement(name = "github")
+    )
+    public ResponseEntity<Battle> updateBattleParticipantById(
+        @PathVariable("battleId") Long battleId,
+        @PathVariable("battleParticipantId") Long battleParticipantId,
+        @Valid @RequestBody BattleParticipantUpdateDTO battleParticipant,
+        @Parameter(hidden = true) @RequestHeader("Authorization") String accessToken,
+        @Parameter(hidden = true) @RequestHeader(value = "Origin", required = false) String origin
+    ) throws OAuthException, EntityNotFoundException {
+        GHUser user = this.authService.getUserInfo(accessToken, this.authService.getAuthOriginFromOriginHeader(origin));
+        return ResponseEntity.ok().body(this.battleService.updateBattleParticipantById(battleId, battleParticipantId, battleParticipant, user));
     }
 
     @DeleteMapping(
