@@ -1,5 +1,6 @@
 package it.polimi.codekatabattle.services.impl;
 
+import it.polimi.codekatabattle.entities.TournamentCoordinator;
 import it.polimi.codekatabattle.entities.TournamentParticipant;
 import it.polimi.codekatabattle.entities.Tournament;
 import it.polimi.codekatabattle.models.dto.TournamentDTO;
@@ -127,6 +128,12 @@ public class TournamentServiceImpl extends CrudServiceImpl<Tournament> implement
         tournamentToUpdate.setEndsAt(tournament.getEndsAt());
         tournamentToUpdate.setPrivacy(tournament.getPrivacy());
         tournamentToUpdate.setMaxParticipants(tournament.getMaxParticipants());
+        tournamentToUpdate.setCoordinators(tournament.getCoordinators().stream().map(c -> {
+            TournamentCoordinator tc = new TournamentCoordinator();
+            tc.setUsername(c);
+            tc.setTournament(tournamentToUpdate);
+            return tc;
+        }).toList());
 
         return this.save(tournamentToUpdate);
     }
