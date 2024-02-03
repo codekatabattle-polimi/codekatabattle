@@ -219,12 +219,12 @@ export const ProfilePage= () => {
 
                     <input type="radio" name="my_tabs_2" role="tab" className="tab" aria-label="Coordinated tournaments" checked/>
                     <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box p-6">
-                        ciao
+                        <CoordinatedTournaments/>
                     </div>
 
                     <input type="radio" name="my_tabs_2" role="tab" className="tab" aria-label="Joined tournaments"/>
                     <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box p-6">
-                        ciao
+                        <JoinedTournaments/>
                     </div>
                 </div>
 
