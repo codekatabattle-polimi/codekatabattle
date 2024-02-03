@@ -3,11 +3,13 @@ import avatar3 from "../assets/avatar3.png";
 import {LogoutButton} from "./LogoutButton.tsx";
 import {Link, useNavigate} from "react-router-dom";
 import dojo from "../assets/dojo.png";
-import {useState} from "react";
+import {useContext, useState} from "react";
+import {AuthContext} from "../context/AuthContext.ts";
 
 
 export const NavBar= () => {
     const [username,setUsername]=useState('');
+    const {user}=useContext(AuthContext);
     const navigate=useNavigate();
 
 
@@ -39,7 +41,7 @@ export const NavBar= () => {
                                     <li><Link to={"/created/tournaments/view/0"}>Created Tournaments</Link></li>
                                     <li><Link to={"/coordinated/tournaments/view/0"}>Coordinated Tournaments</Link></li>
                                     <li><Link to="/tournament/create">Create Tournaments</Link></li>
-                                    <li><a>My Profile</a></li>
+                                    <li><Link to={"/profile/" + user?.login?.toString()}>My Profile</Link></li>
 
                                 </ul>
                             </div>

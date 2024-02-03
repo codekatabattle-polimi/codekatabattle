@@ -32,11 +32,11 @@ export const ProfilePage= () => {
             setUser(user);
             if(!user.login)
                 return;
-            const createdTournaments =await TournamentService.findAllCreatedByUser(user.login.toString(),0, 5);
+            const createdTournaments =await TournamentService.findAllCreatedByUser(user.login.toString(),0, 4);
             setCreatedTournaments(createdTournaments);
-            const coordinatedTournaments =await TournamentService.findAllCoordinatedByUser(user.login.toString(),0, 5);
+            const coordinatedTournaments =await TournamentService.findAllCoordinatedByUser(user.login.toString(),0, 4);
             setCoordinatedTournaments(coordinatedTournaments);
-            const joinedTournaments =await TournamentService.findAllJoinedByUser(user.login.toString(),0, 5);
+            const joinedTournaments =await TournamentService.findAllJoinedByUser(user.login.toString(),0, 4);
             setJoinedTournaments(joinedTournaments);
         }catch (error1) {
             setError(error1 as Error);

@@ -18,7 +18,7 @@ export default function CreateBattle() {
 
     async function fetchCreateBattle(data: BattleDTO) {
         try {
-            data.tests = (testList ?? []);
+            data.tests = (testList ?? []).filter((battleTest ) => (battleTest.name!="_HIDE_" || battleTest.input!="_HIDE_" || battleTest.expectedOutput!="_HIDE_" || battleTest.givesScore!=0 || battleTest.privacy!=privacy.PRIVATE));
             data.tournamentId = +params.tId!;
             if(data.language.toString()=="PYTHON")
                 data.language=BattleDTO.language.PYTHON;
@@ -128,12 +128,13 @@ export default function CreateBattle() {
 
     function remove(index:number){
         const list= testList;
-        if(!list)
+        if(!testList || !list)
             return;
-        /*if(testList?.length-1==index){
+        if(testList?.length-1==index){
             list.pop();
             setTestList(list);
-            alert(testList?.length);
+            loadData("_HIDE_", "_HIDE_", "_HIDE_", "0", "PRIVATE");
+
         }
         else{
             const t: BattleTest = list[testList?.length-1];
@@ -141,10 +142,10 @@ export default function CreateBattle() {
             list[index] = t;
             list.pop();
             setTestList(list);
-           alert(testList?.length);*/
-        testList?.pop();
-        alert(index);
+            loadData("_HIDE_", "_HIDE_", "_HIDE_", "0", "PRIVATE");
+
         }
+    }
 
 
 
@@ -154,40 +155,46 @@ export default function CreateBattle() {
                    onClick={() => remove(index)}>- remove</label>)
     }
 
-  function testAdded() {
+    function visualizeAdd(test: BattleTest, index: number){
+        if(test.name=="_HIDE_" && test.input=="_HIDE_" && test.expectedOutput=="_HIDE_" && test.givesScore==0 && test.privacy==privacy.PRIVATE)
+            return (<></>)
+        else return (
+            <tr>
+                <th className="font-bold" style={{alignItems: "center"}}>
+                    {test.name}
+                </th>
+
+                <th>
+                    <div>{test.input}</div>
+                </th>
+
+                <th>
+                    {test.expectedOutput}
+                </th>
+
+
+                <th>
+                    {test.givesScore}
+                </th>
+
+
+                <th>
+                    {test.privacy?.toString()}
+                </th>
+
+                <th>
+                    {removeButton(index)}
+                </th>
+            </tr>
+        )
+    }
+
+    function testAdded() {
         if (testList == null)
             return (<></>)
 
         return (
-            testList.map(((test, index) => (
-                <tr>
-                    <th className="font-bold" style={{alignItems: "center"}}>
-                        {test.name}
-                    </th>
-
-                    <th>
-                        <div>{test.input}</div>
-                    </th>
-
-                    <th>
-                        {test.expectedOutput}
-                    </th>
-
-
-                    <th>
-                        {test.givesScore}
-                    </th>
-
-
-                    <th>
-                        {test.privacy?.toString()}
-                    </th>
-
-                    <th>
-                        {removeButton(index)}
-                    </th>
-                </tr>
-            )))
+            testList.map((test, index) => visualizeAdd(test, index))
         );
     }
 
