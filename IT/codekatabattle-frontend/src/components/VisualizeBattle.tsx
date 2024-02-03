@@ -293,7 +293,7 @@ export const VisualizeBattle= () => {
             message = "The battle starts at " + startDate.getFullYear() + "/" + (startDate.getMonth()+1) + "/" + startDate.getDate();
         }
          return (
-                <div style={{paddingLeft: "1%", paddingTop: "2%"}}>
+                <div style={{paddingLeft: "1%", paddingTop: "2.5%"}}>
                     <div className="dropdown dropdown-bottom">
                         <div tabIndex={0} role="button">
                             <div style={{color: "lightgray"}} className={colorBadge}> {status}
@@ -327,16 +327,16 @@ export const VisualizeBattle= () => {
                     {battleLanguage()}
                     {battleStatus()}
                 </div>
-                <div style={{width: "22%"}} className="flex-none navbar-end">
+                <div style={{width: "50%"}} className="flex-none navbar-end">
                     <div style={{padding: "2%"}}>
                         {joinOrLeaveButton()}
                     </div>
                     <ul className="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box">
                         <a>
                             <div style={{paddingRight: "10%", paddingLeft: "1%"}}>
-                                <h2 className="text-l"
-                                    style={{padding: "1%", paddingTop: "2%"}}> Created by: </h2>
-                                <h2 className="text-2xl font-bold"
+                                <h2 className="text-l w-full"
+                                    style={{padding: "1%", paddingTop: "2%"}}> CreatedBy: </h2>
+                                <h2 className="text-2xl font-bold w-full"
                                     style={{padding: "1%", paddingTop: "2%"}}> {battle?.creator}</h2>
                             </div>
                         </a>
