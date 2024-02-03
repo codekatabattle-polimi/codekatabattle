@@ -21,15 +21,23 @@ export const ProfilePage= () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchUser();
-        fetchCreatedTournaments();
-        fetchCoordinatedTournaments();
-        fetchJoinedTournaments();
+        fetchAll();
+
     }, [params]);
-    async function fetchUser(){
+    async function fetchAll(){
         try {
-            const user =await AuthService.getUserInfo((params.username ?? ""));
+            if(!params.username)
+                return;
+            const user =await AuthService.getUserInfo(params.username);
             setUser(user);
+            if(!user.login)
+                return;
+            const createdTournaments =await TournamentService.findAllCreatedByUser(user.login.toString(),0, 5);
+            setCreatedTournaments(createdTournaments);
+            const coordinatedTournaments =await TournamentService.findAllCoordinatedByUser(user.login.toString(),0, 5);
+            setCoordinatedTournaments(coordinatedTournaments);
+            const joinedTournaments =await TournamentService.findAllJoinedByUser(user.login.toString(),0, 5);
+            setJoinedTournaments(joinedTournaments);
         }catch (error1) {
             setError(error1 as Error);
             if (error?.message) alert(error?.message);
@@ -37,38 +45,7 @@ export const ProfilePage= () => {
 
     }
 
-    async function fetchCreatedTournaments(){
-        try {
-            const tournaments =await TournamentService.findAllCreatedByUser((user?.login ?? ""),1, 3);
-            setCreatedTournaments(tournaments);
-        }catch (error1) {
-            setError(error1 as Error);
-            if (error?.message) alert(error?.message);
-        }
 
-    }
-
-    async function fetchCoordinatedTournaments(){
-        try {
-            const tournaments =await TournamentService.findAllCoordinatedByUser((user?.login ?? ""),1, 5);
-            setCoordinatedTournaments(tournaments);
-        }catch (error1) {
-            setError(error1 as Error);
-            if (error?.message) alert(error?.message);
-        }
-
-    }
-
-    async function fetchJoinedTournaments(){
-        try {
-            const tournaments =await TournamentService.findAllJoinedByUser((user?.login ?? ""),1, 5);
-            setJoinedTournaments(tournaments);
-        }catch (error1) {
-            setError(error1 as Error);
-            if (error?.message) alert(error?.message);
-        }
-
-    }
 
     function to(id: string | undefined) {
         if (id != undefined) {
@@ -81,18 +58,19 @@ export const ProfilePage= () => {
         let tournaments : PageTournament|null;
         if (type=="created")
             tournaments = createdTournaments;
-        if (type=="coordinated")
+        else if (type=="coordinated")
             tournaments = coordinatedTournaments;
-        if (type=="joined")
+        else if (type=="joined")
             tournaments = joinedTournaments;
-        else  return (<></>);
+        else  return (<>Error</>);
 
         if (tournaments == null)
-            return (<></>);
-        if (tournaments.content == null) return (<></>);
+            return (<>No tournament found</>);
+        if (tournaments.content == null) return (<>No tournament found 1</>);
+        if (tournaments.content.length == 0) return (<>No tournament found 2</>);
         return(
             tournaments.content.map((t: Tournament) => (
-                <tr className=" shadow " style={{width: "100%"}} onClick={() => to(t.id?.toString())}>
+                <tr className=" bg-base-200 shadow rounded-box" style={{width: "100%"}} onClick={() => to(t.id?.toString())}>
                     <th style={{width: "10%", overflow: "auto"}}>
                         <div className=" ">
                             <div className="stat-title text-xs">Title</div>
@@ -169,11 +147,12 @@ export const ProfilePage= () => {
     }
 
     const CreatedTournaments= () => {
-        return(<table className="table " style={{width: "100%"}}>
+        return(
+            <table className="table bg-base-100 rounded-box" style={{width: "100%"}}>
             <thead style={{width: "100%"}}>
 
             </thead>
-            <tbody>
+            <tbody className="bg-base-100 rounded-box">
             {tournamentRows("created")}
             </tbody>
         </table>)
@@ -205,33 +184,44 @@ export const ProfilePage= () => {
                 <div className="bg-base-300" style={{alignSelf: "end", top: "8%", position: "fixed", width: "100%"}}>
                     <ul className="menu menu-vertical lg:menu-horizontal bg-base-300 rounded-box" style={{width: "100%"}}>
                     <div className="avatar">
-                        <div className="w-32 rounded-full">
+                        <div className="w-28 rounded-full">
                             <img src={user?.avatar_url}/>
                         </div>
                     </div>
-                    <h2 className="text-6xl font-bold" style={{padding: "2%"}}>{user?.login}</h2>
+                    <h2 className="text-5xl font-bold" style={{padding: "2%"}}>{user?.login}</h2>
                 </ul>
                 <div style={{height:"100%"}} role="tablist" className="tabs tabs-lifted">
-                    <input type="radio" name="my_tabs_2" role="tab" className="tab" aria-label="Created tournaments"/>
+                    <input type="radio" name="my_tabs_2" role="tab" className="tab" aria-label="Created tournaments" checked/>
                     <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box p-6">
                         <CreatedTournaments/>
+                        <div onClick={() => navigate("/created/tournaments/view/0")} className="badge badge-info gap-2 font-bold">
+                            {"See more >>"}
+                        </div>
                     </div>
 
-                    <input type="radio" name="my_tabs_2" role="tab" className="tab" aria-label="Coordinated tournaments" checked/>
+                    <input type="radio" name="my_tabs_2" role="tab" className="tab"
+                           aria-label="Coordinated tournaments"/>
                     <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box p-6">
                         <CoordinatedTournaments/>
+                        <div  onClick={() => navigate("/coordinated/tournaments/view/0")} className="badge badge-info gap-2 font-bold">
+                            {"See more >>"}
+                        </div>
                     </div>
 
                     <input type="radio" name="my_tabs_2" role="tab" className="tab" aria-label="Joined tournaments"/>
                     <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box p-6">
                         <JoinedTournaments/>
+                        <div  onClick={() => navigate("/joined/tournaments/view/0")} className="badge badge-info gap-2 font-bold">
+                            {"See more >>"}
+                        </div>
+
                     </div>
                 </div>
 
-            </div>
+                </div>
 
 
-            <div style={{top: "0%", position: "fixed", width: "100%", height: "10%"}}><NavBar/></div>
+                <div style={{top: "0%", position: "fixed", width: "100%", height: "10%"}}><NavBar/></div>
         </div>
         </>
     )
