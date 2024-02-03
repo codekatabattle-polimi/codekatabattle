@@ -132,12 +132,15 @@ public class TournamentServiceImpl extends CrudServiceImpl<Tournament> implement
         tournamentToUpdate.setEndsAt(tournament.getEndsAt());
         tournamentToUpdate.setPrivacy(tournament.getPrivacy());
         tournamentToUpdate.setMaxParticipants(tournament.getMaxParticipants());
-        tournamentToUpdate.setCoordinators(tournament.getCoordinators().stream().map(c -> {
-            TournamentCoordinator tc = new TournamentCoordinator();
-            tc.setUsername(c);
-            tc.setTournament(tournamentToUpdate);
-            return tc;
-        }).toList());
+
+        if (tournament.getCoordinators().size() > 0) {
+            tournamentToUpdate.setCoordinators(tournament.getCoordinators().stream().map(c -> {
+                TournamentCoordinator tc = new TournamentCoordinator();
+                tc.setUsername(c);
+                tc.setTournament(tournamentToUpdate);
+                return tc;
+            }).toList());
+        }
 
         return this.save(tournamentToUpdate);
     }
