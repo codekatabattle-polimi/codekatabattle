@@ -1,4 +1,4 @@
-import belt from "../assets/belt.png"
+import tournamentimg from "../assets/tournament.png"
 import Avatar from "../assets/avatar2.png"
 import {useContext, useEffect, useState} from "react";
 import {Tournament, TournamentService} from "../services/openapi";
@@ -399,7 +399,7 @@ export const VisualizeTournament= () => {
             message = "The tournament starts at " + startDate.getFullYear() + "/" + (startDate.getMonth()+1) + "/" + startDate.getDate();
         }
          return (
-                <div style={{paddingLeft: "1%", paddingTop: "1.5%"}}>
+                <div style={{paddingLeft: "1%", paddingTop: "1%"}}>
                     <div className="dropdown dropdown-bottom">
                         <div tabIndex={0} role="button">
                             <div style={{color: "lightgray"}} className={colorBadge}> {status}
@@ -424,7 +424,7 @@ export const VisualizeTournament= () => {
 
                     <div style={{padding: "1%"}} >
                         <div className="w-12 h-12 rounded-full">
-                            <img src={belt}/>
+                            <img src={tournamentimg}/>
                         </div>
                     </div>
 
@@ -433,7 +433,7 @@ export const VisualizeTournament= () => {
                     {tournamentPrivacy()}
                     {tournamentStatus()}
                 </div>
-                <div style={{width:"22%"}} className="flex-none navbar-end">
+                <div style={{width:"50%"}} className="flex-none navbar-end">
                     <div style={{padding: "2%"}}>
                         {joinOrLeaveButton()}
                     </div>
@@ -441,7 +441,7 @@ export const VisualizeTournament= () => {
                         <a>
                             <div style={{paddingRight: "10%", paddingLeft: "1%"}}>
                                 <h2 className="text-l"
-                                    style={{padding: "1%", paddingTop: "2%"}}> Created by: </h2>
+                                    style={{padding: "1%", paddingTop: "2%"}}> CreatedBy: </h2>
                                 <h2 className="text-2xl font-bold"
                                     style={{padding: "1%", paddingTop: "2%"}}> {tournament?.creator}</h2>
                             </div>

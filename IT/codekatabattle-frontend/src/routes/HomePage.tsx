@@ -67,7 +67,7 @@ export function HomePage() {
                                             and
                                             improve
                                             the art pf coding</p>
-                                        <button className="btn btn-primary"><Link to="tournaments/view/0">Check
+                                        <button className="btn btn-primary"><Link to={"/all/tournaments/view/0"}>Check
                                             tournaments and
                                             join
                                             them</Link></button>

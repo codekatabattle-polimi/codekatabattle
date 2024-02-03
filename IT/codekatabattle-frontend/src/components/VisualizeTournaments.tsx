@@ -207,9 +207,9 @@ export const VisualizeTournaments= () => {
             <div style={{alignSelf: "end", top: "8%",position:"fixed", width: "100%"}}>
 
                 <ul className="menu menu-vertical lg:menu-horizontal " style={{width: "100%"}}>
-                    <img src={earth} style={{width: "3%", height: "3%", paddingLeft: "1%", paddingTop: "0.1%"}}/>
+                    <img src={earth} style={{width: "4%", height: "4%", paddingLeft: "1%"}}/>
                     <h1 className="text-3xl font-bold"
-                        style={{paddingLeft: "0.5%", paddingBottom: "0.5%"}}>Tournament</h1>
+                        style={{paddingLeft: "0.5%", paddingBottom: "0.5%"}}> All Tournament</h1>
                 </ul>
                 <div className="overflow-x-auto">
                     <table className="table " style={{width: "100%"}}>
