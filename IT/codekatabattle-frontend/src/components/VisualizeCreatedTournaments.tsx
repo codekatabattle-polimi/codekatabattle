@@ -1,24 +1,28 @@
 import { PageTournament, Tournament, TournamentService} from "../services/openapi";
-import { useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {NavBar} from "./NavBar.tsx";
 import earth from "../assets/earth.png"
 import {useNavigate, useParams} from "react-router-dom";
 import student from "../assets/reading.png";
 import educator from "../assets/educator.png";
 import {ImageCreator} from "./ImageCreator.tsx";
-export const VisualizeTournaments= () => {
+import {AuthContext} from "../context/AuthContext.ts";
+export const VisualizeCreatedTournaments= () => {
     const params = useParams();
     const [tournaments, setTournaments] = useState<PageTournament | null>(null);
     const [error, setError] = useState<Error | null>(null);
     const navigate = useNavigate();
+    const {user}=useContext(AuthContext);
     useEffect(() => {
         fetchTournaments();
-    }, [params]);
+    }, [params,user]);
 
     async function fetchTournaments() {
         try {
-            const tournaments = await TournamentService.findAll(+params.page!, 5);
-            setTournaments(tournaments);
+            if(user?.login){
+                const tournaments = await TournamentService.findAllCreatedByUser(user.login,+params.page!, 5);
+                setTournaments(tournaments);
+            }
 
         } catch (error1) {
             setError(error1 as Error);
@@ -28,7 +32,7 @@ export const VisualizeTournaments= () => {
 
     function to(id: string | undefined) {
         if (id != undefined) {
-            const s = "/all/tournaments/" + id;
+            const s = "/created/tournaments/" + id;
             navigate(s);
             location.reload();
         }
