@@ -122,6 +122,10 @@ public class TournamentServiceImpl extends CrudServiceImpl<Tournament> implement
             throw new ValidationException("Tournament has ended, can't be updated");
         }
 
+        if (tournamentToUpdate.getMaxParticipants() != null && tournamentToUpdate.getParticipants().size() > tournamentToUpdate.getMaxParticipants()) {
+            throw new ValidationException("Tournament maximum number of participants can't be lower than the current number of participants");
+        }
+
         tournamentToUpdate.setTitle(tournament.getTitle());
         tournamentToUpdate.setDescription(tournament.getDescription());
         tournamentToUpdate.setStartsAt(tournament.getStartsAt());
