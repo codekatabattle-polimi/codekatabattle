@@ -17,8 +17,8 @@ Run the following commands:
 ```shell
 export CKB_GITHUB_PAT="{{Replace with your own PAT here}}"
 
-mvn install -DskipTests
-mvn spring-boot:run
+./mvnw install -DskipTests
+./mvnw spring-boot:run
 ```
 
 Alternatively, it is possible to use IntelliJ IDEA to run the application and manage dependencies directly.
@@ -34,7 +34,7 @@ java.lang.IllegalArgumentException: Could not resolve placeholder 'CKB_GITHUB_PA
 Run the following command:
 
 ```shell
-mvn compile
+./mvnw compile
 ```
 
 The build output will be located in the `target/` directory.
