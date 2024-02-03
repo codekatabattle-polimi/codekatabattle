@@ -1,7 +1,7 @@
 import Avatar from "../assets/avatar2.png"
 import {useContext, useEffect, useState} from "react";
 import {Battle, BattleService} from "../services/openapi";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {NavBar} from "./NavBar.tsx";
 import avatar2 from "../assets/avatar1.png";
 import {AuthContext} from "../context/AuthContext.ts";
@@ -14,6 +14,7 @@ export const VisualizeBattle= () => {
     const {bId} = useParams();
     const [battle, setBattle] = useState<Battle | null>(null);
     const [error, setError] = useState<Error | null>(null);
+    const navgate = useNavigate();
 
     useEffect(() => {
         fetchBattle();
@@ -164,6 +165,11 @@ export const VisualizeBattle= () => {
         );
     }
 
+    function seeEntries(username: string){
+        return (
+            <button onClick={()=>{navgate("/tournaments/"+ battle?.tournament?.id?.toString() + "/battles/" + battle?.id?.toString() + "/" + username)}} style={{width:"100%"}} className="btn btn-outline btn-info"> See Entries →</button>
+        )
+    }
     const BattleLeaderboard = () => {
         return (
             <div style={{padding: "1%", width:"fit-content", height:"fit-content"}} className="">
@@ -217,7 +223,7 @@ export const VisualizeBattle= () => {
         return (
             battle.participants?.sort((a, b) => (b?.score ?? 0) - (a?.score ?? 0)).map(((participant, index) => (
                 <tr className={colorOfWinner(index)}>
-                    <th style={{ alignItems: "center" }}>{index + 1}</th>
+                    <th style={{alignItems: "center"}}>{index + 1}</th>
                     <td>
                         <div className="flex items-center gap-3">
                             <div className="avatar">
@@ -232,6 +238,7 @@ export const VisualizeBattle= () => {
                         </div>
                     </td>
                     <td>{participant.score}</td>
+                    <td>{seeEntries((participant.username ?? " "))}</td>
                 </tr>
             )))
         );
