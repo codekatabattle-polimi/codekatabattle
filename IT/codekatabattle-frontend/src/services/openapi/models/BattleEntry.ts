@@ -18,7 +18,7 @@ export type BattleEntry = {
 export namespace BattleEntry {
     export enum status {
         QUEUED = 'QUEUED',
-        RUNNING = 'RUNNING',
+        TESTING = 'TESTING',
         ANALYZING = 'ANALYZING',
         COMPLETED = 'COMPLETED',
     }
