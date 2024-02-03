@@ -62,3 +62,8 @@ div.boxx-inner
   margin:25px 24px 0;
   padding-right:2px
 }
+
+div.page
+{
+  height:10000px;
+}

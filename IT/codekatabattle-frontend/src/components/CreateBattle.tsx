@@ -130,9 +130,10 @@ export default function CreateBattle() {
         const list= testList;
         if(!list)
             return;
-        if(testList?.length-1==index){
+        /*if(testList?.length-1==index){
             list.pop();
             setTestList(list);
+            alert(testList?.length);
         }
         else{
             const t: BattleTest = list[testList?.length-1];
@@ -140,19 +141,20 @@ export default function CreateBattle() {
             list[index] = t;
             list.pop();
             setTestList(list);
+           alert(testList?.length);*/
+        testList?.pop();
+        alert(index);
         }
 
 
-    }
+
     const removeButton = (index: number) => {
 
         return (<label className="badge badge-error badge-outline"
                    onClick={() => remove(index)}>- remove</label>)
-
-
     }
 
-    function testAdded() {
+  function testAdded() {
         if (testList == null)
             return (<></>)
 
