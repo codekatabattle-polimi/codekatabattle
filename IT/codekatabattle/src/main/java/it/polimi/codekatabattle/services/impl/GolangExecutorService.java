@@ -38,15 +38,15 @@ public class GolangExecutorService extends BaseExecutorService implements Execut
     public CompletableFuture<Container.ExecResult> executeSAT(URL artifactUrl) throws ExecutionException, IOException {
         copyArtifactsInContainer(staticcheckContainer, artifactUrl, "");
 
-        // Execute staticcheck on the main.go file and return the result
+        // Execute staticcheck on every go file and return the result
         try {
-            golangContainer.start();
-            Container.ExecResult result = golangContainer.execInContainer("staticcheck main.go");
+            staticcheckContainer.start();
+            Container.ExecResult result = staticcheckContainer.execInContainer("staticcheck ./...");
             return CompletableFuture.completedFuture(result);
         } catch (IOException | InterruptedException e) {
             throw new ExecutionException(e);
         } finally {
-            golangContainer.stop();
+            staticcheckContainer.stop();
         }
     }
 

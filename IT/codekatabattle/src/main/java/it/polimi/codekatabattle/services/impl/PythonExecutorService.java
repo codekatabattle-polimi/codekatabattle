@@ -15,6 +15,8 @@ public class PythonExecutorService extends BaseExecutorService implements Execut
 
     private static final GenericContainer<?> pythonContainer = new GenericContainer<>(DockerImageName.parse("python:3.12-alpine"));
 
+    private static final GenericContainer<?> pylintContainer = new GenericContainer<>(DockerImageName.parse("registry.gitlab.com/pipeline-components/pylint:latest"));
+
     @Override
     @Async
     public CompletableFuture<Container.ExecResult> execute(URL artifactUrl, String input) throws ExecutionException, IOException {
@@ -34,8 +36,18 @@ public class PythonExecutorService extends BaseExecutorService implements Execut
 
     @Override
     public CompletableFuture<Container.ExecResult> executeSAT(URL artifactUrl) throws ExecutionException, IOException {
-        // TODO: Implement SAT for Python (Pylint)
-        return null;
+        copyArtifactsInContainer(pylintContainer, artifactUrl, "");
+
+        // Execute staticcheck on the main.go file and return the result
+        try {
+            pylintContainer.start();
+            Container.ExecResult result = pylintContainer.execInContainer("/app/pylint **/*.py");
+            return CompletableFuture.completedFuture(result);
+        } catch (IOException | InterruptedException e) {
+            throw new ExecutionException(e);
+        } finally {
+            pylintContainer.stop();
+        }
     }
 
     @Override

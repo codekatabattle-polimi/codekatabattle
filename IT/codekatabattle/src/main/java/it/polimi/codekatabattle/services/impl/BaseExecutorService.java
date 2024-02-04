@@ -31,7 +31,7 @@ public class BaseExecutorService {
         }
         for (File file : files) {
             if (file.isFile()) {
-                container.copyFileToContainer(MountableFile.forHostPath(file.getAbsolutePath()), "/app");
+                container.copyFileToContainer(MountableFile.forHostPath(file.getAbsolutePath()), "/submission/");
             }
         }
     }
