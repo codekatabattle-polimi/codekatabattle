@@ -1,4 +1,4 @@
-import { PageTournament, Tournament, TournamentService} from "../services/openapi";
+import {AuthService, PageTournament, Tournament, TournamentService} from "../services/openapi";
 import {useContext, useEffect, useState} from "react";
 import {NavBar} from "./NavBar.tsx";
 import five from "../assets/high-five.png"
@@ -16,12 +16,17 @@ export const VisualizeCoordinatedTournaments= () => {
 
     useEffect(() => {
         fetchTournaments();
-    }, [params,user]);
+    }, []);
 
     async function fetchTournaments() {
         try {
-            if(user?.login) {
-                const tournaments = await TournamentService.findAllCoordinatedByUser(user.login, +params.page!, 5);
+            let tuser;
+            if(!params.username) tuser=user;
+            else {
+                 tuser = await AuthService.getUserInfo(params.username);
+            }
+            if(tuser?.login) {
+                const tournaments = await TournamentService.findAllCoordinatedByUser(tuser.login, +params.page!, 5);
                 setTournaments(tournaments);
             }
 
@@ -33,7 +38,7 @@ export const VisualizeCoordinatedTournaments= () => {
 
     function to(id: string | undefined) {
         if (id != undefined) {
-            const s = "/coordinated/tournaments/" + id;
+            const s = "/coordinated/tournaments/view/"+params.username+"/"+id;
             navigate(s);
             location.reload();
         }
@@ -54,7 +59,7 @@ export const VisualizeCoordinatedTournaments= () => {
                     <input className="join-item btn " type="radio" name="options" aria-label="1"
                            checked/>
                     <input className="join-item btn " type="radio" name="options" aria-label="2"
-                           onClick={() => (to("view/1"))}/>
+                           onClick={() => (to("1"))}/>
                 </div>
             )
         }
@@ -62,7 +67,7 @@ export const VisualizeCoordinatedTournaments= () => {
             return (
                 <div className="join">
                     <input className="join-item btn " type="radio" name="options" aria-label="1"
-                           onClick={() => (to("view/0"))}/>
+                           onClick={() => (to("0"))}/>
                     <input className="join-item btn " type="radio" name="options" aria-label="2"
                            checked/>
                 </div>
@@ -75,13 +80,13 @@ export const VisualizeCoordinatedTournaments= () => {
                            aria-label={"Page " + (+params.page! + 1).toString()}
                            checked/>
                     <input className="join-item btn " type="radio" name="options" aria-label="»"
-                           onClick={() => (to("view/" + (+params.page! + 1).toString()))}/>
+                           onClick={() => (to((+params.page! + 1).toString()))}/>
                     <input className="join-item btn " type="radio" name="options"
                            aria-label={(tournaments.totalPages - 1).toString()}
-                           onClick={() => (to("view/" + ((tournaments?.totalPages ?? 2) - 2).toString()))}/>
+                           onClick={() => (to(((tournaments?.totalPages ?? 2) - 2).toString()))}/>
                     <input className="join-item btn " type="radio" name="options"
                            aria-label={tournaments.totalPages.toString()}
-                           onClick={() => (to("view/" + ((tournaments?.totalPages ?? 1) - 1).toString()))}/>
+                           onClick={() => (to(((tournaments?.totalPages ?? 1) - 1).toString()))}/>
                 </div>
             )
         }
@@ -89,12 +94,12 @@ export const VisualizeCoordinatedTournaments= () => {
             return (
                 <div className="join">
                     <input className="join-item btn " type="radio" name="options" aria-label="1"
-                           onClick={() => (to("view/0"))}
+                           onClick={() => (to("0"))}
                     />
                     <input className="join-item btn " type="radio" name="options" aria-label="2"
-                           onClick={() => (to("view/1"))}/>
+                           onClick={() => (to("1"))}/>
                     <input className="join-item btn " type="radio" name="options" aria-label="«"
-                           onClick={() => (to("view/" + (+params.page! - 1).toString()))}
+                           onClick={() => (to( (+params.page! - 1).toString()))}
                     />
                     <input className="join-item btn " type="radio" name="options"
                            aria-label={"Page " + (+params.page! + 1).toString()}
@@ -104,23 +109,23 @@ export const VisualizeCoordinatedTournaments= () => {
         }
         return (<div className="join">
             <input className="join-item btn " type="radio" name="options" aria-label="1"
-                   onClick={() => (to("view/0"))}
+                   onClick={() => (to("0"))}
             />
             <input className="join-item btn " type="radio" name="options" aria-label="2"
-                   onClick={() => (to("view/1"))}/>
+                   onClick={() => (to("1"))}/>
             <input className="join-item btn " type="radio" name="options" aria-label="«"
-                   onClick={() => (to("view/" + (+params.page! - 1).toString()))}
+                   onClick={() => (to( (+params.page! - 1).toString()))}
             />
             <input className="join-item btn " type="radio" name="options" aria-label={"Page " + (+params.page! + 1).toString()}
                    checked/>
             <input className="join-item btn " type="radio" name="options" aria-label="»"
-                   onClick={() => (to("view/" + (+params.page! + 1).toString()))}
+                   onClick={() => (to( (+params.page! + 1).toString()))}
             />
             <input className="join-item btn " type="radio" name="options"
                    aria-label={(tournaments.totalPages - 1).toString()}
-                   onClick={() => (to("view/" + ((tournaments?.totalPages ?? 2) - 2).toString()))}/>
+                   onClick={() => (to( ((tournaments?.totalPages ?? 2) - 2).toString()))}/>
             <input className="join-item btn " type="radio" name="options" aria-label={tournaments.totalPages.toString()}
-                   onClick={() => (to("view/" + ((tournaments?.totalPages ?? 1) - 1).toString()))}/>
+                   onClick={() => (to( ((tournaments?.totalPages ?? 1) - 1).toString()))}/>
         </div>)
     }
 

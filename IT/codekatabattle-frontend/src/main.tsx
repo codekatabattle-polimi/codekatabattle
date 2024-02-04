@@ -43,17 +43,17 @@ const router = createBrowserRouter([
 
     },
     {
-        path: "/created/tournaments/view/:page",
+        path: "/created/tournaments/view/:username/:page",
         element: <VisualizeCreatedTournaments/>,
 
     },
     {
-        path: "/joined/tournaments/view/:page",
+        path: "/joined/tournaments/view/:username/:page",
         element: <VisualizeJoinedTournaments/>,
 
     },
     {
-        path: "/coordinated/tournaments/view/:page",
+        path: "/coordinated/tournaments/view/:username/:page",
         element: <VisualizeCoordinatedTournaments/>,
 
     },

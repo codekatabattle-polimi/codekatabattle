@@ -37,9 +37,9 @@ export const NavBar= () => {
                                        className="drawer-overlay"></label>
                                 <ul className="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
                                     <li><Link to={"/all/tournaments/view/0"}>All Tournaments</Link></li>
-                                    <li><Link to={"/joined/tournaments/view/0"}>Joined Tournaments</Link></li>
-                                    <li><Link to={"/created/tournaments/view/0"}>Created Tournaments</Link></li>
-                                    <li><Link to={"/coordinated/tournaments/view/0"}>Coordinated Tournaments</Link></li>
+                                    <li><Link to={"/joined/tournaments/view/"+user?.login+"/0"}>Joined Tournaments</Link></li>
+                                    <li><Link to={"/created/tournaments/view/"+user?.login+"/0"}>Created Tournaments</Link></li>
+                                    <li><Link to={"/coordinated/tournaments/view/"+user?.login+"/0"}>Coordinated Tournaments</Link></li>
                                     <li><Link to="/tournament/create">Create Tournaments</Link></li>
                                     <li><Link to={"/profile/" + user?.login?.toString()}>My Profile</Link></li>
 
@@ -68,7 +68,7 @@ export const NavBar= () => {
                         <ul className="menu menu-vertical lg:menu-horizontal">
                                 <input type="text" placeholder="Type here..." style={{height:"5%",paddingTop:"4%"}} className="bg-base-100 "
                                        onChange={event => setUsername(event.target.value)}/>
-                                <button className="btm btn-sm btn-ghost btn-circle" style={{right:"70%"}} onClick={()=>navigate("/"+username)}>
+                                <button className="btm btn-sm btn-ghost btn-circle" style={{right:"70%"}} onClick={()=>navigate("/profile/"+username)}>
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none"
                                          viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

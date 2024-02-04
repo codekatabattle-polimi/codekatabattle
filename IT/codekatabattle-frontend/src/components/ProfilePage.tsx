@@ -7,14 +7,14 @@ import {NavBar} from "./NavBar.tsx";
 import {useEffect, useState} from "react";
 import educator from "../assets/educator.png";
 import student from "../assets/reading.png";
-import avatar from "../assets/avatar2.png";
+import {ImageCreator} from "./ImageCreator.tsx";
 
 
 
 export const ProfilePage= () => {
     const params = useParams();
     const [error, setError] = useState<Error | null>(null);
-    const [user, setUser]=useState<GHUser|null>(null)
+    const [user, setUser]=useState<GHUser|null>(null);
     const [createdTournaments, setCreatedTournaments]=useState<PageTournament|null>(null)
     const [coordinatedTournaments, setCoordinatedTournaments]=useState<PageTournament|null>(null)
     const [joinedTournaments, setJoinedTournaments]=useState<PageTournament|null>(null)
@@ -28,16 +28,16 @@ export const ProfilePage= () => {
         try {
             if(!params.username)
                 return;
-            const user =await AuthService.getUserInfo(params.username);
-            setUser(user);
-            if(!user.login)
+            const tuser =await AuthService.getUserInfo(params.username);
+            setUser(tuser);
+            if(!tuser?.login)
                 return;
-            const createdTournaments =await TournamentService.findAllCreatedByUser(user.login.toString(),0, 4);
-            setCreatedTournaments(createdTournaments);
-            const coordinatedTournaments =await TournamentService.findAllCoordinatedByUser(user.login.toString(),0, 4);
-            setCoordinatedTournaments(coordinatedTournaments);
-            const joinedTournaments =await TournamentService.findAllJoinedByUser(user.login.toString(),0, 4);
-            setJoinedTournaments(joinedTournaments);
+            const tcreatedTournaments =await TournamentService.findAllCreatedByUser(tuser.login.toString(),0, 4);
+            setCreatedTournaments(tcreatedTournaments);
+            const tcoordinatedTournaments =await TournamentService.findAllCoordinatedByUser(tuser.login.toString(),0, 4);
+            setCoordinatedTournaments(tcoordinatedTournaments);
+            const tjoinedTournaments =await TournamentService.findAllJoinedByUser(tuser.login.toString(),0, 4);
+            setJoinedTournaments(tjoinedTournaments);
         }catch (error1) {
             setError(error1 as Error);
             if (error?.message) alert(error?.message);
@@ -130,7 +130,7 @@ export const ProfilePage= () => {
                             <div className="stat-figure text-secondary">
                                 <div className="avatar online">
                                     <div className="w-16 rounded-full">
-                                        <img src={avatar}/>
+                                        <ImageCreator username={t.creator}/>
                                     </div>
                                 </div>
                             </div>
@@ -194,7 +194,7 @@ export const ProfilePage= () => {
                     <input type="radio" name="my_tabs_2" role="tab" className="tab" aria-label="Created tournaments" checked/>
                     <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box p-6">
                         <CreatedTournaments/>
-                        <div onClick={() => navigate("/created/tournaments/view/0")} className="badge badge-info gap-2 font-bold">
+                        <div onClick={() => navigate("/created/tournaments/view/"+user?.login+"/0")} className="badge badge-info gap-2 font-bold">
                             {"See more >>"}
                         </div>
                     </div>
@@ -203,7 +203,7 @@ export const ProfilePage= () => {
                            aria-label="Coordinated tournaments"/>
                     <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box p-6">
                         <CoordinatedTournaments/>
-                        <div  onClick={() => navigate("/coordinated/tournaments/view/0")} className="badge badge-info gap-2 font-bold">
+                        <div onClick={() => navigate("/coordinated/tournaments/view/"+user?.login+"/0")} className="badge badge-info gap-2 font-bold">
                             {"See more >>"}
                         </div>
                     </div>
@@ -211,7 +211,7 @@ export const ProfilePage= () => {
                     <input type="radio" name="my_tabs_2" role="tab" className="tab" aria-label="Joined tournaments"/>
                     <div role="tabpanel" className="tab-content bg-base-100 border-base-300 rounded-box p-6">
                         <JoinedTournaments/>
-                        <div  onClick={() => navigate("/joined/tournaments/view/0")} className="badge badge-info gap-2 font-bold">
+                        <div  onClick={() => navigate("/joined/tournaments/view/"+user?.login+"/0")} className="badge badge-info gap-2 font-bold">
                             {"See more >>"}
                         </div>
 
