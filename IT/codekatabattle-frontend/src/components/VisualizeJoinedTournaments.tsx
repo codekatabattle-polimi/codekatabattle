@@ -1,8 +1,8 @@
-import { PageTournament, Tournament, TournamentService} from "../services/openapi";
+import {AuthService, PageTournament, Tournament, TournamentService} from "../services/openapi";
 import {useContext, useEffect, useState} from "react";
 import {NavBar} from "./NavBar.tsx";
 import join from "../assets/join.png"
-import {useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import student from "../assets/reading.png";
 import educator from "../assets/educator.png";
 import {ImageCreator} from "./ImageCreator.tsx";
@@ -15,12 +15,17 @@ export const VisualizeJoinedTournaments= () => {
     const {user}=useContext(AuthContext);
     useEffect(() => {
         fetchTournaments();
-    }, [params,user]);
+    }, []);
 
     async function fetchTournaments() {
         try {
-            if(user?.login){
-                const tournaments = await TournamentService.findAllJoinedByUser(user.login,+params.page!, 5);
+            let tuser;
+            if(!params.username) tuser=user;
+            else {
+                tuser = await AuthService.getUserInfo(params.username);
+            }
+            if(tuser?.login){
+                const tournaments = await TournamentService.findAllJoinedByUser(tuser.login,+params.page!, 5);
                 setTournaments(tournaments);
             }
 
@@ -32,7 +37,7 @@ export const VisualizeJoinedTournaments= () => {
 
     function to(id: string | undefined) {
         if (id != undefined) {
-            const s = "/joined/tournaments/" + id;
+            const s = "/joined/tournaments/view/" +params.username+"/"+ id;
             navigate(s);
             location.reload();
         }
@@ -53,7 +58,7 @@ export const VisualizeJoinedTournaments= () => {
                     <input className="join-item btn " type="radio" name="options" aria-label="1"
                            checked/>
                     <input className="join-item btn " type="radio" name="options" aria-label="2"
-                           onClick={() => (to("view/1"))}/>
+                           onClick={() => (to("1"))}/>
                 </div>
             )
         }
@@ -61,7 +66,7 @@ export const VisualizeJoinedTournaments= () => {
             return (
                 <div className="join">
                     <input className="join-item btn " type="radio" name="options" aria-label="1"
-                           onClick={() => (to("view/0"))}/>
+                           onClick={() => (to("0"))}/>
                     <input className="join-item btn " type="radio" name="options" aria-label="2"
                            checked/>
                 </div>
@@ -74,13 +79,13 @@ export const VisualizeJoinedTournaments= () => {
                            aria-label={"Page " + (+params.page! + 1).toString()}
                            checked/>
                     <input className="join-item btn " type="radio" name="options" aria-label="»"
-                           onClick={() => (to("view/" + (+params.page! + 1).toString()))}/>
+                           onClick={() => (to( (+params.page! + 1).toString()))}/>
                     <input className="join-item btn " type="radio" name="options"
                            aria-label={(tournaments.totalPages - 1).toString()}
-                           onClick={() => (to("view/" + ((tournaments?.totalPages ?? 2) - 2).toString()))}/>
+                           onClick={() => (to(((tournaments?.totalPages ?? 2) - 2).toString()))}/>
                     <input className="join-item btn " type="radio" name="options"
                            aria-label={tournaments.totalPages.toString()}
-                           onClick={() => (to("view/" + ((tournaments?.totalPages ?? 1) - 1).toString()))}/>
+                           onClick={() => (to(((tournaments?.totalPages ?? 1) - 1).toString()))}/>
                 </div>
             )
         }
@@ -88,12 +93,12 @@ export const VisualizeJoinedTournaments= () => {
             return (
                 <div className="join">
                     <input className="join-item btn " type="radio" name="options" aria-label="1"
-                           onClick={() => (to("view/0"))}
+                           onClick={() => (to("0"))}
                     />
                     <input className="join-item btn " type="radio" name="options" aria-label="2"
-                           onClick={() => (to("view/1"))}/>
+                           onClick={() => (to("1"))}/>
                     <input className="join-item btn " type="radio" name="options" aria-label="«"
-                           onClick={() => (to("view/" + (+params.page! - 1).toString()))}
+                           onClick={() => (to( (+params.page! - 1).toString()))}
                     />
                     <input className="join-item btn " type="radio" name="options"
                            aria-label={"Page " + (+params.page! + 1).toString()}
@@ -103,23 +108,23 @@ export const VisualizeJoinedTournaments= () => {
         }
         return (<div className="join">
             <input className="join-item btn " type="radio" name="options" aria-label="1"
-                   onClick={() => (to("view/0"))}
+                   onClick={() => (to("0"))}
             />
             <input className="join-item btn " type="radio" name="options" aria-label="2"
-                   onClick={() => (to("view/1"))}/>
+                   onClick={() => (to("1"))}/>
             <input className="join-item btn " type="radio" name="options" aria-label="«"
-                   onClick={() => (to("view/" + (+params.page! - 1).toString()))}
+                   onClick={() => (to( (+params.page! - 1).toString()))}
             />
             <input className="join-item btn " type="radio" name="options" aria-label={"Page " + (+params.page! + 1).toString()}
                    checked/>
             <input className="join-item btn " type="radio" name="options" aria-label="»"
-                   onClick={() => (to("view/" + (+params.page! + 1).toString()))}
+                   onClick={() => (to( (+params.page! + 1).toString()))}
             />
             <input className="join-item btn " type="radio" name="options"
                    aria-label={(tournaments.totalPages - 1).toString()}
-                   onClick={() => (to("view/" + ((tournaments?.totalPages ?? 2) - 2).toString()))}/>
+                   onClick={() => (to( ((tournaments?.totalPages ?? 2) - 2).toString()))}/>
             <input className="join-item btn " type="radio" name="options" aria-label={tournaments.totalPages.toString()}
-                   onClick={() => (to("view/" + ((tournaments?.totalPages ?? 1) - 1).toString()))}/>
+                   onClick={() => (to( ((tournaments?.totalPages ?? 1) - 1).toString()))}/>
         </div>)
     }
 
@@ -129,15 +134,15 @@ export const VisualizeJoinedTournaments= () => {
         if (tournaments.content == null) return (<></>);
         return(
             tournaments.content.map((t: Tournament) => (
-                <tr className=" shadow " style={{width: "100%"}} onClick={() => navigate("/tournaments/"+t.id?.toString())}>
-                    <th style={{width: "10%", overflow: "auto"}}>
+                <tr className=" shadow " style={{width: "100%"}} >
+                    <th style={{width: "10%", overflow: "auto"}} onClick={() => navigate("/tournaments/"+t.id?.toString())}>
                         <div className=" ">
                             <div className="stat-title text-xs">Title</div>
                             <div className="stat-value text-2xl">{t.title}
                             </div>
                         </div>
                     </th>
-                    <th>
+                    <th onClick={() => navigate("/tournaments/"+t.id?.toString())}>
                         <div className="" style={{overflow: "auto"}}>
                             <div className="stat-title text-xs">Total Coordinators</div>
                             <div className="navbar " style={{}}>
@@ -149,7 +154,7 @@ export const VisualizeJoinedTournaments= () => {
                             <div className="stat-desc"></div>
                         </div>
                     </th>
-                    <th>
+                    <th onClick={() => navigate("/tournaments/"+t.id?.toString())}>
                         <div className="" style={{overflow: "auto"}}>
                             <div className="stat-title text-xs">Total Participants</div>
                             <div className="navbar " style={{}}>
@@ -162,7 +167,7 @@ export const VisualizeJoinedTournaments= () => {
                         </div>
                     </th>
 
-                    <th>
+                    <th onClick={() => navigate("/tournaments/"+t.id?.toString())}>
                         <div className="stat" style={{overflow: "auto"}}>
                             <div className="stat-figure" style={{paddingTop: "25%"}}>
                                 <div
@@ -185,6 +190,7 @@ export const VisualizeJoinedTournaments= () => {
                     </th>
 
                     <th>
+                        <Link to={"/profile/"+t.creator}>
                         <div className="stat" style={{overflow: "auto"}}>
                             <div className="stat-figure text-secondary">
                                 <div className="avatar online">
@@ -196,6 +202,7 @@ export const VisualizeJoinedTournaments= () => {
                             <div className="stat-title" style={{paddingTop: "10%"}}>created by</div>
                             <div className="stat-desc text-primary">{t.creator}</div>
                         </div>
+                        </Link>
                     </th>
 
 
@@ -205,7 +212,6 @@ export const VisualizeJoinedTournaments= () => {
 
     }
 
-    if (tournaments == null) return (<>no tournament</>);
     return (
         <>
             <div style={{alignSelf: "end", top: "8%",position:"fixed", width: "100%"}}>

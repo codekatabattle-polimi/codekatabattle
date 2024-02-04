@@ -1,14 +1,14 @@
 import tournamentimg from "../assets/tournament.png"
-import Avatar from "../assets/avatar2.png"
 import {useContext, useEffect, useState} from "react";
 import {Tournament, TournamentCoordinator, TournamentDTO, TournamentService} from "../services/openapi";
-import {useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {NavBar} from "./NavBar.tsx";
 import avatar2 from "../assets/avatar1.png";
 import avatar3 from "../assets/avatar3.png";
 import privacy = Tournament.privacy;
 import {AuthContext} from "../context/AuthContext.ts";
 import pencil from "../assets/pencil.png";
+import {ImageCreator} from "./ImageCreator.tsx";
 
 
 
@@ -46,6 +46,7 @@ export const VisualizeTournament= () => {
         try {
             const tournament = await TournamentService.findById(+id!);
             setTournament(tournament);
+            setNewPublic((tournament?.privacy==Tournament.privacy.PUBLIC));
         } catch (error) {
             setError(error as Error);
         }
@@ -249,7 +250,6 @@ export const VisualizeTournament= () => {
                                         <thead>
                                         <tr>
                                             <th>User</th>
-                                            <th>N° of Battles</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -286,7 +286,6 @@ export const VisualizeTournament= () => {
                             </div>
                         </div>
                     </td>
-                    <td>10</td>
                 </tr>
             )))
         );
@@ -454,6 +453,9 @@ export const VisualizeTournament= () => {
     }
 
     function upperBar() {
+        if(!tournament?.creator){
+            return(<></>)
+        }
         return (
             <div className="navbar bg-base-100">
                 <div className="flex-1 navbar-start">
@@ -473,7 +475,8 @@ export const VisualizeTournament= () => {
                     <div style={{padding: "2%"}}>
                         {joinOrLeaveButton()}
                     </div>
-                    <ul className="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box">
+                    <Link to={"/profile/"+tournament.creator}>
+                    <ul className="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box" >
                         <a>
                             <div style={{paddingRight: "10%", paddingLeft: "1%"}}>
                                 <h2 className="text-l"
@@ -486,13 +489,14 @@ export const VisualizeTournament= () => {
                         <a>
                             <div style={{padding: "1%"}} className="avatar">
                                 <div className="w-16 h-16 rounded-box" style={{position: "relative", right: "0%"}}>
-                                    <img src={Avatar}/>
+                                    <ImageCreator username={tournament.creator}/>
                                 </div>
                             </div>
                         </a>
 
 
                     </ul>
+                        </Link>
 
                 </div>
             </div>

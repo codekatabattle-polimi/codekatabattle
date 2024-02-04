@@ -1,4 +1,3 @@
-import Avatar from "../assets/avatar2.png"
 import {useContext, useEffect, useState} from "react";
 import {
     Battle,
@@ -40,6 +39,7 @@ export const VisualizeBattle= () => {
         try {
             const battle = await BattleService.findById1(+bId!);
             setBattle(battle);
+            setNewOME((battle.enableManualEvaluation ?? false));
         } catch (error) {
             setError(error as Error);
         }
@@ -62,9 +62,14 @@ export const VisualizeBattle= () => {
     }
 
     function joinOrLeaveButton() {
+        if(!battle?.endsAt) return (<></>);
+        const endAt=new Date(battle.endsAt);
+        const now= new Date();
         if(battle?.participants == undefined )
-            return (<></>)
+            return (<></>);
         if(!user)return (<></>)
+        if(battle.creator == (user.login) && !battle.enableManualEvaluation && compareDate(now,endAt)==1)
+            return (<></>);
         if(battle.creator == (user.login))
             return (editButton())
         if(battle.participants.length == 0 || !battle.participants.map((partcipant) => partcipant.username == user?.login).reduce((boola, boolb) => boola || boolb))
@@ -387,14 +392,22 @@ export const VisualizeBattle= () => {
         let status: string;
         let message: string;
 
-        if (compareDate(now, endDate) == 1) {
+        if (compareDate(now, endDate) == 1 && !battle.enableManualEvaluation) {
             colorBadge = " font-bold badge badge-error";
             colorText = "dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52 badge-error badge-outline";
             status = "terminated";
             message = "The battle has ended! :(";
 
 
-        } else if (compareDate(now, startDate) == 1 && compareDate(now, endDate) != 1) {
+        }
+        else if (compareDate(now, endDate) == 1 && battle.enableManualEvaluation) {
+            colorBadge = " font-bold badge badge-secondary";
+            colorText = "dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52 badge-secondary badge-outline";
+            status = "Consolidation";
+            message = "The creator is performing manual evaluation";
+
+
+        }else if (compareDate(now, startDate) == 1 && compareDate(now, endDate) != 1) {
             colorBadge = " font-bold badge badge-warning";
             colorText = "dropdown-content z-[1] menu p-2 shadow bg-base-300 rounded-box w-52 badge-warning badge-outline";
             status = "ongoing";
@@ -426,6 +439,7 @@ export const VisualizeBattle= () => {
     }
 
     function upperBar() {
+        if(!battle?.creator)return(<></>);
         return (
             <div className="navbar bg-base-100">
                 <div className="flex-1 navbar-start">
@@ -445,6 +459,7 @@ export const VisualizeBattle= () => {
                     <div style={{padding: "2%"}}>
                         {joinOrLeaveButton()}
                     </div>
+                    <Link to={"/profile/"+battle.creator}>
                     <ul className="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box">
                         <a>
                             <div style={{paddingRight: "10%", paddingLeft: "1%"}}>
@@ -458,13 +473,14 @@ export const VisualizeBattle= () => {
                         <a>
                             <div style={{padding: "1%"}} className="avatar">
                                 <div className="w-16 h-16 rounded-box" style={{position: "relative", right: "0%"}}>
-                                    <img src={Avatar}/>
+                                    <img src={`https://github.com/${battle.creator}.png`}/>
                                 </div>
                             </div>
                         </a>
 
 
                     </ul>
+                    </Link>
 
                 </div>
             </div>
@@ -487,11 +503,11 @@ export const VisualizeBattle= () => {
                 <>
                     <div style={{paddingLeft: "1%"}}>
                         <div className="stats shadow bg-base-200 border border-base-300">
-                            <Link to={location+"/performe/OME"}>
+                            <Link to={location+"/perform/OME"}>
                                 <div className="stat bg-error">
                                     <div className="stat-title text-black">Click</div>
                                     <div className="stat-value text-black">
-                                        <p className="font-bold">Performe OME</p>
+                                        <p className="font-bold">Perform OME</p>
                                     </div>
                                     <div className="stat-desc text-black">for performing the manual evaluation and terminate the battle</div>
                                 </div>
