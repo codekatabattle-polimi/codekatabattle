@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,12 +78,12 @@ public class Battle extends BaseEntity {
     @JsonBackReference
     private Tournament tournament;
 
-    public boolean hasNotStarted() {
-        return LocalDateTime.now().isBefore(startsAt);
+    public boolean hasNotStarted(Clock clock) {
+        return LocalDateTime.now(clock).isBefore(startsAt);
     }
 
-    public boolean hasEnded() {
-        return endsAt.isBefore(LocalDateTime.now());
+    public boolean hasEnded(Clock clock) {
+        return endsAt.isBefore(LocalDateTime.now(clock));
     }
 
 }

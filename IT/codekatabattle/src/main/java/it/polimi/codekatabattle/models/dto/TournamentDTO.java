@@ -25,11 +25,9 @@ public class TournamentDTO {
     @NotBlank
     private String description;
 
-    @Future
     @JsonFormat(pattern=DATETIME_FORMAT)
     private LocalDateTime startsAt;
 
-    @Future
     @JsonFormat(pattern=DATETIME_FORMAT)
     private LocalDateTime endsAt;
 
