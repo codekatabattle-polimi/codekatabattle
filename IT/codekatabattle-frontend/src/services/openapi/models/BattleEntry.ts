@@ -3,8 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Battle } from './Battle';
+import type { BattleEntryProcessResult } from './BattleEntryProcessResult';
 import type { BattleParticipant } from './BattleParticipant';
-import type { BattleTestResult } from './BattleTestResult';
 export type BattleEntry = {
     id?: number;
     createdAt?: string;
@@ -12,7 +12,7 @@ export type BattleEntry = {
     battle?: Battle;
     participant?: BattleParticipant;
     status?: BattleEntry.status;
-    testResults?: Array<BattleTestResult>;
+    processResult?: BattleEntryProcessResult;
     score?: number;
 };
 export namespace BattleEntry {

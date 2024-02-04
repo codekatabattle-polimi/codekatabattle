@@ -10,5 +10,6 @@ export type BattleParticipant = {
     battle?: Battle;
     username?: string;
     score?: number;
+    receivedOME?: boolean;
 };
 

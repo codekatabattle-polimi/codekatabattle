@@ -2,9 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type SortObject = {
-    empty?: boolean;
-    sorted?: boolean;
-    unsorted?: boolean;
+export type SATResult = {
+    satName?: string;
+    warnings?: Array<string>;
+    score?: number;
 };
 
