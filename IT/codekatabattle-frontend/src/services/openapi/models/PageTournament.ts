@@ -6,15 +6,15 @@ import type { PageableObject } from './PageableObject';
 import type { SortObject } from './SortObject';
 import type { Tournament } from './Tournament';
 export type PageTournament = {
-    totalElements?: number;
     totalPages?: number;
+    totalElements?: number;
+    first?: boolean;
+    last?: boolean;
     size?: number;
     content?: Array<Tournament>;
     number?: number;
     sort?: SortObject;
     numberOfElements?: number;
-    first?: boolean;
-    last?: boolean;
     pageable?: PageableObject;
     empty?: boolean;
 };

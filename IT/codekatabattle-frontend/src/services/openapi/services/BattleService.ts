@@ -6,6 +6,8 @@ import type { Battle } from '../models/Battle';
 import type { BattleDTO } from '../models/BattleDTO';
 import type { BattleEntry } from '../models/BattleEntry';
 import type { BattleEntryDTO } from '../models/BattleEntryDTO';
+import type { BattleParticipantUpdateDTO } from '../models/BattleParticipantUpdateDTO';
+import type { BattleUpdateDTO } from '../models/BattleUpdateDTO';
 import type { PageBattle } from '../models/PageBattle';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -45,7 +47,7 @@ export class BattleService {
      */
     public static updateById1(
         id: number,
-        requestBody: BattleDTO,
+        requestBody: BattleUpdateDTO,
     ): CancelablePromise<Battle> {
         return __request(OpenAPI, {
             method: 'PUT',
@@ -127,6 +129,37 @@ export class BattleService {
             path: {
                 'id': id,
             },
+            errors: {
+                400: `Bad Request`,
+                401: `Unauthorized`,
+                404: `Not Found`,
+                500: `Internal Server Error`,
+            },
+        });
+    }
+    /**
+     * Update battle
+     * Update a battle participant by providing battle id, participant id and new battle participant data
+     * @param battleId
+     * @param battleParticipantId
+     * @param requestBody
+     * @returns Battle OK
+     * @throws ApiError
+     */
+    public static updateBattleParticipantById(
+        battleId: number,
+        battleParticipantId: number,
+        requestBody: BattleParticipantUpdateDTO,
+    ): CancelablePromise<Battle> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/battles/{battleId}/participant/{battleParticipantId}',
+            path: {
+                'battleId': battleId,
+                'battleParticipantId': battleParticipantId,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 400: `Bad Request`,
                 401: `Unauthorized`,

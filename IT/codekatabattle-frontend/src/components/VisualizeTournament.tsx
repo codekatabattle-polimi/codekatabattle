@@ -1,13 +1,14 @@
 import tournamentimg from "../assets/tournament.png"
 import Avatar from "../assets/avatar2.png"
 import {useContext, useEffect, useState} from "react";
-import {Tournament, TournamentService} from "../services/openapi";
+import {Tournament, TournamentCoordinator, TournamentDTO, TournamentService} from "../services/openapi";
 import {useNavigate, useParams} from "react-router-dom";
 import {NavBar} from "./NavBar.tsx";
 import avatar2 from "../assets/avatar1.png";
 import avatar3 from "../assets/avatar3.png";
 import privacy = Tournament.privacy;
 import {AuthContext} from "../context/AuthContext.ts";
+import pencil from "../assets/pencil.png";
 
 
 
@@ -17,6 +18,17 @@ export const VisualizeTournament= () => {
     const [tournament, setTournament] = useState<Tournament | null>(null);
     const [error, setError] = useState<Error | null>(null);
     const navigate= useNavigate();
+    const[newTitle,setNewTitle]=useState<string>();
+
+    const[newStartAt,setNewStartAt]=useState<string>();
+
+    const[newEndAt,setNewEndAt]=useState<string>();
+
+    const[newDescription,setNewDescription]=useState<string>();
+
+    const[newPublic,setNewPublic]=useState<boolean>(false);
+
+    const[newMaxParticipants,setnewMaxParticipants]=useState<number>();
 
     useEffect(() => {
         fetchTournament();
@@ -27,6 +39,9 @@ export const VisualizeTournament= () => {
             <>Id not found</>
         )
     }
+    const handleOnChange = () => {
+        setNewPublic(!newPublic);
+    };
     async function fetchTournament(){
         try {
             const tournament = await TournamentService.findById(+id!);
@@ -35,13 +50,27 @@ export const VisualizeTournament= () => {
             setError(error as Error);
         }
     }
+    function editDescription() {
+        if(tournament==null) return (<></>);
+        if(!user) return (<></>);
+        if(tournament.creator == (user.login)) {
+            return(
+            <div role="button" className="w-12 h-12 btn btn-ghost btn-circle"
+                 onClick={() => (document.getElementById('my_modal_4') as HTMLDialogElement).showModal()}>
+                <img src={pencil}/>
+            </div>
+        )
+        }
 
-    function compareDate(date1:Date, date2:Date){
-        if(date1.getFullYear() > date2.getFullYear())
+
+    }
+
+    function compareDate(date1: Date, date2: Date) {
+        if (date1.getFullYear() > date2.getFullYear())
             return 1;
-        if(date1.getFullYear() < date2.getFullYear())
+        if (date1.getFullYear() < date2.getFullYear())
             return 2;
-        if(date1.getMonth() > date2.getMonth())
+        if (date1.getMonth() > date2.getMonth())
             return 1;
         if(date1.getMonth() < date2.getMonth())
             return 2;
@@ -55,8 +84,9 @@ export const VisualizeTournament= () => {
     function joinOrLeaveButton() {
         if(tournament?.participants == undefined )
             return (<></>)
-        if(tournament.creator == (user?.login ?? ""))
-            return (<></>)
+        if(!user)return (<></>)
+        if(tournament.creator == (user.login))
+            return (editButton())
         if(tournament.participants.length == 0 || !tournament.participants.map((partcipant) => partcipant.username == user?.login).reduce((boola, boolb) => boola || boolb))
             return (joinButton())
         if(tournament.participants.map((partcipant) => partcipant.username == user?.login).reduce((boola, boolb) => boola || boolb))
@@ -81,6 +111,12 @@ export const VisualizeTournament= () => {
             return (<></>)
         return (<button style={{width:"100%"}} className="btn btn-error" onClick={() => leaveTournament()}>Leave</button>)
 
+    }
+    function editButton() {
+
+        return (<div  role="button" className="w-12 h-12 btn btn-ghost btn-circle" onClick={() => (document.getElementById('my_modal_1') as HTMLDialogElement).showModal()}>
+            <img src={pencil}/>
+        </div>)
     }
 
     async function joinTournament(){
@@ -462,39 +498,213 @@ export const VisualizeTournament= () => {
             </div>
         )
     }
-
-
-    if (error) {
-        return (
-            <>{error.message}</>
-        )
+    async function editTournamentDescription(){
+        (document.getElementById('my_modal_2') as HTMLDialogElement).showModal();
+        if(!tournament)return;
+        let desc;
+        if(newDescription!=undefined)desc=newDescription;
+        else desc=(tournament?.description ?? "");
+        const coordinators =(tournament.coordinators?.map(((coordinator: TournamentCoordinator):string=>{return coordinator.username ?? ""})));
+        const updateTournament:TournamentDTO={startsAt: tournament.startsAt, endsAt: tournament.endsAt, privacy: tournament.privacy, title:tournament.title,maxParticipants: tournament.maxParticipants,description: desc, coordinators: coordinators};
+        if(tournament.id!=undefined){
+            try{
+                await TournamentService.updateById(tournament.id,updateTournament);
+                navigate(location);
+                location.reload();
+            } catch (e) {
+                setError(e as Error);
+                if(error?.message)alert(error.message);
+            }
+        }
+    }
+    async function editTournament(){
+        (document.getElementById('my_modal_2') as HTMLDialogElement).showModal();
+        if(!tournament)return;
+        let s1,s2,s3,s4,s5;
+        if(newStartAt!=undefined)s1=newStartAt;
+        else s1=(tournament?.startsAt ?? "");
+        if(newEndAt!=undefined)s2=newEndAt;
+        else s2=(tournament?.endsAt ?? "");
+        if(newPublic)s3=Tournament.privacy.PUBLIC;
+        else if(!newPublic)s3=Tournament.privacy.PRIVATE;
+        else s3=(tournament?.privacy ?? true);
+        if(newTitle!=undefined)s4=newTitle;
+        else s4=(tournament?.title ?? "");
+        if(newMaxParticipants!=undefined)s5=newMaxParticipants;
+        else s5=(tournament?.maxParticipants ?? 1000);
+        const coordinators =(tournament.coordinators?.map(((coordinator: TournamentCoordinator):string=>{return coordinator.username ?? ""})));
+        const updateTournament:TournamentDTO={startsAt: s1, endsAt: s2, privacy: s3, title:s4,maxParticipants: s5,description: (tournament.description ?? ""), coordinators: coordinators};
+        if(tournament.id!=undefined){
+            try{
+                await TournamentService.updateById(tournament.id,updateTournament);
+                navigate(location);
+                location.reload();
+            } catch (e) {
+                setError(e as Error);
+                if(error?.message)alert(error.message);
+            }
+        }
     }
 
-    return (
-        <>
-
-            <div style={{alignSelf: "end", top: "8%", position: "fixed", width: "100%"}}>
-                {upperBar()}
-                <div style={{padding: "1%"}}>
-                    <div className="collapse collapse-arrow border border-base-300 bg-base-200">
-                        <input type="checkbox"/>
-                        <div className="collapse-title text-xl font-medium">
-                            Description
-                        </div>
-                        <div className="collapse-content">
-                            <p>{tournament?.description}</p>
-                        </div>
-                    </div>
+    function tournamentDate(){
+        if(!tournament)return(<>No information</>);
+        const startDate = new Date((tournament.startsAt ?? ""));
+        const endDate = new Date((tournament.endsAt ?? ""));
+        let message;
+        if(tournament.privacy==Tournament.privacy.PUBLIC) message="Tournament is public";
+        else message="Tournament is private";
+        return(
+            <>
+            <ul className="menu menu-vertical lg:menu-horizontal" style={{width: "100%"}}>
+                <div style={{width: "50%"}}>
+                    <label style={{width: "50%"}} className="label cursor-pointer  rounded-b-btn textarea "><h1
+                        className="font-bold">Old</h1></label>
                 </div>
-                <ul  style={{width:"100%"}} className="menu-lg lg:menu-horizontal bg-base-100 rounded-box">
-                    <TournamentLeaderboard/>
-                    <TournamentCoordinators/>
-                    <TournamentBattles/>
+
+                <div style={{width: "50%"}}>
+                    <label style={{width: "50%"}} className="label cursor-pointer  rounded-b-btn textarea ">
+                        <h1 className="font-bold">New</h1>
+                    </label>
+                </div>
+            </ul>
+            <ul className="menu menu-vertical lg:menu-horizontal" style={{width: "100%"}}>
+                <label style={{width: "50%"}} className="label cursor-pointer  rounded-b-btn textarea "><span
+                    className=" font-bold">{tournament.title}</span></label>
+
+                <label style={{width: "50%"}} className="label cursor-pointer  rounded-b-btn textarea ">
+                    <input
+                        className="textarea textarea-primary bg-base-200"
+                        onChange={event => setNewTitle(event.target.value)}
+                        placeholder="Tournament Title..."/>
+
+                </label>
+            </ul>
+                <ul className="menu menu-vertical lg:menu-horizontal" style={{width: "100%"}}>
+                    <label style={{width: "50%"}} className="label cursor-pointer  rounded-b-btn textarea "><span
+                        className=" font-bold">{"Max students:" + tournament.maxParticipants}</span></label>
+
+                    <label style={{width: "50%"}} className="label cursor-pointer  rounded-b-btn textarea ">
+                        <input
+                            className="textarea textarea-primary bg-base-200"
+                            onChange={event => setnewMaxParticipants(+event.target.value)}
+                            placeholder="Max number of students..."/>
+
+                    </label>
+
+                </ul>
+                <ul className="menu menu-vertical lg:menu-horizontal" style={{width: "100%"}}>
+                    <label style={{width: "50%"}} className="label cursor-pointer  rounded-b-btn textarea "><span
+                        className=" font-bold">{"Enrollment deadline: " + startDate.getFullYear() + "/" + (startDate.getMonth() + 1) + "/" +
+                        startDate.getDate()}</span></label>
+                    <input style={{width: "50%"}} type="date" placeholder="Type here..."
+                           className="bg-base-100 "
+                           onChange={event => setNewStartAt(event.target.value + "T09:40:46.268Z")}/>
                 </ul>
 
-            </div>
-            <div style={{top: "0%", position:"fixed", width:"100%", height:"10%"}}><NavBar/></div>
-        </>
+                <ul className="menu menu-vertical lg:menu-horizontal" style={{width: "100%"}}>
 
-    )
+                    <label style={{width: "50%"}} className="label cursor-pointer  rounded-b-btn textarea "><span
+                        className=" font-bold">{"Final deadline: " + endDate.getFullYear() + "/" + (endDate.getMonth() + 1) + "/" +
+                        endDate.getDate()}</span></label>
+                    <input style={{width: "50%"}} type="date" placeholder="Type here..."
+                           className="bg-base-100 "
+                           onChange={event => setNewEndAt(event.target.value + "T09:40:46.268Z")}/>
+
+                </ul>
+                <ul className="menu menu-vertical lg:menu-horizontal" style={{width: "100%"}}>
+                    <label style={{width: "50%"}} className="label cursor-pointer  rounded-b-btn textarea "><span
+                        className=" font-bold">{message}</span></label>
+
+                    <label style={{width: "50%"}} className="label cursor-pointer  rounded-b-btn textarea ">
+                        <span className=" font-bold">Public</span>
+                        <input
+                            type="checkbox"
+                            id="topping"
+                            className="toggle"
+                            value="true"
+                            checked={newPublic}
+                            onChange={handleOnChange}
+                        />
+
+                    </label>
+
+            </ul>
+                <label className="btn btn-primary" onClick={() => editTournament()}>Edit</label>
+            </>
+                )
+
+
+                }
+
+                return (
+                <>
+
+                    <div style={{alignSelf: "end", top: "8%", position: "fixed", width: "100%"}}>
+                        {upperBar()}
+                        <div style={{padding: "1%"}}>
+                            <div className="collapse collapse-arrow border border-base-300 bg-base-200">
+                                <input type="checkbox"/>
+                                <div className="collapse-title text-xl font-medium">
+                                    Description
+                                </div>
+                                <div className="collapse-content">
+                                    <p>{tournament?.description}</p>
+                                    {editDescription()}
+                                </div>
+                            </div>
+                        </div>
+                        <ul style={{width: "100%"}} className="menu-lg lg:menu-horizontal bg-base-100 rounded-box">
+                            <TournamentLeaderboard/>
+                            <TournamentCoordinators/>
+                            <TournamentBattles/>
+                        </ul>
+                        <dialog id="my_modal_1" className="modal">
+                            <div className="modal-box">
+                                <h3 className="font-bold text-lg">Hello! You are the creator so you can be edit
+                                    this: </h3>
+                                {tournamentDate()}
+                                <div className="modal-action">
+                                    <form method="dialog">
+                                        <button className="btn">Close</button>
+                                    </form>
+                                </div>
+                            </div>
+                            <form method="dialog" className="modal-backdrop">
+                                <button>close</button>
+                            </form>
+                        </dialog>
+                        <dialog id="my_modal_4" className="modal">
+                            <div className="modal-box">
+                                <h3 className="mb-2 font-bold text-2xl">Hello! You are the creator so you can be edit
+                                    this: </h3>
+                                <h2 className="mb-1 font-bold text-xl">Old</h2>
+                                <h1 className="mb-5 font-bold">{tournament?.description}</h1>
+                                <h2 className="mb-2 font-bold text-xl">New</h2>
+                                <input style={{width:"100%"}}
+                                    className="mb-6 textarea textarea-lg bg-base-200 horizontal"
+                                    onChange={event => setNewDescription(event.target.value)}
+                                    placeholder="Tournament description..."/>
+
+                                <label className="btn btn-primary" onClick={() => editTournamentDescription()}>Edit</label>
+
+                                <div className="modal-action">
+                                    <form method="dialog">
+                                        <button className="btn">Close</button>
+                                    </form>
+                                </div>
+                            </div>
+                            <form method="dialog" className="modal-backdrop">
+                                <button>close</button>
+                            </form>
+                        </dialog>
+                        <dialog id="my_modal_2" className="modal">
+                            <span className="loading loading-spinner text-primary"></span>
+                        </dialog>
+                    </div>
+                    <div style={{top: "0%", position: "fixed", width: "100%", height: "10%"}}><NavBar/></div>
+                </>
+
+
+                )
+
 }

@@ -2,9 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type SortObject = {
-    empty?: boolean;
-    unsorted?: boolean;
-    sorted?: boolean;
+export type BattleUpdateDTO = {
+    startsAt?: string;
+    endsAt?: string;
+    enableManualEvaluation?: boolean;
 };
 

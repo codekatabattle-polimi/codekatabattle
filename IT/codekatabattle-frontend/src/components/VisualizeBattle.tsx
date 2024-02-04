@@ -1,12 +1,17 @@
 import Avatar from "../assets/avatar2.png"
 import {useContext, useEffect, useState} from "react";
-import {Battle, BattleService} from "../services/openapi";
+import {
+    Battle,
+    BattleService, BattleUpdateDTO,
+} from "../services/openapi";
 import {useNavigate, useParams} from "react-router-dom";
 import {NavBar} from "./NavBar.tsx";
 import avatar2 from "../assets/avatar1.png";
 import {AuthContext} from "../context/AuthContext.ts";
 import language = Battle.language;
 import fight from "../assets/judo.png";
+import pencil from "../assets/pencil.png";
+
 
 
 export const VisualizeBattle= () => {
@@ -14,7 +19,13 @@ export const VisualizeBattle= () => {
     const {bId} = useParams();
     const [battle, setBattle] = useState<Battle | null>(null);
     const [error, setError] = useState<Error | null>(null);
-    const navgate = useNavigate();
+
+    const[newStartAt,setNewStartAt]=useState<string>();
+
+    const[newEndAt,setNewEndAt]=useState<string>();
+
+    const[newOME,setNewOME]=useState<boolean>(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchBattle();
@@ -53,8 +64,9 @@ export const VisualizeBattle= () => {
     function joinOrLeaveButton() {
         if(battle?.participants == undefined )
             return (<></>)
-        if(battle.creator == (user?.login ?? ""))
-            return (<></>)
+        if(!user)return (<></>)
+        if(battle.creator == (user.login))
+            return (editButton())
         if(battle.participants.length == 0 || !battle.participants.map((partcipant) => partcipant.username == user?.login).reduce((boola, boolb) => boola || boolb))
             return (joinButton())
         if(battle.participants.map((partcipant) => partcipant.username == user?.login).reduce((boola, boolb) => boola || boolb))
@@ -62,6 +74,12 @@ export const VisualizeBattle= () => {
         else return (<></>)
     }
 
+    function editButton() {
+
+        return (<div  role="button" className="w-12 h-12 btn btn-ghost btn-circle" onClick={() => (document.getElementById('my_modal_1') as HTMLDialogElement).showModal()}>
+            <img src={pencil}/>
+        </div>)
+    }
 
     async function leaveBattle(){
         try{
@@ -91,7 +109,9 @@ export const VisualizeBattle= () => {
     }
 
 
-
+    const handleOnChange = () => {
+        setNewOME(!newOME);
+    };
 
     function joinButton() {
         const now = new Date()
@@ -99,6 +119,93 @@ export const VisualizeBattle= () => {
         if(compareDate(now,startDate) == 1 || compareDate(now,startDate) == 0)
             return (<></>)
         return (<button style={{width:"100%"}} className="btn btn-success" onClick={() => joinBattle()}>Join</button>)
+    }
+    async function editBattle(){
+        (document.getElementById('my_modal_2') as HTMLDialogElement).showModal();
+        if(!battle)return;
+        let s1,s2,s3;
+        if(newStartAt!=undefined)s1=newStartAt;
+        else s1=(battle?.startsAt ?? "");
+        if(newEndAt!=undefined)s2=newEndAt;
+        else s2=(battle?.endsAt ?? "");
+        if(newOME)s3=true;
+        else if(!newOME)s3=false;
+        else s3=(battle?.enableManualEvaluation ?? true);
+        const updateBattle:BattleUpdateDTO={startsAt: s1, endsAt: s2, enableManualEvaluation: s3};
+        if(battle.id!=undefined){
+            try{
+                await BattleService.updateById1(battle.id,updateBattle);
+                navigate(location);
+                location.reload();
+            } catch (e) {
+                setError(e as Error);
+                if(error?.message)alert(error.message);
+            }
+        }
+    }
+    function tournamentDate(){
+        if(!battle)return(<>No information</>);
+        const startDate = new Date((battle.startsAt ?? ""));
+        const endDate = new Date((battle.endsAt ?? ""));
+        let message;
+        if(battle.enableManualEvaluation) message="Manual evaluation: true";
+        else message="Manual evaluation: false";
+        return(
+            <>
+                <ul className="menu menu-vertical lg:menu-horizontal" style={{width: "100%"}}>
+                    <div style={{width: "50%"}}>
+                        <label style={{width: "50%"}} className="label cursor-pointer  rounded-b-btn textarea "><h1
+                            className="font-bold">Old</h1></label>
+                    </div>
+
+                    <div style={{width: "50%"}}>
+                        <label style={{width: "50%"}} className="label cursor-pointer  rounded-b-btn textarea ">
+                            <h1 className="font-bold">New</h1>
+                        </label>
+                    </div>
+                </ul>
+                    <ul className="menu menu-vertical lg:menu-horizontal" style={{width: "100%"}}>
+                        <label style={{width: "50%"}} className="label cursor-pointer  rounded-b-btn textarea "><span
+                            className=" font-bold">{"Enrollment deadline: " + startDate.getFullYear() + "/" + (startDate.getMonth() + 1) + "/" +
+                            startDate.getDate()}</span></label>
+                        <input style={{width: "50%"}} type="date" placeholder="Type here..."
+                               className="bg-base-100 "
+                               onChange={event => setNewStartAt(event.target.value + "T09:40:46.268Z")}/>
+                    </ul>
+
+                    <ul className="menu menu-vertical lg:menu-horizontal" style={{width: "100%"}}>
+
+                        <label style={{width: "50%"}} className="label cursor-pointer  rounded-b-btn textarea "><span
+                            className=" font-bold">{"Final deadline: " + endDate.getFullYear() + "/" + (endDate.getMonth() + 1) + "/" +
+                            endDate.getDate()}</span></label>
+                        <input style={{width: "50%"}} type="date" placeholder="Type here..."
+                               className="bg-base-100 "
+                               onChange={event => setNewEndAt(event.target.value + "T09:40:46.268Z")}/>
+
+                    </ul>
+                    <ul className="menu menu-vertical lg:menu-horizontal" style={{width: "100%"}}>
+                        <label style={{width: "50%"}} className="label cursor-pointer  rounded-b-btn textarea "><span
+                            className=" font-bold">{message}</span></label>
+
+                        <label style={{width: "50%"}} className="label cursor-pointer  rounded-b-btn textarea ">
+                            <span className=" font-bold">OME:</span>
+                            <input
+                                type="checkbox"
+                                id="topping"
+                                className="toggle"
+                                value="true"
+                                checked={newOME}
+                                onChange={handleOnChange}
+                            />
+
+                        </label>
+
+                    </ul>
+                <label className="btn btn-primary" onClick={() => editBattle()}>Edit</label>
+            </>
+        )
+
+
     }
     const BattleTest = () => {
         return (
@@ -167,7 +274,7 @@ export const VisualizeBattle= () => {
 
     function seeEntries(username: string){
         return (
-            <button onClick={()=>{navgate("/tournaments/"+ battle?.tournament?.id?.toString() + "/battles/" + battle?.id?.toString() + "/" + username)}} style={{width:"100%"}} className="btn btn-outline btn-info"> See Entries →</button>
+            <button onClick={()=>{navigate("/tournaments/"+ battle?.tournament?.id?.toString() + "/battles/" + battle?.id?.toString() + "/" + username)}} style={{width:"100%"}} className="btn btn-outline btn-info"> See Entries →</button>
         )
     }
     const BattleLeaderboard = () => {
@@ -391,10 +498,11 @@ export const VisualizeBattle= () => {
 
                 <ul style={{width: "100%"}} className="menu-lg lg:menu-horizontal bg-base-100 rounded-box">
                     <a href={battle?.repositoryUrl}
-                       style={{paddingTop: "1%", paddingLeft: "1%", width: "12%", height:"99%"}}>
+                       style={{paddingTop: "1%", paddingLeft: "1%", width: "12%", height: "99%"}}>
                         <div className="bg-info rounded-xl border-base-300 " style={{height: "78%", width: "100%"}}><p
                             className="font-bold text-base-300"
-                            style={{paddingLeft: "8%", paddingTop: "10%",paddingBottom: "10%"}}>Repository Link ↘</p></div>
+                            style={{paddingLeft: "8%", paddingTop: "10%", paddingBottom: "10%"}}>Repository Link ↘</p>
+                        </div>
                     </a>
                     <BattleLeaderboard/>
                     <BattleTest/>
@@ -411,7 +519,21 @@ export const VisualizeBattle= () => {
 
                     </div>
                 </div>
-
+                <dialog id="my_modal_1" className="modal">
+                    <div className="modal-box">
+                        <h3 className="font-bold text-lg">Hello! You are the creator so you can be edit
+                            this: </h3>
+                        {tournamentDate()}
+                        <div className="modal-action">
+                            <form method="dialog">
+                                <button className="btn">Close</button>
+                            </form>
+                        </div>
+                    </div>
+                    <form method="dialog" className="modal-backdrop">
+                        <button>close</button>
+                    </form>
+                </dialog>
             </div>
             <div style={{top: "0%", position: "fixed", width: "100%", height: "10%"}}><NavBar/></div>
         </>
