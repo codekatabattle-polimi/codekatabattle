@@ -27,6 +27,6 @@ public class BattleTestResult {
     private boolean passed;
 
     @PositiveOrZero
-    private int score;
+    private Integer score = 0;
 }
 

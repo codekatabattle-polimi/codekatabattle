@@ -19,7 +19,7 @@ public class GolangExecutorService extends BaseExecutorService implements Execut
 
     @Override
     @Async
-    public CompletableFuture<Container.ExecResult> execute(URL artifactUrl, String input) throws ExecutionException, IOException {
+    public CompletableFuture<Container.ExecResult> executeArtifact(URL artifactUrl, String input) throws ExecutionException, IOException {
         copyArtifactsInContainer(golangContainer, artifactUrl, input);
 
         // Execute the main.go file in the Golang container and return the result

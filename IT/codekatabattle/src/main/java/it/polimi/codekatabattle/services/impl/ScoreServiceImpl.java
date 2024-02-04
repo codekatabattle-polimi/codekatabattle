@@ -17,6 +17,7 @@ import org.testcontainers.containers.Container;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -47,6 +48,16 @@ public class ScoreServiceImpl implements ScoreService {
         battleEntry.setProcessResult(processResult);
         battleEntry.setStatus(BattleEntryStatus.COMPLETED);
 
+        // Calculate score and save it in battle entry
+        int score = testResults.stream().mapToInt(BattleTestResult::getScore).sum() + (satResult.map(SATResult::getScore).orElse(0));
+
+        // Apply timeliness bonus
+        if (battleEntry.getBattle().getTimelinessBaseScore() > 0) {
+            // Calculation is based on the number of days from the battle creation to the submission. Each day passed subtracts 10 points from the base timeliness score
+            score += Math.max(0, battleEntry.getBattle().getTimelinessBaseScore() - Math.abs((int)battleEntry.getBattle().getCreatedAt().until(battleEntry.getCreatedAt(), ChronoUnit.DAYS)) * 10);
+        }
+
+        battleEntry.setScore(score);
         this.battleEntryRepository.save(battleEntry);
     }
 
@@ -56,7 +67,7 @@ public class ScoreServiceImpl implements ScoreService {
         this.battleEntryRepository.save(battleEntry);
 
         Battle battle = battleEntry.getBattle();
-        ExecutorService executor = this.getBattleCodeExecutor(battle);
+        ExecutorService executor = this.getBattleExecutor(battle);
 
         List<BattleTestResult> results = battle.getTests().parallelStream().map(test -> {
             logger.info("Executing test " + test.getName() + " for battle " + battle.getId() + " and artifact " + artifactUrl.toString());
@@ -66,7 +77,7 @@ public class ScoreServiceImpl implements ScoreService {
 
             try {
                 // Execute code with timeout
-                Container.ExecResult result = executor.execute(artifactUrl, test.getInput()).get(30, TimeUnit.SECONDS);
+                Container.ExecResult result = executor.executeArtifact(artifactUrl, test.getInput()).get(30, TimeUnit.SECONDS);
                 boolean passed = test.getExpectedOutput().equals(result.getStdout());
 
                 btr.setOutput(result.getStdout());
@@ -74,6 +85,7 @@ public class ScoreServiceImpl implements ScoreService {
                 btr.setError(result.getStderr());
                 btr.setPassed(passed);
                 btr.setTimeout(false);
+                btr.setScore(passed ? test.getGivesScore() : 0);
                 logger.info("Done executing test " + test.getName() + " for battle " + battle.getId() + " and artifact " + artifactUrl + ": " + (passed ? "passed" : "failed") + " with exit code " + result.getExitCode() + " and output " + result.getStdout());
             } catch (ExecutionException | InterruptedException | IOException ex) {
                 btr.setPassed(false);
@@ -105,7 +117,7 @@ public class ScoreServiceImpl implements ScoreService {
         battleEntry.setStatus(BattleEntryStatus.ANALYZING);
         this.battleEntryRepository.save(battleEntry);
 
-        ExecutorService executor = this.getBattleCodeExecutor(battleEntry.getBattle());
+        ExecutorService executor = this.getBattleExecutor(battleEntry.getBattle());
         try {
             Container.ExecResult result = executor.executeSAT(artifactUrl).get(30, TimeUnit.SECONDS);
             if (result.getExitCode() != 0) {
@@ -126,7 +138,7 @@ public class ScoreServiceImpl implements ScoreService {
         }
     }
 
-    private ExecutorService getBattleCodeExecutor(Battle battle) {
+    private ExecutorService getBattleExecutor(Battle battle) {
         return switch (battle.getLanguage()) {
             case GOLANG -> new GolangExecutorService();
             case PYTHON -> new PythonExecutorService();

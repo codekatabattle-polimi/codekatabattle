@@ -19,7 +19,7 @@ public class PythonExecutorService extends BaseExecutorService implements Execut
 
     @Override
     @Async
-    public CompletableFuture<Container.ExecResult> execute(URL artifactUrl, String input) throws ExecutionException, IOException {
+    public CompletableFuture<Container.ExecResult> executeArtifact(URL artifactUrl, String input) throws ExecutionException, IOException {
         copyArtifactsInContainer(pythonContainer, artifactUrl, input);
 
         // Execute the main.py file in the Python container and return the result
