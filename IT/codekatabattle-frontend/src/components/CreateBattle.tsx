@@ -34,19 +34,24 @@ export default function CreateBattle() {
     function isDuplicate(list : Array<BattleTest>|null){
         if (list == null)
             return false;
-        else
-        return list.filter((battleTest ) => (battleTest.name!="_HIDE_" || battleTest.input!="_HIDE_" || battleTest.expectedOutput!="_HIDE_" || battleTest.givesScore!=0 || battleTest.privacy!=privacy.PRIVATE)).map((battleTest) =>(test.name==battleTest.name)).reduce((testA, testB) => (testA || testB));
-    }
+        else{
+            const list1 = list.filter((battleTest ) => (battleTest.name!="_HIDE_" || battleTest.input!="_HIDE_" || battleTest.expectedOutput!="_HIDE_" || battleTest.givesScore!=0 || battleTest.privacy!=privacy.PRIVATE));
+            const list2 = list1.map((battleTest) =>(test.name?.toString()==battleTest.name?.toString()))
+            return list2.reduce((testA, testB) => (testA || testB)) ;
+        }}
+
 
     const test: BattleTest = {name: "", input: "", expectedOutput: "", givesScore: 0, privacy: privacy.PRIVATE}
     function loadData(name: string, input: string, expectedOutput: string, givenScore: string, isPublic : string){
 
         if (name=="" || input=="" || expectedOutput=="" || givenScore=="")
             alert("Fill all the fields")
-        else if( isDuplicate(testList))
-            alert("A test with this name exist already.\nChange name please")
         else{
             test.name=name;
+            if( isDuplicate(testList)){
+                alert("A test with this name exist already.\nChange name please");
+                return;
+            }
             test.input=input;
             test.expectedOutput=expectedOutput;
             test.givesScore= +givenScore!;
