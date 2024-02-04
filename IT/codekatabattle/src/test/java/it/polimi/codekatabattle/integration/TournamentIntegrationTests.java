@@ -71,7 +71,6 @@ public class TournamentIntegrationTests extends BaseIntegrationTestSetup {
         given()
             .contentType(ContentType.JSON)
             .headers("Authorization", "Bearer " + personalAccessToken)
-            .body(tournamentDTO)
             .when()
             .get("/tournaments/" + tournament.getId())
             .then()
@@ -261,12 +260,34 @@ public class TournamentIntegrationTests extends BaseIntegrationTestSetup {
     }
 
     @Test
-    void givenCreatedTournaments_shouldBlockCreatorFromJoiningTournament() throws OAuthException {
+    void givenCreatedTournament_shouldBlockCreatorFromJoiningTournament() throws OAuthException {
         TournamentDTO tournamentDTO = new TournamentDTO();
         tournamentDTO.setTitle("Tournament 1");
         tournamentDTO.setDescription("Tournament Description 1");
         tournamentDTO.setPrivacy(TournamentPrivacy.PUBLIC);
         tournamentDTO.setStartsAt(LocalDateTime.now().plusHours(1));
+        tournamentDTO.setEndsAt(LocalDateTime.now().plusDays(5));
+        tournamentDTO.setMaxParticipants(100);
+
+        GHUser creator = this.authService.getUserInfo(personalAccessToken, AuthOrigin.SWAGGER);
+        Tournament tournament = this.tournamentService.create(tournamentDTO, creator);
+
+        given()
+            .contentType(ContentType.JSON)
+            .headers("Authorization", "Bearer " + personalAccessToken)
+            .when()
+            .put("/tournaments/" + tournament.getId() + "/join")
+            .then()
+            .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+    }
+
+    @Test
+    void givenCreatedTournament_shouldBlockJoinIfTheTournamentStarted() throws OAuthException {
+        TournamentDTO tournamentDTO = new TournamentDTO();
+        tournamentDTO.setTitle("Tournament 1");
+        tournamentDTO.setDescription("Tournament Description 1");
+        tournamentDTO.setPrivacy(TournamentPrivacy.PUBLIC);
+        tournamentDTO.setStartsAt(LocalDateTime.now().minusHours(1));
         tournamentDTO.setEndsAt(LocalDateTime.now().plusDays(5));
         tournamentDTO.setMaxParticipants(100);
 

@@ -22,13 +22,15 @@ import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URI;
 
 @Service
-public class BattleServiceImpl extends CrudServiceImpl<Battle> implements BattleService {
+public class BattleServiceImpl implements BattleService {
 
     @Value("${ckb.github.pat}")
     private String githubPAT;
@@ -44,7 +46,6 @@ public class BattleServiceImpl extends CrudServiceImpl<Battle> implements Battle
     private final ScoreService scoreService;
 
     public BattleServiceImpl(BattleRepository battleRepository, BattleParticipantRepository battleParticipantRepository, BattleEntryRepository battleEntryRepository, TournamentService tournamentService, ScoreService scoreService) {
-        super(battleRepository);
         this.battleRepository = battleRepository;
         this.battleParticipantRepository = battleParticipantRepository;
         this.battleEntryRepository = battleEntryRepository;
@@ -52,9 +53,8 @@ public class BattleServiceImpl extends CrudServiceImpl<Battle> implements Battle
         this.scoreService = scoreService;
     }
 
-    public Battle create(BattleDTO battle, GHUser creator) throws ValidationException, IOException {
-        Tournament tournament = this.tournamentService.findById(battle.getTournamentId())
-            .orElseThrow(() -> new ValidationException("Tournament not found by id " + battle.getTournamentId()));
+    public Battle create(BattleDTO battle, GHUser creator) throws ValidationException, EntityNotFoundException, IOException {
+        Tournament tournament = this.tournamentService.findById(battle.getTournamentId());
 
         if (!tournament.getCreator().equals(creator.getLogin()) && tournament.getCoordinators().stream().noneMatch(c -> c.getUsername().equals(creator.getLogin()))) {
             throw new ValidationException("Only the creator of the tournament or one of the coordinators can create battles in it");
@@ -75,10 +75,29 @@ public class BattleServiceImpl extends CrudServiceImpl<Battle> implements Battle
         return this.battleRepository.save(newBattle);
     }
 
+    public Battle findById(Long battleId) throws EntityNotFoundException {
+        Battle battle = this.battleRepository.findById(battleId)
+            .orElseThrow(() -> new ValidationException("Battle not found by id " + battleId));
+
+        // Include only public tests
+        battle.setTests(battle.getTests().stream().filter(test -> test.getPrivacy() == BattleTestPrivacy.PUBLIC).toList());
+
+        return battle;
+    }
+
+    @Override
+    public Page<Battle> findAll(Pageable pageable) {
+        // Include only public tests
+        return this.battleRepository.findAll(pageable).map(battle -> {
+            battle.setTests(battle.getTests().stream().filter(test -> test.getPrivacy() == BattleTestPrivacy.PUBLIC).toList());
+            return battle;
+        });
+    }
+
     @Override
     @Transactional
     public Battle join(Long battleId, GHUser user) throws EntityNotFoundException, ValidationException {
-        Battle battle = this.findById(battleId)
+        Battle battle = this.battleRepository.findById(battleId)
             .orElseThrow(() -> new EntityNotFoundException("Battle not found by id " + battleId));
 
         if (battle.getTournament().getParticipants().stream().noneMatch(p -> p.getUsername().equals(user.getLogin()))) {
@@ -87,7 +106,7 @@ public class BattleServiceImpl extends CrudServiceImpl<Battle> implements Battle
         if (battle.getTournament().hasEnded()) {
             throw new ValidationException("Tournament has ended, can't join battles");
         }
-        if (!battle.hasStarted()) {
+        if (battle.hasNotStarted()) {
             throw new ValidationException("Tournament has not started yet, it is not possible to join");
         }
         if (battle.hasEnded()) {
@@ -97,19 +116,27 @@ public class BattleServiceImpl extends CrudServiceImpl<Battle> implements Battle
             throw new ValidationException("User is already participating in this tournament");
         }
 
+        // These are mostly paranoid checks, as the first check already prevents creator/coordinators from joining
+        if (battle.getTournament().getCreator().equals(user.getLogin())) {
+            throw new ValidationException("Tournament creator cannot join its battles");
+        }
+        if (battle.getTournament().getCoordinators().stream().anyMatch(c -> c.getUsername().equals(user.getLogin()))) {
+            throw new ValidationException("Tournament coordinators cannot join its battles");
+        }
+
         BattleParticipant participant = new BattleParticipant();
         participant.setBattle(battle);
         participant.setUsername(user.getLogin());
         participant.setScore(0);
 
         battle.getParticipants().add(participant);
-        return this.save(battle);
+        return this.battleRepository.save(battle);
     }
 
     @Override
     @Transactional
     public Battle leave(Long battleId, GHUser user) throws EntityNotFoundException, ValidationException {
-        Battle battle = this.findById(battleId)
+        Battle battle = this.battleRepository.findById(battleId)
             .orElseThrow(() -> new EntityNotFoundException("Battle not found by id " + battleId));
 
         BattleParticipant participant = battle.getParticipants().stream()
@@ -125,13 +152,13 @@ public class BattleServiceImpl extends CrudServiceImpl<Battle> implements Battle
         }
 
         battle.getParticipants().remove(participant);
-        return this.save(battle);
+        return this.battleRepository.save(battle);
     }
 
     @Override
     @Transactional
     public Battle updateById(@NotNull Long battleId, @NotNull BattleUpdateDTO battle, @NotNull GHUser updater) throws EntityNotFoundException, ValidationException {
-        Battle battleToUpdate = this.findById(battleId)
+        Battle battleToUpdate = this.battleRepository.findById(battleId)
             .orElseThrow(() -> new EntityNotFoundException("Battle not found by id " + battleId));
 
         if (!battleToUpdate.getCreator().equals(updater.getLogin())) {
@@ -142,7 +169,7 @@ public class BattleServiceImpl extends CrudServiceImpl<Battle> implements Battle
         battleToUpdate.setEndsAt(battle.getEndsAt());
         battleToUpdate.setEnableManualEvaluation(battle.getEnableManualEvaluation());
 
-        return this.save(battleToUpdate);
+        return this.battleRepository.save(battleToUpdate);
     }
 
     @Override
@@ -153,7 +180,7 @@ public class BattleServiceImpl extends CrudServiceImpl<Battle> implements Battle
         @NotNull BattleParticipantUpdateDTO battleParticipantUpdate,
         @NotNull GHUser updater
     ) throws EntityNotFoundException, ValidationException {
-        Battle battleToUpdate = this.findById(battleId)
+        Battle battleToUpdate = this.battleRepository.findById(battleId)
             .orElseThrow(() -> new EntityNotFoundException("Battle not found by id " + battleId));
 
         if (!battleToUpdate.getCreator().equals(updater.getLogin())) {
@@ -170,17 +197,21 @@ public class BattleServiceImpl extends CrudServiceImpl<Battle> implements Battle
             .filter(p -> p.getId().equals(battleParticipantId))
             .findFirst()
             .orElseThrow(() -> new EntityNotFoundException("Battle participant not found by id " + battleParticipantId));
+        if (participantToUpdate.getReceivedOME()) {
+            throw new ValidationException("Participant has already received manual evaluation by the creator of the battle");
+        }
 
         participantToUpdate.setScore(participantToUpdate.getScore() + battleParticipantUpdate.getScore());
+        participantToUpdate.setReceivedOME(true);
         this.battleParticipantRepository.save(participantToUpdate);
 
-        return this.save(battleToUpdate);
+        return this.battleRepository.save(battleToUpdate);
     }
 
     @Override
     @Transactional
     public Battle deleteById(Long battleId, GHUser deleter) throws EntityNotFoundException, ValidationException, IOException {
-        Battle battleToDelete = this.findById(battleId)
+        Battle battleToDelete = this.battleRepository.findById(battleId)
             .orElseThrow(() -> new EntityNotFoundException("Battle not found by id " + battleId));
 
         if (!battleToDelete.getCreator().equals(deleter.getLogin())) {
@@ -234,10 +265,10 @@ public class BattleServiceImpl extends CrudServiceImpl<Battle> implements Battle
 
     @Override
     public BattleEntry submit(Long battleId, BattleEntryDTO battleEntry, GitHub github) throws EntityNotFoundException, ValidationException, IOException {
-        Battle battle = this.findById(battleId)
+        Battle battle = this.battleRepository.findById(battleId)
             .orElseThrow(() -> new EntityNotFoundException("Battle not found by id " + battleId));
 
-        if (!battle.hasStarted()) {
+        if (battle.hasNotStarted()) {
             throw new ValidationException("Battle has not started yet, it is not possible to submit");
         }
         if (battle.hasEnded()) {

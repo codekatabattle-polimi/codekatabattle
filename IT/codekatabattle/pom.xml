@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>it.polimi</groupId>
 	<artifactId>codekatabattle</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>codekatabattle</name>
 	<description>RESTful API for CodeKataBattle</description>
 	<properties>

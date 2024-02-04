@@ -29,7 +29,7 @@ public class Battle extends BaseEntity {
     @Column
     private String title;
 
-    @Column
+    @Column(columnDefinition = "text")
     private String description;
 
     @Column
@@ -77,8 +77,8 @@ public class Battle extends BaseEntity {
     @JsonBackReference
     private Tournament tournament;
 
-    public boolean hasStarted() {
-        return startsAt.isBefore(LocalDateTime.now());
+    public boolean hasNotStarted() {
+        return LocalDateTime.now().isBefore(startsAt);
     }
 
     public boolean hasEnded() {

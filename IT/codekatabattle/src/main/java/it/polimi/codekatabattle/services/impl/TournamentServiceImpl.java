@@ -17,12 +17,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TournamentServiceImpl extends CrudServiceImpl<Tournament> implements TournamentService {
+public class TournamentServiceImpl implements TournamentService {
 
     private final TournamentRepository tournamentRepository;
 
     public TournamentServiceImpl(TournamentRepository tournamentRepository) {
-        super(tournamentRepository);
         this.tournamentRepository = tournamentRepository;
     }
 
@@ -30,7 +29,12 @@ public class TournamentServiceImpl extends CrudServiceImpl<Tournament> implement
     public Tournament create(@Valid @NotNull TournamentDTO tournament, @NotNull GHUser creator) throws ValidationException {
         Tournament entity = tournament.toEntity();
         entity.setCreator(creator.getLogin());
-        return this.save(entity);
+        return this.tournamentRepository.save(entity);
+    }
+
+    public Tournament findById(Long tournamentId) throws EntityNotFoundException {
+        return this.tournamentRepository.findById(tournamentId)
+            .orElseThrow(() -> new EntityNotFoundException("Tournament not found by id " + tournamentId));
     }
 
     @Override
@@ -56,7 +60,7 @@ public class TournamentServiceImpl extends CrudServiceImpl<Tournament> implement
     @Override
     @Transactional
     public Tournament join(Long tournamentId, GHUser user) throws EntityNotFoundException, ValidationException {
-        Tournament tournament = this.findById(tournamentId)
+        Tournament tournament = this.tournamentRepository.findById(tournamentId)
             .orElseThrow(() -> new EntityNotFoundException("Tournament not found by id " + tournamentId));
 
         if (tournament.hasStarted()) {
@@ -81,13 +85,13 @@ public class TournamentServiceImpl extends CrudServiceImpl<Tournament> implement
         participant.setScore(0);
 
         tournament.getParticipants().add(participant);
-        return this.save(tournament);
+        return this.tournamentRepository.save(tournament);
     }
 
     @Override
     @Transactional
     public Tournament leave(Long tournamentId, GHUser user) throws EntityNotFoundException, ValidationException {
-        Tournament tournament = this.findById(tournamentId)
+        Tournament tournament = this.tournamentRepository.findById(tournamentId)
             .orElseThrow(() -> new EntityNotFoundException("Tournament not found by id " + tournamentId));
 
         TournamentParticipant participant = tournament.getParticipants().stream()
@@ -103,13 +107,13 @@ public class TournamentServiceImpl extends CrudServiceImpl<Tournament> implement
         }
 
         tournament.getParticipants().remove(participant);
-        return this.save(tournament);
+        return this.tournamentRepository.save(tournament);
     }
 
     @Override
     @Transactional
     public Tournament updateById(Long tournamentId, TournamentDTO tournament, GHUser updater) throws EntityNotFoundException, ValidationException {
-        Tournament tournamentToUpdate = this.findById(tournamentId)
+        Tournament tournamentToUpdate = this.tournamentRepository.findById(tournamentId)
             .orElseThrow(() -> new EntityNotFoundException("Tournament not found by id " + tournamentId));
 
         if (!tournamentToUpdate.getCreator().equals(updater.getLogin())) {
@@ -142,13 +146,13 @@ public class TournamentServiceImpl extends CrudServiceImpl<Tournament> implement
             }).toList());
         }
 
-        return this.save(tournamentToUpdate);
+        return this.tournamentRepository.save(tournamentToUpdate);
     }
 
     @Override
     @Transactional
     public Tournament deleteById(Long tournamentId, GHUser deleter) throws EntityNotFoundException, ValidationException {
-        Tournament tournamentToDelete = this.findById(tournamentId)
+        Tournament tournamentToDelete = this.tournamentRepository.findById(tournamentId)
             .orElseThrow(() -> new EntityNotFoundException("Tournament not found by id " + tournamentId));
 
         if (!tournamentToDelete.getCreator().equals(deleter.getLogin())) {

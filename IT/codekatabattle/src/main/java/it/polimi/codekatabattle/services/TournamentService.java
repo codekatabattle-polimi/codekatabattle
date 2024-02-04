@@ -8,9 +8,11 @@ import jakarta.validation.ValidationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public interface TournamentService extends CrudService<Tournament> {
+public interface TournamentService {
 
     Tournament create(TournamentDTO tournament, GHUser creator) throws ValidationException;
+
+    Tournament findById(Long tournamentId) throws EntityNotFoundException;
 
     Page<Tournament> findAllPublic(Pageable pageable);
 

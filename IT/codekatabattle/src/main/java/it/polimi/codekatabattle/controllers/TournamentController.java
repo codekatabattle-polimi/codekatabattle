@@ -61,8 +61,7 @@ public class TournamentController {
         description = "Find a tournament by id"
     )
     public ResponseEntity<Tournament> findById(@PathVariable("id") Long id) throws EntityNotFoundException {
-        return ResponseEntity.ok().body(this.tournamentService.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Tournament not found by id " + id)));
+        return ResponseEntity.ok().body(this.tournamentService.findById(id));
     }
 
     @GetMapping(

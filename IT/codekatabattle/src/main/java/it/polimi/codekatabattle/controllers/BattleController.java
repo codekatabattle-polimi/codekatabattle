@@ -70,8 +70,7 @@ public class BattleController {
         description = "Find a battle by id"
     )
     public ResponseEntity<Battle> findById(@PathVariable("id") Long id) throws EntityNotFoundException {
-        return ResponseEntity.ok().body(this.battleService.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Battle not found by id " + id)));
+        return ResponseEntity.ok().body(this.battleService.findById(id));
     }
 
     @GetMapping(

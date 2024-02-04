@@ -11,12 +11,18 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHub;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.io.IOException;
 
-public interface BattleService extends CrudService<Battle> {
+public interface BattleService {
 
-    Battle create(BattleDTO battle, GHUser creator) throws ValidationException, IOException;
+    Battle create(BattleDTO battle, GHUser creator) throws ValidationException, EntityNotFoundException, IOException;
+
+    Battle findById(Long battleId) throws EntityNotFoundException;
+
+    Page<Battle> findAll(Pageable pageable);
 
     Battle join(Long battleId, GHUser user) throws EntityNotFoundException, ValidationException;
 

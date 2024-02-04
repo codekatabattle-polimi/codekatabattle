@@ -27,7 +27,7 @@ public class Tournament extends BaseEntity {
     @NotNull
     private String title;
 
-    @Column
+    @Column(columnDefinition = "text")
     private String description;
 
     @Column

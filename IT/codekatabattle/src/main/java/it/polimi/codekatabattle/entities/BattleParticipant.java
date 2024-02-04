@@ -22,4 +22,7 @@ public class BattleParticipant extends BaseEntity {
     @Column
     private Integer score = null;
 
+    @Column
+    private Boolean receivedOME = false;
+
 }
