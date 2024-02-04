@@ -62,6 +62,15 @@ public class BattleServiceImpl implements BattleService {
         if (battle.getTests().stream().map(BattleTest::getName).distinct().count() != battle.getTests().size()) {
             throw new ValidationException("Two battle tests with the same name are not allowed");
         }
+        if (battle.getEndsAt().isBefore(battle.getStartsAt())) {
+            throw new ValidationException("The enrollament deadline must be before the final deadline");
+        }
+        if (battle.getEndsAt().isAfter(tournament.getEndsAt())) {
+            throw new ValidationException("The battle final deadline must be before the tournament final deadline");
+        }
+        if (battle.getStartsAt().isBefore(tournament.getStartsAt())) {
+            throw new ValidationException("The battle enrollament deadline must be after the tournament enrollment deadline");
+        }
 
         Battle newBattle = battle.toEntity();
         newBattle.setCreator(creator.getLogin());

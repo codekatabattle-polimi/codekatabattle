@@ -27,6 +27,9 @@ public class TournamentServiceImpl implements TournamentService {
 
     @Override
     public Tournament create(@Valid @NotNull TournamentDTO tournament, @NotNull GHUser creator) throws ValidationException {
+        if (tournament.getEndsAt().isBefore(tournament.getStartsAt())) {
+            throw new ValidationException("The enrollament deadline must be before the final deadline");
+        }
         Tournament entity = tournament.toEntity();
         entity.setCreator(creator.getLogin());
         return this.tournamentRepository.save(entity);
