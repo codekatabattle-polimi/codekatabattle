@@ -2,14 +2,11 @@ package it.polimi.codekatabattle.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
-import it.polimi.codekatabattle.models.BattleTestResult;
+import it.polimi.codekatabattle.models.BattleEntryProcessResult;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "battle_entries")
@@ -32,7 +29,7 @@ public class BattleEntry extends BaseEntity {
 
     @Column(columnDefinition = "jsonb")
     @Type(JsonType.class)
-    private List<BattleTestResult> testResults = new ArrayList<>();
+    private BattleEntryProcessResult processResult;
 
     @Column
     private Integer score = null;

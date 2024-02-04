@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -37,18 +36,18 @@ public class ScoreServiceImpl implements ScoreService {
 
     @Override
     @Async
-    public CompletableFuture<BattleEntryProcessResult> processBattleEntry(BattleEntry battleEntry, URL artifactUrl) {
+    public void processBattleEntry(BattleEntry battleEntry, URL artifactUrl) {
         List<BattleTestResult> testResults = this.executeBattleTests(battleEntry, artifactUrl);
         Optional<SATResult> satResult = this.executeSAT(battleEntry, artifactUrl);
 
-        BattleEntryProcessResult results = new BattleEntryProcessResult();
-        results.setTestResults(testResults);
-        results.setSatResult(satResult.orElse(null));
+        BattleEntryProcessResult processResult = new BattleEntryProcessResult();
+        processResult.setTestResults(testResults);
+        processResult.setSatResult(satResult.orElse(null));
 
+        battleEntry.setProcessResult(processResult);
         battleEntry.setStatus(BattleEntryStatus.COMPLETED);
-        this.battleEntryRepository.save(battleEntry);
 
-        return CompletableFuture.completedFuture(results);
+        this.battleEntryRepository.save(battleEntry);
     }
 
     @Override
