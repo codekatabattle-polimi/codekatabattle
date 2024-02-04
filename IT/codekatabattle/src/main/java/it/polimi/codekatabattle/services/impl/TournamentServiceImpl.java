@@ -30,6 +30,12 @@ public class TournamentServiceImpl implements TournamentService {
         if (tournament.getEndsAt().isBefore(tournament.getStartsAt())) {
             throw new ValidationException("The enrollament deadline must be before the final deadline");
         }
+
+        // Do not allow creator to be a coordinator
+        if (tournament.getCoordinators().contains(creator.getLogin())) {
+            throw new ValidationException("Tournament creator can't be a coordinator");
+        }
+
         Tournament entity = tournament.toEntity();
         entity.setCreator(creator.getLogin());
         return this.tournamentRepository.save(entity);
@@ -135,6 +141,11 @@ public class TournamentServiceImpl implements TournamentService {
 
         if (tournament.getEndsAt().isBefore(tournament.getStartsAt())) {
             throw new ValidationException("The enrollament deadline must be before the final deadline");
+        }
+
+        // Do not allow creator to be a coordinator
+        if (tournament.getCoordinators().contains(tournamentToUpdate.getCreator())) {
+            throw new ValidationException("Tournament creator can't be a coordinator");
         }
 
         tournamentToUpdate.setTitle(tournament.getTitle());

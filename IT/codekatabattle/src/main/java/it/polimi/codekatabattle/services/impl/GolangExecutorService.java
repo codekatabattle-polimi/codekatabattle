@@ -25,7 +25,7 @@ public class GolangExecutorService extends BaseExecutorService implements Execut
         // Execute the main.go file in the Golang container and return the result
         try {
             golangContainer.start();
-            Container.ExecResult result = golangContainer.execInContainer("go run main.go");
+            Container.ExecResult result = golangContainer.execInContainer("go run kata.go");
             return CompletableFuture.completedFuture(result);
         } catch (IOException | InterruptedException e) {
             throw new ExecutionException(e);
