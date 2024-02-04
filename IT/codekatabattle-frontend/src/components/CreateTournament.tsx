@@ -2,13 +2,15 @@ import {useForm} from "react-hook-form";
 import {SubmitHandler} from "react-hook-form";
 import {AuthService, GHUser, Tournament, TournamentDTO, TournamentService} from "../services/openapi";
 import {NavBar} from "./NavBar.tsx";
-import {useState} from "react";
+import {useContext, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import nunchaku from "../assets/nunchaku.png";
+import {AuthContext} from "../context/AuthContext.ts";
 
 export default function CreateTournament() { // Manca l'aggiunta di badges e TC
 
     const [username,setUsername]=useState('');
+    const {user}=useContext(AuthContext);
     const [usernames,setUsernames]=useState<GHUser[]>([]);
     const { register, formState: { errors }, handleSubmit } = useForm<TournamentDTO>();
     const [tournament, setTournament] = useState<Tournament | null>(null);
@@ -25,6 +27,10 @@ export default function CreateTournament() { // Manca l'aggiunta di badges e TC
             const ghuser=await AuthService.getUserInfo(username);
             if(ghuser.login==undefined){
                 alert("the coordinator nickname is undefined")
+                return;
+            }
+            if(ghuser.login==user?.login){
+                alert("Creator can't be a coordinator");
                 return;
             }
             if(existUser(ghuser.login.toString())){

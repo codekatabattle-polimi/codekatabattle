@@ -171,7 +171,7 @@ export const VisualizeCreatedTournaments= () => {
                             <div className="stat-figure" style={{paddingTop: "25%"}}>
                                 <div
                                     className="stat-desc">{(t.maxParticipants ?? 1000) - (t.participants?.length ?? 0)} available
-                                    spot
+                                    spots
                                 </div>
                             </div>
                             <div className="stat-title text-xs" style={{paddingBottom: "4%"}}>Occupation</div>
@@ -182,7 +182,7 @@ export const VisualizeCreatedTournaments= () => {
                                          "--size": "3rem"
                                      } as React.CSSProperties}
                                      role="progressbar"><p
-                                    className="text-xs">{Math.min(Math.ceil((t.participants?.length ?? 0) / (t.maxParticipants ?? 1000)), 100)}</p>
+                                    className="text-xs">{Math.min(Math.ceil((t.participants?.length ?? 0) / (t.maxParticipants ?? 1000)), 100)+"%"}</p>
                                 </div>
                             </div>
                         </div>

@@ -5,11 +5,11 @@ import {
 } from "../services/openapi";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {NavBar} from "./NavBar.tsx";
-import avatar2 from "../assets/avatar1.png";
 import {AuthContext} from "../context/AuthContext.ts";
 import language = Battle.language;
 import fight from "../assets/judo.png";
 import pencil from "../assets/pencil.png";
+import {ImageCreator} from "./ImageCreator.tsx";
 
 
 
@@ -340,8 +340,7 @@ export const VisualizeBattle= () => {
                         <div className="flex items-center gap-3">
                             <div className="avatar">
                                 <div className="mask mask-squircle w-12 h-12">
-                                    <img src={avatar2}
-                                         alt="Avatar Tailwind CSS Component"/>
+                                    <ImageCreator username={participant.username ?? ""}/>
                                 </div>
                             </div>
                             <div>

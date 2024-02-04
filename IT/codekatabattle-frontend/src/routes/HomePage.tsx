@@ -62,15 +62,16 @@ export function HomePage() {
                                         </ul>
 
                                         <h1 className="mb-5 text-5xl font-bold">{user.login}</h1>
-
-                                        <p className="mb-5 font-black">This is CodekataBattle, your online dojo where you can learn
-                                            and
-                                            improve
-                                            the art of coding</p>
-                                        <button className="btn btn-primary"><Link to={"/all/tournaments/view/0"}>Check
-                                            tournaments and
-                                            join
-                                            them</Link></button>
+                                        <p className="mb-5 font-bold text-blue-400">"click the background to see more"</p>
+                                            <p className="mb-5 font-black">This is CodekataBattle, your online dojo
+                                                where you can learn
+                                                and
+                                                improve
+                                                the art of coding</p>
+                                            <button className="btn btn-primary"><Link to={"/all/tournaments/view/0"}>Check
+                                                tournaments and
+                                                join
+                                                them</Link></button>
                                     </div>
                                 </div>
                             </div>

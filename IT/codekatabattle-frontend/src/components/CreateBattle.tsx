@@ -11,10 +11,19 @@ export default function CreateBattle() {
 
     const { register, formState: { errors }, handleSubmit } = useForm<BattleDTO>();
     const [error, setError] = useState<Error | null>(null);
+
+    const[newOME,setNewOME]=useState<boolean>(false);
+    const[newSAT,setNewSAT]=useState<boolean>(false);
     const navigate= useNavigate();
     const params = useParams();
     const [testList, setTestList]=useState<BattleTest[] | null>(null);
 
+    const handleOnChangeOME = () => {
+        setNewOME(!newOME);
+    };
+    const handleOnChangeSAT = () => {
+        setNewSAT(!newSAT);
+    };
     async function fetchCreateBattle(data: BattleDTO) {
         try {
             data.tests = (testList ?? []).filter((battleTest ) => (battleTest.name!="_HIDE_" || battleTest.input!="_HIDE_" || battleTest.expectedOutput!="_HIDE_" || battleTest.givesScore!=0 || battleTest.privacy!=privacy.PRIVATE));
@@ -23,6 +32,8 @@ export default function CreateBattle() {
                 data.language=BattleDTO.language.PYTHON;
             if(data.language.toString()=="GOLANG")
                 data.language=BattleDTO.language.GOLANG;
+            data.enableManualEvaluation=newOME;
+            data.enableSAT=newSAT;
             (document.getElementById('my_modal_2') as HTMLDialogElement).showModal();
             const battle = await BattleService.create1(data);
             navigate("/tournaments/" + params.tId + "/battles/" + battle.id?.toString())
@@ -335,16 +346,21 @@ export default function CreateBattle() {
                     <label className="label cursor-pointer bg-base-200 rounded-b-btn textarea textarea-primary">
                                 <span className="label-text font-bold"
                                       style={{}}>SAT: </span>
-                        <input  {...register("enableSAT")} type="checkbox" className="toggle"
-                                value="true"/>
+                        <input   type="checkbox" className="toggle"
+                                 value="true"
+                                 checked={newSAT}
+                                 onChange={handleOnChangeSAT}
+                        />
                     </label>
                 </div>
                 <div className="form-control" style={{width: "30%", paddingLeft: "2%"}}>
                     <label className="label cursor-pointer bg-base-200 rounded-b-btn textarea textarea-primary">
                                 <span className="label-text font-bold"
                                       style={{paddingLeft: "1%"}}>Manual evaluation: </span>
-                        <input  {...register("enableManualEvaluation")} type="checkbox" className="toggle"
-                                value="true"/>
+                        <input   type="checkbox" className="toggle"
+                                value="true"
+                                 checked={newOME}
+                                 onChange={handleOnChangeOME}/>
                     </label>
                 </div>
             </ul>

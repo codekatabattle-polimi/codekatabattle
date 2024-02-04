@@ -3,8 +3,6 @@ import {useContext, useEffect, useState} from "react";
 import {Tournament, TournamentCoordinator, TournamentDTO, TournamentService} from "../services/openapi";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {NavBar} from "./NavBar.tsx";
-import avatar2 from "../assets/avatar1.png";
-import avatar3 from "../assets/avatar3.png";
 import privacy = Tournament.privacy;
 import {AuthContext} from "../context/AuthContext.ts";
 import pencil from "../assets/pencil.png";
@@ -277,8 +275,7 @@ export const VisualizeTournament= () => {
                         <div className="flex items-center gap-3">
                             <div className="avatar">
                                 <div className="mask mask-squircle w-12 h-12">
-                                    <img src={avatar3}
-                                         alt="Avatar Tailwind CSS Component"/>
+                                    <ImageCreator username={coordinator.username ?? ""}/>
                                 </div>
                             </div>
                             <div>
@@ -349,8 +346,7 @@ export const VisualizeTournament= () => {
                         <div className="flex items-center gap-3">
                             <div className="avatar">
                                 <div className="mask mask-squircle w-12 h-12">
-                                    <img src={avatar2}
-                                         alt="Avatar Tailwind CSS Component"/>
+                                    <ImageCreator username={participant.username ?? ""}/>
                                 </div>
                             </div>
                             <div>
@@ -588,7 +584,7 @@ export const VisualizeTournament= () => {
                         className=" font-bold">{"Max students:" + tournament.maxParticipants}</span></label>
 
                     <label style={{width: "50%"}} className="label cursor-pointer  rounded-b-btn textarea ">
-                        <input
+                        <input type="number"
                             className="textarea textarea-primary bg-base-200"
                             onChange={event => setnewMaxParticipants(+event.target.value)}
                             placeholder="Max number of students..."/>
