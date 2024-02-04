@@ -15,7 +15,6 @@ export default function CreateBattle() {
     const params = useParams();
     const [testList, setTestList]=useState<BattleTest[] | null>(null);
 
-
     async function fetchCreateBattle(data: BattleDTO) {
         try {
             data.tests = (testList ?? []).filter((battleTest ) => (battleTest.name!="_HIDE_" || battleTest.input!="_HIDE_" || battleTest.expectedOutput!="_HIDE_" || battleTest.givesScore!=0 || battleTest.privacy!=privacy.PRIVATE));
@@ -32,10 +31,20 @@ export default function CreateBattle() {
         }
     }
 
+    function isDuplicate(list : Array<BattleTest>|null){
+        if (list == null)
+            return false;
+        else
+        return list.filter((battleTest ) => (battleTest.name!="_HIDE_" || battleTest.input!="_HIDE_" || battleTest.expectedOutput!="_HIDE_" || battleTest.givesScore!=0 || battleTest.privacy!=privacy.PRIVATE)).map((battleTest) =>(test.name==battleTest.name)).reduce((testA, testB) => (testA || testB));
+    }
+
     const test: BattleTest = {name: "", input: "", expectedOutput: "", givesScore: 0, privacy: privacy.PRIVATE}
     function loadData(name: string, input: string, expectedOutput: string, givenScore: string, isPublic : string){
-        if(name=="" || input=="" || expectedOutput=="" || givenScore=="")
+
+        if (name=="" || input=="" || expectedOutput=="" || givenScore=="")
             alert("Fill all the fields")
+        else if( isDuplicate(testList))
+            alert("A test with this name exist already.\nChange name please")
         else{
             test.name=name;
             test.input=input;
@@ -46,12 +55,17 @@ export default function CreateBattle() {
             else if(isPublic == "PRIVATE")
                 test.privacy= privacy.PRIVATE;
             const tests : BattleTest[] = (testList ?? []).concat(test);
-
             setTestList(tests);
+
+
         }
 
 
     }
+
+
+
+
 
 
     const AddTestForm = () => {
@@ -64,81 +78,118 @@ export default function CreateBattle() {
 
 
         return (
-            <dialog   id="my_modal_3" className="modal">
-                <div className="modal-box">
-                    <p className="font-bold text-xl">Add test</p>
-                    {/*Test form*/}
-                    <div className="overflow-x-auto">
-                            <div style={{padding: "2%"}}>
-                                <input style={{width: "100%"}}
-                                       className="textarea textarea-primary bg-base-300" onChange={event => setName(event.target.value)}
-                                       placeholder="Test name..." />
-                            </div>
-                            <div style={{padding: "2%"}}>
-                                <input
-                                    className="textarea textarea-primary bg-base-300" onChange={event => setInput(event.target.value)}
-                                    placeholder="Test input..." style={{width: "100%"}} />
-                            </div>
-                            <div style={{padding: "2%"}}>
-                                <input
-                                    className="textarea textarea-primary bg-base-300" onChange={event => setExpectedOutput(event.target.value)}
-                                    placeholder="Expected output..." style={{width: "100%"}} />
-                            </div>
-                            <div style={{padding: "2%"}}>
-                                <input
-                                    className="textarea textarea-primary bg-base-300" onChange={event => setGivenScore(event.target.value)}
-                                    placeholder="Score given..." style={{width: "100%", paddingBottom: "1%"}} />
-                            </div>
-                        <div className="form-control" style={{width: "30%", padding: "2%"}}>
-                            <label style={{paddingLeft: "0.5%"}} className="form-control w-full max-w-xs ">
-                                <div className="label">
-                                    <span className="label-text"></span>
+            <dialog id="my_modal_3" className="modal">
+                <ul style={{width: "80%"}} className="menu-lg lg:menu-horizontal bg-base-100 rounded-box">
+                    <div style={{width: "50%"}}>
+                        <div className="modal-box">
+                            <p className="font-bold text-xl">Add test</p>
+                            {/*Test form*/}
+                            <div className="overflow-x-auto">
+                                <div style={{padding: "2%"}}>
+                                    <input style={{width: "100%"}}
+                                           className="textarea textarea-primary bg-base-300"
+                                           onChange={event => setName(event.target.value)}
+                                           placeholder="Test name..."/>
                                 </div>
-                                <select onChange={event => {setPublic(event.target.value)}}
-                                        className="select select-bordered bg-base-200 rounded-b-btn textarea textarea-primary">
-                                    <option value={"PUBLIC"}>PUBLIC</option>
-                                    <option disabled selected value={"PRIVATE"}>PRIVATE</option>
-                                </select>
-                                <div className="label">
+                                <div style={{padding: "2%"}}>
+                                    <input
+                                        className="textarea textarea-primary bg-base-300"
+                                        onChange={event => setInput(event.target.value)}
+                                        placeholder="Test input..." style={{width: "100%"}}/>
                                 </div>
-                            </label>
+                                <div style={{padding: "2%"}}>
+                                    <input
+                                        className="textarea textarea-primary bg-base-300"
+                                        onChange={event => setExpectedOutput(event.target.value)}
+                                        placeholder="Expected output..." style={{width: "100%"}}/>
+                                </div>
+                                <div style={{padding: "2%"}}>
+                                    <input
+                                        className="textarea textarea-primary bg-base-300"
+                                        onChange={event => setGivenScore(event.target.value)}
+                                        placeholder="Score given..." style={{width: "100%", paddingBottom: "1%"}}/>
+                                </div>
+                                <div className="form-control" style={{width: "30%", padding: "2%"}}>
+                                    <label style={{paddingLeft: "0.5%"}} className="form-control w-full max-w-xs ">
+                                        <div className="label">
+                                            <span className="label-text"></span>
+                                        </div>
+                                        <select onChange={event => {
+                                            setPublic(event.target.value)
+                                        }}
+                                                className="select select-bordered bg-base-200 rounded-b-btn textarea textarea-primary">
+                                            <option value={"PUBLIC"}>PUBLIC</option>
+                                            <option disabled selected value={"PRIVATE"}>PRIVATE</option>
+                                        </select>
+                                        <div className="label">
+                                        </div>
+                                    </label>
+
+                                </div>
+
+                                <label onClick={() => loadData(name, input, expectedOutput, givenScore, isPublic)}
+                                       className="btn btn-primary">Add test</label>
+
+
+                            </div>
+                            {/*botton close*/
+                            }
+                            <div className="modal-action">
+                                <form method="dialog">
+
+                                    <button className="btn">Close</button>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <table style={{width: "50%"}} className="table ">
+                        <tbody>
+                        <div style={{height: "fit-content"}} className="boxx">
+                            <div className="boxx-inner">
+                                <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Input</th>
+                                    <th>Expected output</th>
+                                    <th>Score given</th>
+                                    <th>Privacy</th>
+                                </tr>
+                                </thead>
+                                {testAdded()}
+                            </div>
 
                         </div>
-                        <label onClick={() => loadData(name, input, expectedOutput, givenScore, isPublic)}
-                               className="btn btn-primary">Add test</label>
 
+                        </tbody>
+                    </table>
 
-                    </div>
-                    {/*botton close*/
-                    }
-                    <div className="modal-action">
-                        <form method="dialog">
-
-                            <button className="btn">Close</button>
-                        </form>
-                    </div>
-                </div>
+                </ul>
+                {/*
                 <form method="dialog" className="modal-backdrop">
                     <button>close</button>
                 </form>
+                */}
+
+
             </dialog>
         )
     }
 
 
-    function remove(index:number){
-        const list= testList;
-        if(!testList || !list)
+    function remove(index: number) {
+        const list = testList;
+        if (!testList || !list)
             return;
-        if(testList?.length-1==index){
+        if (testList?.length - 1 == index) {
             list.pop();
             setTestList(list);
             loadData("_HIDE_", "_HIDE_", "_HIDE_", "0", "PRIVATE");
 
-        }
-        else{
-            const t: BattleTest = list[testList?.length-1];
-            list[testList?.length-1]  = list[index];
+        } else {
+            const t: BattleTest = list[testList?.length - 1];
+            list[testList?.length - 1] = list[index];
             list[index] = t;
             list.pop();
             setTestList(list);
@@ -148,15 +199,14 @@ export default function CreateBattle() {
     }
 
 
-
     const removeButton = (index: number) => {
 
         return (<label className="badge badge-error badge-outline"
-                   onClick={() => remove(index)}>- remove</label>)
+                       onClick={() => remove(index)}>- remove</label>)
     }
 
-    function visualizeAdd(test: BattleTest, index: number){
-        if(test.name=="_HIDE_" && test.input=="_HIDE_" && test.expectedOutput=="_HIDE_" && test.givesScore==0 && test.privacy==privacy.PRIVATE)
+    function visualizeAdd(test: BattleTest, index: number) {
+        if (test.name == "_HIDE_" && test.input == "_HIDE_" && test.expectedOutput == "_HIDE_" && test.givesScore == 0 && test.privacy == privacy.PRIVATE)
             return (<></>)
         else return (
             <tr>
@@ -203,7 +253,7 @@ export default function CreateBattle() {
 
     if (error) {
         return (
-            <>{error.message}</>
+            <>{error.message.toString()}</>
         );
     }
 
@@ -211,25 +261,25 @@ export default function CreateBattle() {
     return (
         /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
         <>
-        <form onSubmit={handleSubmit(onSubmit1)}
-              style={{alignSelf: "end", top: "8%", position: "fixed", width: "100%"}}>
-            <ul className="menu menu-vertical lg:menu-horizontal " style={{width: "100%"}}>
-                <div className="w-12 h-12 rounded-full"
-                     style={{paddingLeft: "0.5%", paddingTop: "1%",}}>
-                    <img src={createbattle}/>
-                </div>
-                <h1 className="text-3xl font-bold" style={{paddingTop: "1.5%", paddingLeft: "0.5%"}}>Create
-                    Battle</h1>
-            </ul>
-            <ul className="menu menu-vertical lg:menu-horizontal " style={{width: "100%"}}>
-                <div style={{padding: "1%", width: "33.33%"}}>
-                    <input
-                        className="textarea textarea-primary bg-base-200" {...register("title", {required: true})}
-                        placeholder="Battle Title..." style={{width: "100%"}}/>
-                </div>
+            <form onSubmit={handleSubmit(onSubmit1)}
+                  style={{alignSelf: "end", top: "8%", position: "fixed", width: "100%"}}>
+                <ul className="menu menu-vertical lg:menu-horizontal " style={{width: "100%"}}>
+                    <div className="w-12 h-12 rounded-full"
+                         style={{paddingLeft: "0.5%", paddingTop: "1%",}}>
+                        <img src={createbattle}/>
+                    </div>
+                    <h1 className="text-3xl font-bold" style={{paddingTop: "1.5%", paddingLeft: "0.5%"}}>Create
+                        Battle</h1>
+                </ul>
+                <ul className="menu menu-vertical lg:menu-horizontal " style={{width: "100%"}}>
+                    <div style={{padding: "1%", width: "33.33%"}}>
+                        <input
+                            className="textarea textarea-primary bg-base-200" {...register("title", {required: true})}
+                            placeholder="Battle Title..." style={{width: "100%"}}/>
+                    </div>
 
-                <div style={{padding: "1%", width: "33.33%"}}>
-                    <input className="textarea textarea-primary bg-base-200" placeholder="Time liness base score..."
+                    <div style={{padding: "1%", width: "33.33%"}}>
+                        <input className="textarea textarea-primary bg-base-200" placeholder="Time liness base score..."
                            style={{width: "100%"}}
                            {...register("timelinessBaseScore", {required: true, pattern: /^[0-9]+$/i})}
                            aria-invalid={errors.timelinessBaseScore ? "true" : "false"}
@@ -320,26 +370,7 @@ export default function CreateBattle() {
 
         <AddTestForm/>
 
-        <table className="table ">
-            <tbody>
-            <div style={{height: "fit-content"}} className="boxx">
-                <div className="boxx-inner">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Input</th>
-                        <th>Expected output</th>
-                        <th>Score given</th>
-                        <th>Privacy</th>
-                    </tr>
-                    </thead>
-                    {testAdded()}
-                </div>
 
-            </div>
-
-            </tbody>
-        </table>
 
         <div style={{padding: "1.5%"}}>
             <button className="btn btn-primary">

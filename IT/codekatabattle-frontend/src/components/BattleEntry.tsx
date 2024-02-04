@@ -1,6 +1,7 @@
 import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {Battle, BattleEntry, BattleService, BattleTestResult} from "../services/openapi";
+import {NavBar} from "./NavBar.tsx";
 
 export const BattleEntries= () => {
     const params = useParams();
@@ -89,16 +90,16 @@ export const BattleEntries= () => {
             entries?.map((entry, index) => (
                     <tr>
                         <th className="font-bold" style={{alignItems: "center"}}>
-                        {index}
-                    </th>
+                            {index}
+                        </th>
 
-                    <th>
-                        <div>{entry.status}</div>
-                    </th>
+                        <th>
+                            <div>{entry.status}</div>
+                        </th>
 
-                    <th>
-                        {entry.score}
-                    </th>
+                        <th>
+                            {entry.score}
+                        </th>
 
                         <th>
                             <div style={{paddingLeft: "1.5%"}}>
@@ -107,7 +108,10 @@ export const BattleEntries= () => {
                                     See test results
                                 </p>
                             </div>
-                            {testScoreListModal((entry.testResults ?? []))}
+                            {testScoreListModal((entry.processResult?.testResults ?? []))}
+                        </th>
+                        <th>
+                            {(entry.processResult?.satResult ?? "").toString()}
                         </th>
                     </tr>
                 )
@@ -117,22 +121,26 @@ export const BattleEntries= () => {
 
     return (
         <>
-            <div className="overflow-x-auto">
-                <table className="table">
-                    {/* head */}
-                    <thead>
-                    <tr>
-                        <th></th>
-                        <th>Status</th>
-                        <th>Score</th>
-                        <th>r</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {entryList()}
-                    </tbody>
-                </table>
+            <div style={{alignSelf: "end", top: "8%", width: "100%"}}>
+                <div className="overflow-x-auto">
+                    <table className="table">
+                        {/* head */}
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th>Status</th>
+                            <th>Score</th>
+                            <th>r</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {entryList()}
+                        </tbody>
+                    </table>
+                </div>
             </div>
+
+            <div style={{top: "0%", position: "fixed", width: "100%", height: "10%"}}><NavBar/></div>
 
         </>
     )

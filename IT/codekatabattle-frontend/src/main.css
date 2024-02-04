@@ -55,7 +55,7 @@ div.boxx
 div.boxx-inner
 {
   height: fit-content;
-  max-height: 400px;
+  max-height: 500px;
   overflow: auto;
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;
