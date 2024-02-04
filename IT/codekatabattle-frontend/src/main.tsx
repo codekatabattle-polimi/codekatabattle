@@ -18,6 +18,7 @@ import {VisualizeJoinedTournaments} from "./components/VisualizeJoinedTournament
 import {VisualizeCoordinatedTournaments} from "./components/VisualizeCoordinatedTournaments.tsx";
 import {ProfilePage} from "./components/ProfilePage.tsx";
 import {BattleEntries} from "./components/BattleEntry.tsx";
+import {PerformeOME} from "./components/PerformeOME.tsx";
 
 OpenAPI.BASE = import.meta.env.VITE_API_URL;
 
@@ -67,6 +68,12 @@ const router = createBrowserRouter([
     {
         path: "/tournaments/:tId/battles/:bId",
         element: <VisualizeBattle/>,
+
+    },
+
+    {
+        path: "/tournaments/:tId/battles/:bId/performe/OME",
+        element: <PerformeOME/>,
 
     },
 

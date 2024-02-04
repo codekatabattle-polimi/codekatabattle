@@ -206,9 +206,6 @@ public class BattleServiceImpl implements BattleService {
         if (!battleToUpdate.getCreator().equals(updater.getLogin())) {
             throw new ValidationException("Only the creator of the battle can update it");
         }
-        if (battleToUpdate.hasEnded()) {
-            throw new ValidationException("Battle has ended, can't be updated");
-        }
         if (!battleToUpdate.getEnableManualEvaluation()) {
             throw new ValidationException("Manual evaluation is not enabled for this battle");
         }

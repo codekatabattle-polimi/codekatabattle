@@ -4,7 +4,7 @@ import {
     Battle,
     BattleService, BattleUpdateDTO,
 } from "../services/openapi";
-import {useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {NavBar} from "./NavBar.tsx";
 import avatar2 from "../assets/avatar1.png";
 import {AuthContext} from "../context/AuthContext.ts";
@@ -478,6 +478,32 @@ export const VisualizeBattle= () => {
         )
     }
 
+    function buttonOME(){
+        if ( battle?.endsAt == undefined) return (<></>)
+        const endDate = new Date((battle.endsAt ?? ""));
+        const now = new Date();
+        if(compareDate(now,endDate)==1 && battle.enableManualEvaluation){
+            return(
+                <>
+                    <div style={{paddingLeft: "1%"}}>
+                        <div className="stats shadow bg-base-200 border border-base-300">
+                            <Link to={location+"/performe/OME"}>
+                                <div className="stat bg-error">
+                                    <div className="stat-title text-black">Click</div>
+                                    <div className="stat-value text-black">
+                                        <p className="font-bold">Performe OME</p>
+                                    </div>
+                                    <div className="stat-desc text-black">for performing the manual evaluation and terminate the battle</div>
+                                </div>
+                            </Link>
+
+                        </div>
+                    </div>
+                </>
+            )
+        }
+    }
+
     return (
         <>
 
@@ -497,28 +523,39 @@ export const VisualizeBattle= () => {
 
 
                 <ul style={{width: "100%"}} className="menu-lg lg:menu-horizontal bg-base-100 rounded-box">
-                    <a href={battle?.repositoryUrl}
-                       style={{paddingTop: "1%", paddingLeft: "1%", width: "12%", height: "99%"}}>
-                        <div className="bg-info rounded-xl border-base-300 " style={{height: "78%", width: "100%"}}><p
-                            className="font-bold text-base-300"
-                            style={{paddingLeft: "8%", paddingTop: "10%", paddingBottom: "10%"}}>Repository Link ↘</p>
-                        </div>
-                    </a>
                     <BattleLeaderboard/>
                     <BattleTest/>
 
                 </ul>
-                <div style={{paddingLeft: "1%"}}>
-                    <div className="stats shadow bg-base-200 border border-base-300">
+                <ul style={{width: "100%"}} className="menu-lg lg:menu-horizontal bg-base-100 rounded-box">
 
-                        <div className="stat">
-                            <div className="stat-title">Gain up to</div>
-                            <div className="stat-value">{battle?.timelinessBaseScore} extra point</div>
-                            <div className="stat-desc">for submitting your final version as soon as possible!</div>
+                    <div style={{paddingLeft: "1%"}}>
+                        <div className="stats shadow bg-base-200 border border-base-300">
+
+                            <div className="stat">
+                                <div className="stat-title">Gain up to</div>
+                                <div className="stat-value">{battle?.timelinessBaseScore} extra point</div>
+                                <div className="stat-desc">for submitting your final version as soon as possible!</div>
+                            </div>
+
                         </div>
-
                     </div>
-                </div>
+                    <div style={{paddingLeft: "1%"}}>
+                        <div className="stats shadow bg-base-200 border border-base-300">
+                            <a href={battle?.repositoryUrl}>
+                                <div className="stat bg-info">
+                                    <div className="stat-title text-black">Click</div>
+                                    <div className="stat-value text-black">
+                                        <p className="font-bold">Repository Link ↘</p>
+                                    </div>
+                                <div className="stat-desc text-black">for accessing in the Github repository</div>
+                                </div>
+                            </a>
+
+                        </div>
+                    </div>
+                    {buttonOME()}
+                </ul>
                 <dialog id="my_modal_1" className="modal">
                     <div className="modal-box">
                         <h3 className="font-bold text-lg">Hello! You are the creator so you can be edit
@@ -530,10 +567,10 @@ export const VisualizeBattle= () => {
                             </form>
                         </div>
                     </div>
-                    <form method="dialog" className="modal-backdrop">
-                        <button>close</button>
-                    </form>
-                </dialog>
+                        <form method="dialog" className="modal-backdrop">
+                            <button>close</button>
+                        </form>
+                    </dialog>
             </div>
             <div style={{top: "0%", position: "fixed", width: "100%", height: "10%"}}><NavBar/></div>
         </>
