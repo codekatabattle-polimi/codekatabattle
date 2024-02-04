@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,12 +61,12 @@ public class Tournament extends BaseEntity {
     @JsonManagedReference
     private List<Battle> battles = new ArrayList<>();
 
-    public boolean hasStarted() {
-        return startsAt.isBefore(LocalDateTime.now());
+    public boolean hasStarted(Clock clock) {
+        return startsAt.isBefore(LocalDateTime.now(clock));
     }
 
-    public boolean hasEnded() {
-        return endsAt.isBefore(LocalDateTime.now());
+    public boolean hasEnded(Clock clock) {
+        return endsAt.isBefore(LocalDateTime.now(clock));
     }
 
 }

@@ -13,6 +13,7 @@ import it.polimi.codekatabattle.models.oauth.AuthOrigin;
 import it.polimi.codekatabattle.repositories.TournamentRepository;
 import it.polimi.codekatabattle.services.AuthService;
 import it.polimi.codekatabattle.services.TournamentService;
+import it.polimi.codekatabattle.utils.clock.ConfigurableClock;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,6 +31,9 @@ public class TournamentIntegrationTests extends BaseIntegrationTestSetup {
     @Autowired
     private TournamentService tournamentService;
 
+    @Autowired
+    private ConfigurableClock clock;
+
     public TournamentIntegrationTests(@Autowired TournamentRepository tournamentRepository) {
         super(tournamentRepository);
     }
@@ -40,8 +44,8 @@ public class TournamentIntegrationTests extends BaseIntegrationTestSetup {
         tournamentDTO.setTitle("Tournament 1");
         tournamentDTO.setDescription("Tournament Description 1");
         tournamentDTO.setPrivacy(TournamentPrivacy.PUBLIC);
-        tournamentDTO.setStartsAt(LocalDateTime.now().plusHours(1));
-        tournamentDTO.setEndsAt(LocalDateTime.now().plusDays(5));
+        tournamentDTO.setStartsAt(LocalDateTime.now(clock.getClock()).plusHours(1));
+        tournamentDTO.setEndsAt(LocalDateTime.now(clock.getClock()).plusDays(5));
         tournamentDTO.setMaxParticipants(100);
 
         given()
@@ -61,8 +65,8 @@ public class TournamentIntegrationTests extends BaseIntegrationTestSetup {
         tournamentDTO.setTitle("Tournament 1");
         tournamentDTO.setDescription("Tournament Description 1");
         tournamentDTO.setPrivacy(TournamentPrivacy.PUBLIC);
-        tournamentDTO.setStartsAt(LocalDateTime.now().plusHours(1));
-        tournamentDTO.setEndsAt(LocalDateTime.now().plusDays(5));
+        tournamentDTO.setStartsAt(LocalDateTime.now(clock.getClock()).plusHours(1));
+        tournamentDTO.setEndsAt(LocalDateTime.now(clock.getClock()).plusDays(5));
         tournamentDTO.setMaxParticipants(100);
 
         GHUser user = this.authService.getUserInfo(personalAccessToken, AuthOrigin.SWAGGER);
@@ -84,24 +88,24 @@ public class TournamentIntegrationTests extends BaseIntegrationTestSetup {
         tournamentDTO1.setTitle("Tournament 1");
         tournamentDTO1.setDescription("Tournament Description 1");
         tournamentDTO1.setPrivacy(TournamentPrivacy.PUBLIC);
-        tournamentDTO1.setStartsAt(LocalDateTime.now().plusHours(1));
-        tournamentDTO1.setEndsAt(LocalDateTime.now().plusDays(5));
+        tournamentDTO1.setStartsAt(LocalDateTime.now(clock.getClock()).plusHours(1));
+        tournamentDTO1.setEndsAt(LocalDateTime.now(clock.getClock()).plusDays(5));
         tournamentDTO1.setMaxParticipants(100);
 
         TournamentDTO tournamentDTO2 = new TournamentDTO();
         tournamentDTO2.setTitle("Tournament 2");
         tournamentDTO2.setDescription("Tournament Description 2");
         tournamentDTO2.setPrivacy(TournamentPrivacy.PUBLIC);
-        tournamentDTO2.setStartsAt(LocalDateTime.now().plusHours(1));
-        tournamentDTO2.setEndsAt(LocalDateTime.now().plusDays(5));
+        tournamentDTO2.setStartsAt(LocalDateTime.now(clock.getClock()).plusHours(1));
+        tournamentDTO2.setEndsAt(LocalDateTime.now(clock.getClock()).plusDays(5));
         tournamentDTO2.setMaxParticipants(200);
 
         TournamentDTO tournamentDTO3 = new TournamentDTO();
         tournamentDTO3.setTitle("Tournament 3");
         tournamentDTO3.setDescription("Tournament Description 3");
         tournamentDTO3.setPrivacy(TournamentPrivacy.PRIVATE);
-        tournamentDTO3.setStartsAt(LocalDateTime.now().plusHours(1));
-        tournamentDTO3.setEndsAt(LocalDateTime.now().plusDays(5));
+        tournamentDTO3.setStartsAt(LocalDateTime.now(clock.getClock()).plusHours(1));
+        tournamentDTO3.setEndsAt(LocalDateTime.now(clock.getClock()).plusDays(5));
         tournamentDTO3.setMaxParticipants(300);
 
         GHUser user = this.authService.getUserInfo(personalAccessToken, AuthOrigin.SWAGGER);
@@ -126,16 +130,16 @@ public class TournamentIntegrationTests extends BaseIntegrationTestSetup {
         tournamentDTO1.setTitle("Tournament 1");
         tournamentDTO1.setDescription("Tournament Description 1");
         tournamentDTO1.setPrivacy(TournamentPrivacy.PUBLIC);
-        tournamentDTO1.setStartsAt(LocalDateTime.now().plusHours(1));
-        tournamentDTO1.setEndsAt(LocalDateTime.now().plusDays(5));
+        tournamentDTO1.setStartsAt(LocalDateTime.now(clock.getClock()).plusHours(1));
+        tournamentDTO1.setEndsAt(LocalDateTime.now(clock.getClock()).plusDays(5));
         tournamentDTO1.setMaxParticipants(100);
 
         TournamentDTO tournamentDTO2 = new TournamentDTO();
         tournamentDTO2.setTitle("Tournament 2");
         tournamentDTO2.setDescription("Tournament Description 2");
         tournamentDTO2.setPrivacy(TournamentPrivacy.PUBLIC);
-        tournamentDTO2.setStartsAt(LocalDateTime.now().plusHours(1));
-        tournamentDTO2.setEndsAt(LocalDateTime.now().plusDays(5));
+        tournamentDTO2.setStartsAt(LocalDateTime.now(clock.getClock()).plusHours(1));
+        tournamentDTO2.setEndsAt(LocalDateTime.now(clock.getClock()).plusDays(5));
         tournamentDTO2.setMaxParticipants(200);
 
         GHUser creator1 = new GHUser();
@@ -163,16 +167,16 @@ public class TournamentIntegrationTests extends BaseIntegrationTestSetup {
         tournamentDTO1.setTitle("Tournament 1");
         tournamentDTO1.setDescription("Tournament Description 1");
         tournamentDTO1.setPrivacy(TournamentPrivacy.PUBLIC);
-        tournamentDTO1.setStartsAt(LocalDateTime.now().plusHours(1));
-        tournamentDTO1.setEndsAt(LocalDateTime.now().plusDays(5));
+        tournamentDTO1.setStartsAt(LocalDateTime.now(clock.getClock()).plusHours(1));
+        tournamentDTO1.setEndsAt(LocalDateTime.now(clock.getClock()).plusDays(5));
         tournamentDTO1.setMaxParticipants(100);
 
         TournamentDTO tournamentDTO2 = new TournamentDTO();
         tournamentDTO2.setTitle("Tournament 2");
         tournamentDTO2.setDescription("Tournament Description 2");
         tournamentDTO2.setPrivacy(TournamentPrivacy.PUBLIC);
-        tournamentDTO2.setStartsAt(LocalDateTime.now().plusHours(1));
-        tournamentDTO2.setEndsAt(LocalDateTime.now().plusDays(5));
+        tournamentDTO2.setStartsAt(LocalDateTime.now(clock.getClock()).plusHours(1));
+        tournamentDTO2.setEndsAt(LocalDateTime.now(clock.getClock()).plusDays(5));
         tournamentDTO2.setMaxParticipants(200);
 
         GHUser creator = new GHUser();
@@ -200,8 +204,8 @@ public class TournamentIntegrationTests extends BaseIntegrationTestSetup {
         tournamentDTO1.setTitle("Tournament 1");
         tournamentDTO1.setDescription("Tournament Description 1");
         tournamentDTO1.setPrivacy(TournamentPrivacy.PUBLIC);
-        tournamentDTO1.setStartsAt(LocalDateTime.now().plusHours(1));
-        tournamentDTO1.setEndsAt(LocalDateTime.now().plusDays(5));
+        tournamentDTO1.setStartsAt(LocalDateTime.now(clock.getClock()).plusHours(1));
+        tournamentDTO1.setEndsAt(LocalDateTime.now(clock.getClock()).plusDays(5));
         tournamentDTO1.setMaxParticipants(100);
         tournamentDTO1.setCoordinators(List.of("coordinator1", "coordinator2"));
 
@@ -209,8 +213,8 @@ public class TournamentIntegrationTests extends BaseIntegrationTestSetup {
         tournamentDTO2.setTitle("Tournament 2");
         tournamentDTO2.setDescription("Tournament Description 2");
         tournamentDTO2.setPrivacy(TournamentPrivacy.PUBLIC);
-        tournamentDTO2.setStartsAt(LocalDateTime.now().plusHours(1));
-        tournamentDTO2.setEndsAt(LocalDateTime.now().plusDays(5));
+        tournamentDTO2.setStartsAt(LocalDateTime.now(clock.getClock()).plusHours(1));
+        tournamentDTO2.setEndsAt(LocalDateTime.now(clock.getClock()).plusDays(5));
         tournamentDTO2.setMaxParticipants(200);
 
         GHUser creator1 = new GHUser();
@@ -238,8 +242,8 @@ public class TournamentIntegrationTests extends BaseIntegrationTestSetup {
         tournamentDTO.setTitle("Tournament 1");
         tournamentDTO.setDescription("Tournament Description 1");
         tournamentDTO.setPrivacy(TournamentPrivacy.PUBLIC);
-        tournamentDTO.setStartsAt(LocalDateTime.now().plusHours(1));
-        tournamentDTO.setEndsAt(LocalDateTime.now().plusDays(5));
+        tournamentDTO.setStartsAt(LocalDateTime.now(clock.getClock()).plusHours(1));
+        tournamentDTO.setEndsAt(LocalDateTime.now(clock.getClock()).plusDays(5));
         tournamentDTO.setMaxParticipants(100);
 
         GHUser creator = new GHUser();
@@ -265,8 +269,8 @@ public class TournamentIntegrationTests extends BaseIntegrationTestSetup {
         tournamentDTO.setTitle("Tournament 1");
         tournamentDTO.setDescription("Tournament Description 1");
         tournamentDTO.setPrivacy(TournamentPrivacy.PUBLIC);
-        tournamentDTO.setStartsAt(LocalDateTime.now().plusHours(1));
-        tournamentDTO.setEndsAt(LocalDateTime.now().plusDays(5));
+        tournamentDTO.setStartsAt(LocalDateTime.now(clock.getClock()).plusHours(1));
+        tournamentDTO.setEndsAt(LocalDateTime.now(clock.getClock()).plusDays(5));
         tournamentDTO.setMaxParticipants(100);
 
         GHUser creator = this.authService.getUserInfo(personalAccessToken, AuthOrigin.SWAGGER);
@@ -287,8 +291,8 @@ public class TournamentIntegrationTests extends BaseIntegrationTestSetup {
         tournamentDTO.setTitle("Tournament 1");
         tournamentDTO.setDescription("Tournament Description 1");
         tournamentDTO.setPrivacy(TournamentPrivacy.PUBLIC);
-        tournamentDTO.setStartsAt(LocalDateTime.now().minusHours(1));
-        tournamentDTO.setEndsAt(LocalDateTime.now().plusDays(5));
+        tournamentDTO.setStartsAt(LocalDateTime.now(clock.getClock()).minusHours(1));
+        tournamentDTO.setEndsAt(LocalDateTime.now(clock.getClock()).plusDays(5));
         tournamentDTO.setMaxParticipants(100);
 
         GHUser creator = this.authService.getUserInfo(personalAccessToken, AuthOrigin.SWAGGER);
@@ -309,8 +313,8 @@ public class TournamentIntegrationTests extends BaseIntegrationTestSetup {
         tournamentDTO.setTitle("Tournament 1");
         tournamentDTO.setDescription("Tournament Description 1");
         tournamentDTO.setPrivacy(TournamentPrivacy.PUBLIC);
-        tournamentDTO.setStartsAt(LocalDateTime.now().plusHours(1));
-        tournamentDTO.setEndsAt(LocalDateTime.now().plusDays(5));
+        tournamentDTO.setStartsAt(LocalDateTime.now(clock.getClock()).plusHours(1));
+        tournamentDTO.setEndsAt(LocalDateTime.now(clock.getClock()).plusDays(5));
         tournamentDTO.setMaxParticipants(100);
 
         GHUser creator = new GHUser();
@@ -345,8 +349,8 @@ public class TournamentIntegrationTests extends BaseIntegrationTestSetup {
         tournamentDTO.setTitle("Tournament 1");
         tournamentDTO.setDescription("Tournament Description 1");
         tournamentDTO.setPrivacy(TournamentPrivacy.PUBLIC);
-        tournamentDTO.setStartsAt(LocalDateTime.now().plusHours(1));
-        tournamentDTO.setEndsAt(LocalDateTime.now().plusDays(5));
+        tournamentDTO.setStartsAt(LocalDateTime.now(clock.getClock()).plusHours(1));
+        tournamentDTO.setEndsAt(LocalDateTime.now(clock.getClock()).plusDays(5));
         tournamentDTO.setMaxParticipants(100);
 
         GHUser creator = this.authService.getUserInfo(personalAccessToken, AuthOrigin.SWAGGER);
@@ -356,8 +360,8 @@ public class TournamentIntegrationTests extends BaseIntegrationTestSetup {
         updateDTO.setTitle("Updated Tournament 1");
         updateDTO.setDescription("Updated Tournament Description 1");
         updateDTO.setPrivacy(TournamentPrivacy.PRIVATE);
-        updateDTO.setStartsAt(LocalDateTime.now().plusHours(2));
-        updateDTO.setEndsAt(LocalDateTime.now().plusDays(6));
+        updateDTO.setStartsAt(LocalDateTime.now(clock.getClock()).plusHours(2));
+        updateDTO.setEndsAt(LocalDateTime.now(clock.getClock()).plusDays(6));
         updateDTO.setMaxParticipants(200);
 
         given()
@@ -380,8 +384,8 @@ public class TournamentIntegrationTests extends BaseIntegrationTestSetup {
         tournamentDTO.setTitle("Tournament 1");
         tournamentDTO.setDescription("Tournament Description 1");
         tournamentDTO.setPrivacy(TournamentPrivacy.PUBLIC);
-        tournamentDTO.setStartsAt(LocalDateTime.now().plusHours(1));
-        tournamentDTO.setEndsAt(LocalDateTime.now().plusDays(5));
+        tournamentDTO.setStartsAt(LocalDateTime.now(clock.getClock()).plusHours(1));
+        tournamentDTO.setEndsAt(LocalDateTime.now(clock.getClock()).plusDays(5));
         tournamentDTO.setMaxParticipants(100);
 
         GHUser creator = this.authService.getUserInfo(personalAccessToken, AuthOrigin.SWAGGER);
@@ -402,8 +406,8 @@ public class TournamentIntegrationTests extends BaseIntegrationTestSetup {
         tournamentDTO.setTitle("Tournament 1");
         tournamentDTO.setDescription("Tournament Description 1");
         tournamentDTO.setPrivacy(TournamentPrivacy.PUBLIC);
-        tournamentDTO.setStartsAt(LocalDateTime.now().plusHours(1));
-        tournamentDTO.setEndsAt(LocalDateTime.now().plusDays(5));
+        tournamentDTO.setStartsAt(LocalDateTime.now(clock.getClock()).plusHours(1));
+        tournamentDTO.setEndsAt(LocalDateTime.now(clock.getClock()).plusDays(5));
         tournamentDTO.setMaxParticipants(100);
 
         GHUser creator = new GHUser();
@@ -414,8 +418,8 @@ public class TournamentIntegrationTests extends BaseIntegrationTestSetup {
         updateDTO.setTitle("Updated Tournament 1");
         updateDTO.setDescription("Updated Tournament Description 1");
         updateDTO.setPrivacy(TournamentPrivacy.PRIVATE);
-        updateDTO.setStartsAt(LocalDateTime.now().plusHours(2));
-        updateDTO.setEndsAt(LocalDateTime.now().plusDays(6));
+        updateDTO.setStartsAt(LocalDateTime.now(clock.getClock()).plusHours(2));
+        updateDTO.setEndsAt(LocalDateTime.now(clock.getClock()).plusDays(6));
         updateDTO.setMaxParticipants(200);
 
         given()

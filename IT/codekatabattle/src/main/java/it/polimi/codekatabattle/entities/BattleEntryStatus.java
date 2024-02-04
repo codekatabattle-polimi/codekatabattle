@@ -5,4 +5,5 @@ public enum BattleEntryStatus {
     TESTING,
     ANALYZING,
     COMPLETED,
+    COMPLETED_WITH_ERRORS,
 }

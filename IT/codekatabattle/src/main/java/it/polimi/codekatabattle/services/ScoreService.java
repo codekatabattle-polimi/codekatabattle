@@ -7,10 +7,11 @@ import it.polimi.codekatabattle.models.SATResult;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public interface ScoreService {
 
-    void processBattleEntry(BattleEntry battleEntry, URL artifactUrl);
+    CompletableFuture<BattleEntry> processBattleEntry(BattleEntry battleEntry, URL artifactUrl);
 
     List<BattleTestResult> executeBattleTests(BattleEntry battleEntry, URL artifactUrl);
 

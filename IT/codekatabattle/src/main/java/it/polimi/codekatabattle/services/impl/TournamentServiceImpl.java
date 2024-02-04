@@ -7,6 +7,7 @@ import it.polimi.codekatabattle.models.dto.TournamentDTO;
 import it.polimi.codekatabattle.models.github.GHUser;
 import it.polimi.codekatabattle.repositories.TournamentRepository;
 import it.polimi.codekatabattle.services.TournamentService;
+import it.polimi.codekatabattle.utils.clock.ConfigurableClock;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -16,13 +17,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
+
 @Service
 public class TournamentServiceImpl implements TournamentService {
 
     private final TournamentRepository tournamentRepository;
 
-    public TournamentServiceImpl(TournamentRepository tournamentRepository) {
+    private final ConfigurableClock clock;
+
+    public TournamentServiceImpl(TournamentRepository tournamentRepository, ConfigurableClock clock) {
         this.tournamentRepository = tournamentRepository;
+        this.clock = clock;
     }
 
     @Override
@@ -72,10 +78,10 @@ public class TournamentServiceImpl implements TournamentService {
         Tournament tournament = this.tournamentRepository.findById(tournamentId)
             .orElseThrow(() -> new EntityNotFoundException("Tournament not found by id " + tournamentId));
 
-        if (tournament.hasStarted()) {
+        if (tournament.hasStarted(clock.getClock())) {
             throw new ValidationException("Tournament has already started, it is not possible to join");
         }
-        if (tournament.hasEnded()) {
+        if (tournament.hasEnded(clock.getClock())) {
             throw new ValidationException("Tournament has ended");
         }
         if (tournament.getMaxParticipants() != null && tournament.getParticipants().size() + 1 > tournament.getMaxParticipants()) {
@@ -111,7 +117,7 @@ public class TournamentServiceImpl implements TournamentService {
         if (tournament.getParticipants().stream().noneMatch(p -> p.getUsername().equals(user.getLogin()))) {
             throw new ValidationException("User is not participating in this tournament");
         }
-        if (tournament.hasEnded()) {
+        if (tournament.hasEnded(clock.getClock())) {
             throw new ValidationException("Tournament has ended");
         }
 
@@ -128,10 +134,10 @@ public class TournamentServiceImpl implements TournamentService {
         if (!tournamentToUpdate.getCreator().equals(updater.getLogin())) {
             throw new ValidationException("Only the creator of the tournament can update it");
         }
-        if (tournamentToUpdate.hasStarted()) {
+        if (tournamentToUpdate.hasStarted(clock.getClock())) {
             throw new ValidationException("Tournament has already started, can't be updated");
         }
-        if (tournamentToUpdate.hasEnded()) {
+        if (tournamentToUpdate.hasEnded(clock.getClock())) {
             throw new ValidationException("Tournament has ended, can't be updated");
         }
 

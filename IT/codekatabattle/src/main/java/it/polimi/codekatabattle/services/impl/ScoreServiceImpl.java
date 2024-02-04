@@ -5,6 +5,7 @@ import it.polimi.codekatabattle.entities.BattleEntry;
 import it.polimi.codekatabattle.entities.BattleEntryStatus;
 import it.polimi.codekatabattle.models.BattleEntryProcessResult;
 import it.polimi.codekatabattle.models.BattleTestResult;
+import it.polimi.codekatabattle.models.ExecuteResult;
 import it.polimi.codekatabattle.models.SATResult;
 import it.polimi.codekatabattle.repositories.BattleEntryRepository;
 import it.polimi.codekatabattle.services.ExecutorService;
@@ -20,9 +21,7 @@ import java.net.URL;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 @Service
 public class ScoreServiceImpl implements ScoreService {
@@ -37,7 +36,7 @@ public class ScoreServiceImpl implements ScoreService {
 
     @Override
     @Async
-    public void processBattleEntry(BattleEntry battleEntry, URL artifactUrl) {
+    public CompletableFuture<BattleEntry> processBattleEntry(BattleEntry battleEntry, URL artifactUrl) {
         List<BattleTestResult> testResults = this.executeBattleTests(battleEntry, artifactUrl);
         Optional<SATResult> satResult = this.executeSAT(battleEntry, artifactUrl);
 
@@ -46,7 +45,12 @@ public class ScoreServiceImpl implements ScoreService {
         processResult.setSatResult(satResult.orElse(null));
 
         battleEntry.setProcessResult(processResult);
-        battleEntry.setStatus(BattleEntryStatus.COMPLETED);
+
+        if (testResults.stream().anyMatch(tr -> tr.isTimeout() || tr.getExitCode() != 0)) {
+            battleEntry.setStatus(BattleEntryStatus.COMPLETED_WITH_ERRORS);
+        } else {
+            battleEntry.setStatus(BattleEntryStatus.COMPLETED);
+        }
 
         // Calculate score and save it in battle entry
         int score = testResults.stream().mapToInt(BattleTestResult::getScore).sum() + (satResult.map(SATResult::getScore).orElse(0));
@@ -59,6 +63,8 @@ public class ScoreServiceImpl implements ScoreService {
 
         battleEntry.setScore(score);
         this.battleEntryRepository.save(battleEntry);
+
+        return CompletableFuture.completedFuture(battleEntry);
     }
 
     @Override
@@ -77,17 +83,17 @@ public class ScoreServiceImpl implements ScoreService {
 
             try {
                 // Execute code with timeout
-                Container.ExecResult result = executor.executeArtifact(artifactUrl, test.getInput()).get(30, TimeUnit.SECONDS);
-                boolean passed = test.getExpectedOutput().equals(result.getStdout());
+                ExecuteResult result = executor.executeArtifact(artifactUrl, test.getInput()).get(30, TimeUnit.SECONDS);
+                boolean passed = test.getExpectedOutput().equals(result.getOutput());
 
-                btr.setOutput(result.getStdout());
-                btr.setExitCode(result.getExitCode());
-                btr.setError(result.getStderr());
+                btr.setOutput(result.getOutput());
+                btr.setExitCode(result.getExitCode().intValue());
+                btr.setError(result.getError());
                 btr.setPassed(passed);
                 btr.setTimeout(false);
                 btr.setScore(passed ? test.getGivesScore() : 0);
-                logger.info("Done executing test " + test.getName() + " for battle " + battle.getId() + " and artifact " + artifactUrl + ": " + (passed ? "passed" : "failed") + " with exit code " + result.getExitCode() + " and output " + result.getStdout());
-            } catch (ExecutionException | InterruptedException | IOException ex) {
+                logger.info("Done executing test " + test.getName() + " for battle " + battle.getId() + " and artifact " + artifactUrl + ": " + (passed ? "passed" : "failed") + " with exit code " + result.getExitCode() + " and output " + result.getOutput());
+            } catch (ExecutionException | InterruptedException ex) {
                 btr.setPassed(false);
                 btr.setTimeout(false);
                 btr.setExitCode(-1);
@@ -99,6 +105,12 @@ public class ScoreServiceImpl implements ScoreService {
                 btr.setExitCode(-1);
                 btr.setError("Timeout");
                 logger.error("Got TimeoutException while executing test " + test.getName() + " for battle " + battle.getId() + " and artifact " + artifactUrl + ": " + ex.getMessage());
+            } catch (Exception ex) {
+                btr.setPassed(false);
+                btr.setTimeout(false);
+                btr.setExitCode(-1);
+                btr.setError(ex.getMessage());
+                logger.error("Got Exception while executing test " + test.getName() + " for battle " + battle.getId() + " and artifact " + artifactUrl + ": " + ex.getMessage());
             }
 
             return btr;
@@ -119,7 +131,7 @@ public class ScoreServiceImpl implements ScoreService {
 
         ExecutorService executor = this.getBattleExecutor(battleEntry.getBattle());
         try {
-            Container.ExecResult result = executor.executeSAT(artifactUrl).get(30, TimeUnit.SECONDS);
+            ExecuteResult result = executor.executeSAT(artifactUrl).get(30, TimeUnit.SECONDS);
             if (result.getExitCode() != 0) {
                 logger.error("Got non-zero exit code while executing SAT for battle " + battleEntry.getBattle().getId() + " and artifact " + artifactUrl + ": " + result.getExitCode());
                 return Optional.empty();
@@ -127,8 +139,8 @@ public class ScoreServiceImpl implements ScoreService {
 
             SATResult satResult = new SATResult();
             satResult.setSatName(executor.getSATName());
-            satResult.setWarnings(List.of(result.getStdout().split("\n")));
-            satResult.setScore(Math.max(0, 10 - result.getStdout().split("\n").length));
+            satResult.setWarnings(List.of(result.getOutput().split("\n")));
+            satResult.setScore(Math.max(0, 10 - result.getOutput().split("\n").length));
 
             logger.info("Done executing SAT for battle " + battleEntry.getBattle().getId() + " and artifact " + artifactUrl + ": " + satResult.getScore());
             return Optional.of(satResult);

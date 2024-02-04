@@ -1,17 +1,16 @@
 package it.polimi.codekatabattle.services;
 
-import org.testcontainers.containers.Container;
+import it.polimi.codekatabattle.models.ExecuteResult;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public interface ExecutorService {
 
-    CompletableFuture<Container.ExecResult> executeArtifact(URL artifactUrl, String input) throws ExecutionException, IOException;
+    CompletableFuture<ExecuteResult> executeArtifact(URL artifactUrl, String input) throws ExecutionException;
 
-    CompletableFuture<Container.ExecResult> executeSAT(URL artifactUrl) throws ExecutionException, IOException;
+    CompletableFuture<ExecuteResult> executeSAT(URL artifactUrl) throws ExecutionException;
 
     String getSATName();
 

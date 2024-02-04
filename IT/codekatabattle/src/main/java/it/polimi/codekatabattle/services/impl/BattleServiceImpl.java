@@ -13,6 +13,7 @@ import it.polimi.codekatabattle.repositories.BattleRepository;
 import it.polimi.codekatabattle.services.BattleService;
 import it.polimi.codekatabattle.services.ScoreService;
 import it.polimi.codekatabattle.services.TournamentService;
+import it.polimi.codekatabattle.utils.clock.ConfigurableClock;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ValidationException;
@@ -45,12 +46,22 @@ public class BattleServiceImpl implements BattleService {
 
     private final ScoreService scoreService;
 
-    public BattleServiceImpl(BattleRepository battleRepository, BattleParticipantRepository battleParticipantRepository, BattleEntryRepository battleEntryRepository, TournamentService tournamentService, ScoreService scoreService) {
+    private final ConfigurableClock clock;
+
+    public BattleServiceImpl(
+        BattleRepository battleRepository,
+        BattleParticipantRepository battleParticipantRepository,
+        BattleEntryRepository battleEntryRepository,
+        TournamentService tournamentService,
+        ScoreService scoreService,
+        ConfigurableClock clock
+    ) {
         this.battleRepository = battleRepository;
         this.battleParticipantRepository = battleParticipantRepository;
         this.battleEntryRepository = battleEntryRepository;
         this.tournamentService = tournamentService;
         this.scoreService = scoreService;
+        this.clock = clock;
     }
 
     public Battle create(BattleDTO battle, GHUser creator) throws ValidationException, EntityNotFoundException, IOException {
@@ -63,7 +74,7 @@ public class BattleServiceImpl implements BattleService {
             throw new ValidationException("Two battle tests with the same name are not allowed");
         }
         if (battle.getEndsAt().isBefore(battle.getStartsAt())) {
-            throw new ValidationException("The enrollament deadline must be before the final deadline");
+            throw new ValidationException("The enrollment deadline must be before the final deadline");
         }
         if (battle.getEndsAt().isAfter(tournament.getEndsAt())) {
             throw new ValidationException("The battle final deadline must be before the tournament final deadline");
@@ -112,17 +123,18 @@ public class BattleServiceImpl implements BattleService {
         if (battle.getTournament().getParticipants().stream().noneMatch(p -> p.getUsername().equals(user.getLogin()))) {
             throw new ValidationException("User is not participating in this tournament");
         }
-        if (battle.getTournament().hasEnded()) {
+        if (battle.getTournament().hasEnded(clock.getClock())) {
             throw new ValidationException("Tournament has ended, can't join battles");
         }
-        if (battle.hasNotStarted()) {
-            throw new ValidationException("Tournament has not started yet, it is not possible to join");
+
+        if (battle.hasNotStarted(clock.getClock())) {
+            throw new ValidationException("Battle has not started yet, it is not possible to join");
         }
-        if (battle.hasEnded()) {
-            throw new ValidationException("Tournament has ended");
+        if (battle.hasEnded(clock.getClock())) {
+            throw new ValidationException("Battle has ended");
         }
         if (battle.getParticipants().stream().anyMatch(p -> p.getUsername().equals(user.getLogin()))) {
-            throw new ValidationException("User is already participating in this tournament");
+            throw new ValidationException("User is already participating in this battle");
         }
 
         // These are mostly paranoid checks, as the first check already prevents creator/coordinators from joining
@@ -156,7 +168,7 @@ public class BattleServiceImpl implements BattleService {
         if (participant == null) {
             throw new ValidationException("User is not participating in this battle");
         }
-        if (battle.hasEnded()) {
+        if (battle.hasEnded(clock.getClock())) {
             throw new ValidationException("Battle has ended");
         }
 
@@ -281,14 +293,15 @@ public class BattleServiceImpl implements BattleService {
     }
 
     @Override
+    @Transactional
     public BattleEntry submit(Long battleId, BattleEntryDTO battleEntry, GitHub github) throws EntityNotFoundException, ValidationException, IOException {
         Battle battle = this.battleRepository.findById(battleId)
             .orElseThrow(() -> new EntityNotFoundException("Battle not found by id " + battleId));
 
-        if (battle.hasNotStarted()) {
+        if (battle.hasNotStarted(clock.getClock())) {
             throw new ValidationException("Battle has not started yet, it is not possible to submit");
         }
-        if (battle.hasEnded()) {
+        if (battle.hasEnded(clock.getClock())) {
             throw new ValidationException("Battle has ended");
         }
 
