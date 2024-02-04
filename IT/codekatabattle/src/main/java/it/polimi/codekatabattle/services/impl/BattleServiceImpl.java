@@ -170,8 +170,19 @@ public class BattleServiceImpl implements BattleService {
         Battle battleToUpdate = this.battleRepository.findById(battleId)
             .orElseThrow(() -> new EntityNotFoundException("Battle not found by id " + battleId));
 
+        Tournament tournament = battleToUpdate.getTournament();
+
         if (!battleToUpdate.getCreator().equals(updater.getLogin())) {
             throw new ValidationException("Only the creator of the battle can update it");
+        }
+        if (battle.getEndsAt().isBefore(battle.getStartsAt())) {
+            throw new ValidationException("The enrollament deadline must be before the final deadline");
+        }
+        if (battle.getEndsAt().isAfter(tournament.getEndsAt())) {
+            throw new ValidationException("The battle final deadline must be before the tournament final deadline");
+        }
+        if (battle.getStartsAt().isBefore(tournament.getStartsAt())) {
+            throw new ValidationException("The battle enrollament deadline must be after the tournament enrollment deadline");
         }
 
         battleToUpdate.setStartsAt(battle.getStartsAt());

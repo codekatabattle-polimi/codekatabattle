@@ -133,6 +133,10 @@ public class TournamentServiceImpl implements TournamentService {
             throw new ValidationException("Tournament maximum number of participants can't be lower than the current number of participants");
         }
 
+        if (tournament.getEndsAt().isBefore(tournament.getStartsAt())) {
+            throw new ValidationException("The enrollament deadline must be before the final deadline");
+        }
+
         tournamentToUpdate.setTitle(tournament.getTitle());
         tournamentToUpdate.setDescription(tournament.getDescription());
         tournamentToUpdate.setStartsAt(tournament.getStartsAt());
