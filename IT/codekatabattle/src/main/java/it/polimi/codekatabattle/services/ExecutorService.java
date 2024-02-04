@@ -11,4 +11,8 @@ public interface ExecutorService {
 
     CompletableFuture<Container.ExecResult> execute(URL artifactUrl, String input) throws ExecutionException, IOException;
 
+    CompletableFuture<Container.ExecResult> executeSAT(URL artifactUrl) throws ExecutionException, IOException;
+
+    String getSATName();
+
 }

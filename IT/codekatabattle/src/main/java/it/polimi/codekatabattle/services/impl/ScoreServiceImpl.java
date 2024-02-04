@@ -45,6 +45,9 @@ public class ScoreServiceImpl implements ScoreService {
         results.setTestResults(testResults);
         results.setSatResult(satResult.orElse(null));
 
+        battleEntry.setStatus(BattleEntryStatus.COMPLETED);
+        this.battleEntryRepository.save(battleEntry);
+
         return CompletableFuture.completedFuture(results);
     }
 
@@ -103,8 +106,25 @@ public class ScoreServiceImpl implements ScoreService {
         battleEntry.setStatus(BattleEntryStatus.ANALYZING);
         this.battleEntryRepository.save(battleEntry);
 
-        // TODO: Implement SAT execution
-        return Optional.empty();
+        ExecutorService executor = this.getBattleCodeExecutor(battleEntry.getBattle());
+        try {
+            Container.ExecResult result = executor.executeSAT(artifactUrl).get(30, TimeUnit.SECONDS);
+            if (result.getExitCode() != 0) {
+                logger.error("Got non-zero exit code while executing SAT for battle " + battleEntry.getBattle().getId() + " and artifact " + artifactUrl + ": " + result.getExitCode());
+                return Optional.empty();
+            }
+
+            SATResult satResult = new SATResult();
+            satResult.setSatName(executor.getSATName());
+            satResult.setWarnings(List.of(result.getStdout().split("\n")));
+            satResult.setScore(Math.max(0, 10 - result.getStdout().split("\n").length));
+
+            logger.info("Done executing SAT for battle " + battleEntry.getBattle().getId() + " and artifact " + artifactUrl + ": " + satResult.getScore());
+            return Optional.of(satResult);
+        } catch (Exception e) {
+            logger.error("Got exception while executing SAT for battle " + battleEntry.getBattle().getId() + " and artifact " + artifactUrl + ": " + e.getMessage());
+            return Optional.empty();
+        }
     }
 
     private ExecutorService getBattleCodeExecutor(Battle battle) {
