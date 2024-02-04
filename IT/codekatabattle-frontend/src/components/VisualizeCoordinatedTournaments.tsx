@@ -2,7 +2,7 @@ import {AuthService, PageTournament, Tournament, TournamentService} from "../ser
 import {useContext, useEffect, useState} from "react";
 import {NavBar} from "./NavBar.tsx";
 import five from "../assets/high-five.png"
-import {useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import student from "../assets/reading.png";
 import educator from "../assets/educator.png";
 import {ImageCreator} from "./ImageCreator.tsx";
@@ -135,15 +135,15 @@ export const VisualizeCoordinatedTournaments= () => {
         if (tournaments.content == null) return (<></>);
         return(
             tournaments.content.map((t: Tournament) => (
-                <tr className=" shadow " style={{width: "100%"}} onClick={() => navigate("/tournaments/"+t.id?.toString())}>
-                    <th style={{width: "10%", overflow: "auto"}}>
+                <tr className=" shadow " style={{width: "100%"}} >
+                    <th style={{width: "10%", overflow: "auto"}} onClick={() => navigate("/tournaments/"+t.id?.toString())}>
                         <div className=" ">
                             <div className="stat-title text-xs">Title</div>
                             <div className="stat-value text-2xl">{t.title}
                             </div>
                         </div>
                     </th>
-                    <th>
+                    <th onClick={() => navigate("/tournaments/"+t.id?.toString())}>
                         <div className="" style={{overflow: "auto"}}>
                             <div className="stat-title text-xs">Total Coordinators</div>
                             <div className="navbar " style={{}}>
@@ -155,7 +155,7 @@ export const VisualizeCoordinatedTournaments= () => {
                             <div className="stat-desc"></div>
                         </div>
                     </th>
-                    <th>
+                    <th onClick={() => navigate("/tournaments/"+t.id?.toString())}>
                         <div className="" style={{overflow: "auto"}}>
                             <div className="stat-title text-xs">Total Participants</div>
                             <div className="navbar " style={{}}>
@@ -168,7 +168,7 @@ export const VisualizeCoordinatedTournaments= () => {
                         </div>
                     </th>
 
-                    <th>
+                    <th onClick={() => navigate("/tournaments/"+t.id?.toString())}>
                         <div className="stat" style={{overflow: "auto"}}>
                             <div className="stat-figure" style={{paddingTop: "25%"}}>
                                 <div
@@ -191,6 +191,7 @@ export const VisualizeCoordinatedTournaments= () => {
                     </th>
 
                     <th>
+                        <Link to={"/profile/"+t.creator}>
                         <div className="stat" style={{overflow: "auto"}}>
                             <div className="stat-figure text-secondary">
                                 <div className="avatar online">
@@ -202,6 +203,7 @@ export const VisualizeCoordinatedTournaments= () => {
                             <div className="stat-title" style={{paddingTop: "10%"}}>created by</div>
                             <div className="stat-desc text-primary">{t.creator}</div>
                         </div>
+                        </Link>
                     </th>
 
 
@@ -211,7 +213,6 @@ export const VisualizeCoordinatedTournaments= () => {
 
     }
 
-    if (tournaments == null) return (<>no tournament</>);
     return (
         <>
             <div style={{alignSelf: "end", top: "8%",position:"fixed", width: "100%"}}>

@@ -1,7 +1,7 @@
 //import {useContext} from "react";
 //import {AuthContext} from "../context/AuthContext.ts";
 
-import {useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {AuthService, GHUser, PageTournament, Tournament, TournamentService} from "../services/openapi";
 import {NavBar} from "./NavBar.tsx";
 import {useEffect, useState} from "react";
@@ -66,19 +66,19 @@ export const ProfilePage= () => {
 
         if (tournaments == null)
             return (<>No tournament found</>);
-        if (tournaments.content == null) return (<>No tournament found 1</>);
-        if (tournaments.content.length == 0) return (<>No tournament found 2</>);
+        if (tournaments.content == null) return (<>No tournament found </>);
+        if (tournaments.content.length == 0) return (<>No tournament found </>);
         return(
             tournaments.content.map((t: Tournament) => (
-                <tr className=" bg-base-200 shadow rounded-box" style={{width: "100%"}} onClick={() => to(t.id?.toString())}>
-                    <th style={{width: "10%", overflow: "auto"}}>
+                <tr className=" bg-base-200 shadow rounded-box" style={{width: "100%"}}>
+                    <th style={{width: "10%", overflow: "auto"}} onClick={() => to(t.id?.toString())}>
                         <div className=" ">
                             <div className="stat-title text-xs">Title</div>
                             <div className="stat-value text-2xl">{t.title}
                             </div>
                         </div>
                     </th>
-                    <th>
+                    <th onClick={() => to(t.id?.toString())}>
                         <div className="" style={{overflow: "auto"}}>
                             <div className="stat-title text-xs">Total Coordinators</div>
                             <div className="navbar " style={{}}>
@@ -90,7 +90,7 @@ export const ProfilePage= () => {
                             <div className="stat-desc"></div>
                         </div>
                     </th>
-                    <th>
+                    <th onClick={() => to(t.id?.toString())}>
                         <div className="" style={{overflow: "auto"}}>
                             <div className="stat-title text-xs">Total Participants</div>
                             <div className="navbar " style={{}}>
@@ -103,7 +103,7 @@ export const ProfilePage= () => {
                         </div>
                     </th>
 
-                    <th>
+                    <th onClick={() => to(t.id?.toString())}>
                         <div className="stat" style={{overflow: "auto"}}>
                             <div className="stat-figure" style={{paddingTop: "25%"}}>
                                 <div
@@ -126,6 +126,7 @@ export const ProfilePage= () => {
                     </th>
 
                     <th>
+                        <Link to={"/profile/"+t.creator}>
                         <div className="stat" style={{overflow: "auto"}}>
                             <div className="stat-figure text-secondary">
                                 <div className="avatar online">
@@ -137,6 +138,7 @@ export const ProfilePage= () => {
                             <div className="stat-title" style={{paddingTop: "10%"}}>created by</div>
                             <div className="stat-desc text-primary">{t.creator}</div>
                         </div>
+                        </Link>
                     </th>
 
 

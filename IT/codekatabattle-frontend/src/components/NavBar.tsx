@@ -66,7 +66,7 @@ export const NavBar= () => {
                 <div className="navbar-end">
                     <form className="input input-bordered  ">
                         <ul className="menu menu-vertical lg:menu-horizontal">
-                                <input type="text" placeholder="Type here..." style={{height:"5%",paddingTop:"4%"}} className="bg-base-100 "
+                                <input type="text" placeholder="Search user..." style={{height:"5%",paddingTop:"4%"}} className="bg-base-100 "
                                        onChange={event => setUsername(event.target.value)}/>
                                 <button className="btm btn-sm btn-ghost btn-circle" style={{right:"70%"}} onClick={()=>navigate("/profile/"+username)}>
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none"

@@ -1,15 +1,22 @@
-import {Link, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {useContext, useEffect, useState} from "react";
 import {AuthContext} from "../context/AuthContext.ts";
-import {Battle, BattleParticipant, BattleParticipantUpdateDTO, BattleService} from "../services/openapi";
+import {
+    Battle,
+    BattleParticipant,
+    BattleParticipantUpdateDTO,
+    BattleService,
+    BattleUpdateDTO
+} from "../services/openapi";
 import {NavBar} from "./NavBar.tsx";
 import nunchaku from "../assets/nunchaku.png";
 
-export const PerformeOME= () => {
+export const PerformOME= () => {
     const params = useParams();
     const {user}=useContext(AuthContext);
     const [battle, setBattle] = useState<Battle | null>(null);
     const [error, setError] = useState<Error | null>(null);
+    const navigate=useNavigate();
     const [OMEs] = useState(
         new Array(battle?.participants?.length).fill(0)
     );
@@ -78,7 +85,7 @@ export const PerformeOME= () => {
                 </td>
                 <td>
                     <label className="btn btn-primary"
-                           onClick={() => performOME(index, participantId)}>Edit</label>
+                           onClick={() => performOME(index, participantId)}>Save</label>
                 </td>
             </>
         )
@@ -105,12 +112,27 @@ export const PerformeOME= () => {
         )
     }
 
+    async function editBattle(){
+        (document.getElementById('my_modal_2') as HTMLDialogElement).showModal();
+        if(!battle)return;
+        const updateBattle:BattleUpdateDTO={startsAt: battle.startsAt, endsAt: battle.endsAt, enableManualEvaluation: false};
+        if(battle.id!=undefined){
+            try{
+                await BattleService.updateById1(battle.id,updateBattle);
+                navigate("/tournaments/"+params.tId+"/battles/"+params.bId);
+            } catch (e) {
+                setError(e as Error);
+                if(error?.message)alert(error.message);
+            }
+        }
+    }
+
     return (
         <>
             <div style={{top: "8%", width: "100%", position: "absolute"}}>
 
                 <div className="navbar bg-base-200" style={{width: "100%"}}>
-                <div className="navbar-start"></div>
+                    <div className="navbar-start"></div>
                     <div className="navbar-center">
                         <div className="w-10 h-10 rounded-full">
                             <img src={nunchaku}/>
@@ -138,6 +160,11 @@ export const PerformeOME= () => {
                         {participants()}
                         </tbody>
                     </table>
+                </div>
+                <div style={{padding:"1%"}}>
+                    <label style={{width: "100%"}} className="btn btn-error" onClick={() => editBattle()}>Terminate OME
+                        and BATTLE!!</label>
+
                 </div>
             </div>
             <div style={{top: "0%", position: "fixed", width: "100%", height: "10%"}}><NavBar/></div>

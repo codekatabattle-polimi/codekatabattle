@@ -63,10 +63,10 @@ export function HomePage() {
 
                                         <h1 className="mb-5 text-5xl font-bold">{user.login}</h1>
 
-                                        <p className="mb-5">This is CodekataBattle, your online dojo where you can learn
+                                        <p className="mb-5 font-black">This is CodekataBattle, your online dojo where you can learn
                                             and
                                             improve
-                                            the art pf coding</p>
+                                            the art of coding</p>
                                         <button className="btn btn-primary"><Link to={"/all/tournaments/view/0"}>Check
                                             tournaments and
                                             join
