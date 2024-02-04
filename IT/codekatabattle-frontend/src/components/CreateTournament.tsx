@@ -145,7 +145,7 @@ export default function CreateTournament() { // Manca l'aggiunta di badges e TC
                                 </div>
                                 <input type="date" {...register("startsAt", {
                                     required: true,
-                                    setValueAs: (value) => value + "T09:40:46.268Z"
+                                    setValueAs: (value) => value + "T23:59:59.268Z"
                                 })} />
                             </ul>
                         </div>
@@ -158,7 +158,7 @@ export default function CreateTournament() { // Manca l'aggiunta di badges e TC
                                 </div>
                                 <input type="date" {...register("endsAt", {
                                     required: true,
-                                    setValueAs: (value) => value + "T09:40:46.268Z"
+                                    setValueAs: (value) => value + "T00:00:00.268Z"
                                 })}/>
                             </ul>
                         </div>
@@ -166,7 +166,7 @@ export default function CreateTournament() { // Manca l'aggiunta di badges e TC
                         <div className="form-control" style={{width: "18%", paddingLeft: "2%"}}>
                             <label className="label cursor-pointer bg-base-200 rounded-b-btn textarea textarea-primary">
                                 <span className="label-text font-bold" style={{paddingLeft: "1%"}}>Public:</span>
-                                <input  {...register("privacy")} type="checkbox" className="toggle" value="PUBLIC"/>
+                                <input  {...register("privacy")} type="checkbox" className="toggle" value="PUBLIC" defaultChecked={true}/>
                             </label>
                         </div>
                     </ul>

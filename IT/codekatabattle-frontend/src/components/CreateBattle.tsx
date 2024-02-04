@@ -321,7 +321,7 @@ export default function CreateBattle() {
                             </div>
                             <input type="date" {...register("startsAt", {
                                 required: true,
-                                setValueAs: (value) => value + "T09:40:46.268Z"
+                                setValueAs: (value) => value + "T23:59:59.268Z"
                             })} />
                         </ul>
                     </div>
@@ -334,7 +334,7 @@ export default function CreateBattle() {
                             </div>
                             <input type="date" {...register("endsAt", {
                                 required: true,
-                                setValueAs: (value) => value + "T09:40:46.268Z"
+                                setValueAs: (value) => value + "T00:00:00.268Z"
                             })}/>
                         </ul>
                     </div>
@@ -370,11 +370,10 @@ export default function CreateBattle() {
                 <div className="label">
                     <span className="label-text">Select the language</span>
                 </div>
-                <select {...register("language")}
+                <select {...register("language", {required: true})}
                         className="select select-bordered bg-base-200 rounded-b-btn textarea textarea-primary">
-                    <option disabled selected>no selection</option>
+                    <option value="GOLANG"  selected>Golang</option>
                     <option value="PYTHON">Python</option>
-                    <option value="GOLANG">Golang</option>
                 </select>
                 <div className="label">
                 </div>

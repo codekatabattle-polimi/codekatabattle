@@ -598,7 +598,7 @@ export const VisualizeTournament= () => {
                         startDate.getDate()}</span></label>
                     <input style={{width: "50%"}} type="date" placeholder="Type here..."
                            className="bg-base-100 "
-                           onChange={event => setNewStartAt(event.target.value + "T09:40:46.268Z")}/>
+                           onChange={event => setNewStartAt(event.target.value + "T23:59:59.268Z")}/>
                 </ul>
 
                 <ul className="menu menu-vertical lg:menu-horizontal" style={{width: "100%"}}>
@@ -608,7 +608,7 @@ export const VisualizeTournament= () => {
                         endDate.getDate()}</span></label>
                     <input style={{width: "50%"}} type="date" placeholder="Type here..."
                            className="bg-base-100 "
-                           onChange={event => setNewEndAt(event.target.value + "T09:40:46.268Z")}/>
+                           onChange={event => setNewEndAt(event.target.value + "T00:00:00.268Z")}/>
 
                 </ul>
                 <ul className="menu menu-vertical lg:menu-horizontal" style={{width: "100%"}}>
