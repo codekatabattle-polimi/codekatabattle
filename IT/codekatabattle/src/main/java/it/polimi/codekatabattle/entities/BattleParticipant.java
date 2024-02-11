@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 public class BattleParticipant extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "battle_id", nullable = false)
     @JsonBackReference
     private Battle battle;

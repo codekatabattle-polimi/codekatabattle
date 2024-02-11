@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="All Tests" type="JUnit" factoryName="JUnit">
+    <module name="codekatabattle" />
+    <option name="MAIN_CLASS_NAME" value="" />
+    <option name="METHOD_NAME" value="" />
+    <option name="TEST_OBJECT" value="directory" />
+    <envs>
+      <env name="CKB_GITHUB_PAT" value="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" />
+      <env name="CKB_GITHUB_TEST_PAT" value="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" />
+    </envs>
+    <dir value="$PROJECT_DIR$/src/test/java" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

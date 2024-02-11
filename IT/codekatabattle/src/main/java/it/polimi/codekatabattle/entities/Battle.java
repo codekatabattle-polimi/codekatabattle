@@ -65,7 +65,7 @@ public class Battle extends BaseEntity {
     @Column
     private int timelinessBaseScore = 0;
 
-    @OneToMany(mappedBy = "battle", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "battle", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JsonManagedReference
     private List<BattleParticipant> participants = new ArrayList<>();
 
@@ -78,7 +78,7 @@ public class Battle extends BaseEntity {
     @JsonBackReference
     private Tournament tournament;
 
-    public boolean hasNotStarted(Clock clock) {
+    public boolean canStudentEnroll(Clock clock) {
         return LocalDateTime.now(clock).isBefore(startsAt);
     }
 

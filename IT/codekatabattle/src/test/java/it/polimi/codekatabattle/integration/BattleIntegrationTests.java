@@ -16,6 +16,8 @@ import it.polimi.codekatabattle.services.BattleService;
 import it.polimi.codekatabattle.services.TournamentService;
 import it.polimi.codekatabattle.utils.clock.ConfigurableClock;
 import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GitHub;
@@ -23,6 +25,9 @@ import org.kohsuke.github.GitHubBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.io.IOException;
 import java.time.Clock;
@@ -35,10 +40,32 @@ import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class BattleIntegrationTests extends BaseIntegrationTestSetup {
+
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(
+        "postgres:15-alpine"
+    );
+
+    @BeforeAll
+    static void beforeAll() {
+        postgres.start();
+    }
+
+    @AfterAll
+    static void afterAll() {
+        postgres.stop();
+    }
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+    }
 
     @Autowired
     private AuthService authService;
@@ -336,6 +363,57 @@ public class BattleIntegrationTests extends BaseIntegrationTestSetup {
             .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
 
         this.battleService.deleteById(battle.getId(), creator);
+    }
+
+    @Test
+    void givenCreatedTournamentAndBattle_shouldLeaveBattle() throws OAuthException, IOException {
+        TournamentDTO tournamentDTO = new TournamentDTO();
+        tournamentDTO.setTitle("Tournament 1");
+        tournamentDTO.setDescription("Tournament Description 1");
+        tournamentDTO.setPrivacy(TournamentPrivacy.PUBLIC);
+        tournamentDTO.setStartsAt(LocalDateTime.now(clock.getClock()).plusDays(1));
+        tournamentDTO.setEndsAt(LocalDateTime.now(clock.getClock()).plusDays(30));
+        tournamentDTO.setMaxParticipants(100);
+
+        GHUser creator = new GHUser();
+        creator.setLogin("creator1");
+        Tournament tournament = this.tournamentService.create(tournamentDTO, creator);
+
+        GHUser joiner = this.authService.getUserInfo(personalAccessToken, AuthOrigin.SWAGGER);
+        GHUser joiner2 = new GHUser();
+        joiner2.setLogin("joiner2");
+
+        this.tournamentService.join(tournament.getId(), joiner);
+        this.tournamentService.join(tournament.getId(), joiner2);
+
+        clock.setClock(Clock.offset(clock.getClock(), Duration.ofDays(2)));
+
+        BattleDTO battleDTO = new BattleDTO();
+        battleDTO.setTournamentId(tournament.getId());
+        battleDTO.setTitle("FizzBuzz 6");
+        battleDTO.setDescription("Implement FizzBuzz algorithm. Example output: 10 -> 1-2-Fizz-4-Buzz-6-7-8-Fizz-Buzz");
+        battleDTO.setStartsAt(LocalDateTime.now(clock.getClock()).plusHours(1));
+        battleDTO.setEndsAt(LocalDateTime.now(clock.getClock()).plusDays(7));
+        battleDTO.setLanguage(BattleLanguage.GOLANG);
+        battleDTO.setEnableSAT(true);
+        battleDTO.setEnableManualEvaluation(true);
+        battleDTO.setTimelinessBaseScore(100);
+
+        Battle battle = this.battleService.create(battleDTO, creator);
+
+        try {
+            this.battleService.join(battle.getId(), joiner);
+            this.battleService.join(battle.getId(), joiner2);
+            this.battleService.leave(battle.getId(), joiner);
+
+            // Check that battle is still there
+            assertDoesNotThrow(() -> this.battleService.findById(battle.getId()));
+
+            // Check that joiner2 is still there
+            assertThat(this.battleService.findById(battle.getId()).getParticipants().size(), equalTo(1));
+        } finally {
+            this.battleService.deleteBattleRepository(battle);
+        }
     }
 
     @Test

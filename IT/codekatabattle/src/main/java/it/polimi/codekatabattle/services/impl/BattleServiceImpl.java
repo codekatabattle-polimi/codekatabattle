@@ -97,7 +97,7 @@ public class BattleServiceImpl implements BattleService {
 
     public Battle findById(Long battleId) throws EntityNotFoundException {
         Battle battle = this.battleRepository.findById(battleId)
-            .orElseThrow(() -> new ValidationException("Battle not found by id " + battleId));
+            .orElseThrow(() -> new EntityNotFoundException("Battle not found by id " + battleId));
 
         // Include only public tests
         battle.setTests(battle.getTests().stream().filter(test -> test.getPrivacy() == BattleTestPrivacy.PUBLIC).toList());
@@ -127,8 +127,8 @@ public class BattleServiceImpl implements BattleService {
             throw new ValidationException("Tournament has ended, can't join battles");
         }
 
-        if (battle.hasNotStarted(clock.getClock())) {
-            throw new ValidationException("Battle has not started yet, it is not possible to join");
+        if (!battle.canStudentEnroll(clock.getClock())) {
+            throw new ValidationException("Battle enrollment deadline has expired");
         }
         if (battle.hasEnded(clock.getClock())) {
             throw new ValidationException("Battle has ended");
@@ -298,8 +298,8 @@ public class BattleServiceImpl implements BattleService {
         Battle battle = this.battleRepository.findById(battleId)
             .orElseThrow(() -> new EntityNotFoundException("Battle not found by id " + battleId));
 
-        if (battle.hasNotStarted(clock.getClock())) {
-            throw new ValidationException("Battle has not started yet, it is not possible to submit");
+        if (!battle.canStudentEnroll(clock.getClock())) {
+            throw new ValidationException("Battle enrollment deadline has expired");
         }
         if (battle.hasEnded(clock.getClock())) {
             throw new ValidationException("Battle has ended");
