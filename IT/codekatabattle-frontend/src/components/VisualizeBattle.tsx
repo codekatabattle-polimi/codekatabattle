@@ -121,7 +121,8 @@ export const VisualizeBattle= () => {
     function joinButton() {
         const now = new Date()
         const startDate= new Date(battle?.startsAt ?? now)
-        if(compareDate(now,startDate) == 1 || compareDate(now,startDate) == 0)
+        const endDate= new Date(battle?.endsAt ?? now)
+        if(compareDate(now,startDate) == 2 || compareDate(now,endDate)==1)
             return (<></>)
         return (<button style={{width:"100%"}} className="btn btn-success" onClick={() => joinBattle()}>Join</button>)
     }

@@ -1,4 +1,4 @@
-import {Link, useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {useContext, useEffect, useState} from "react";
 import {AuthContext} from "../context/AuthContext.ts";
 import {
@@ -105,7 +105,7 @@ export const PerformOME= () => {
                     <th>{index + 1}</th>
                     <td>{participant.username}</td>
                     <td>{participant.score}</td>
-                    <td><Link to={location + (participant.username ?? "")}>Repository link</Link></td>
+                    <td><a href={"https://github.com/"+participant.username}>Repository link</a></td>
                     {OMEorNotOME(index,(participant.id ?? -1),(participant?.receivedOME ?? true))}
                 </tr>
             )))

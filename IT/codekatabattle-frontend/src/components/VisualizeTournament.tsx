@@ -50,6 +50,9 @@ export const VisualizeTournament= () => {
         }
     }
     function editDescription() {
+        const now = new Date();
+        const startDate= new Date(tournament?.startsAt ?? now);
+        if(compareDate(now,startDate)==1)return (<></>);
         if(tournament==null) return (<></>);
         if(!user) return (<></>);
         if(tournament.creator == (user.login)) {
@@ -81,6 +84,9 @@ export const VisualizeTournament= () => {
     }
 
     function joinOrLeaveButton() {
+        const now = new Date();
+        const startDate= new Date(tournament?.startsAt ?? now);
+        if(compareDate(now,startDate)==1)return (<></>);
         if(tournament?.participants == undefined )
             return (<></>)
         if(!user)return (<></>)
