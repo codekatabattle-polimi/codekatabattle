@@ -27,9 +27,5 @@ COPY src/ src/
 COPY pom.xml .
 RUN mvn compile
 
-RUN ls -la
-
-COPY target/*.jar ckb.jar
-
-ENTRYPOINT ["java", "-jar", "ckb.jar"]
+ENTRYPOINT ["java", "-jar", "target/codekatabattle-0.0.1-SNAPSHOT.jar"]
 EXPOSE 8000
