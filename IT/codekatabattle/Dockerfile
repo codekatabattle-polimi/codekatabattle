@@ -27,6 +27,8 @@ COPY src/ src/
 COPY pom.xml .
 RUN mvn compile
 
+RUN ls -la
+
 COPY target/*.jar ckb.jar
 
 ENTRYPOINT ["java", "-jar", "ckb.jar"]
