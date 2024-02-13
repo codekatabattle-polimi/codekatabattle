@@ -25,7 +25,7 @@ ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
 # Build project
 COPY src/ src/
 COPY pom.xml .
-RUN mvn package spring-boot:repackage -DskipTests
+RUN mvn package -DskipTests
 
 ENTRYPOINT ["java", "-jar", "/app/target/codekatabattle-1.0.0.jar.original"]
 EXPOSE 8000
