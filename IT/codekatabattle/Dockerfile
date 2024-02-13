@@ -23,6 +23,8 @@ ENV MAVEN_HOME /usr/share/maven
 ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
 
 # Build project
+COPY src/ src/
+COPY pom.xml .
 RUN mvn compile
 
 COPY target/*.jar ckb.jar
