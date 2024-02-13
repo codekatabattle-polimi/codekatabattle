@@ -27,5 +27,5 @@ COPY src/ src/
 COPY pom.xml .
 RUN mvn compile
 
-ENTRYPOINT ["java", "-jar", "target/codekatabattle-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "/app/target/codekatabattle-0.0.1-SNAPSHOT.jar"]
 EXPOSE 8000
