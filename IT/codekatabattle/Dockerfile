@@ -1,5 +1,5 @@
 FROM eclipse-temurin:17-jdk-alpine
-VOLUME /tmp
+WORKDIR /app
 
 ARG MAVEN_VERSION=3.9.6
 ARG USER_HOME_DIR="/root"
@@ -22,7 +22,10 @@ RUN mkdir -p /usr/share/maven /usr/share/maven/ref \
 ENV MAVEN_HOME /usr/share/maven
 ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
 
-COPY target/*.jar app.jar
+# Build project
+RUN mvn compile
 
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+COPY target/*.jar ckb.jar
+
+ENTRYPOINT ["java", "-jar", "ckb.jar"]
 EXPOSE 8000
