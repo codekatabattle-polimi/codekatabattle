@@ -264,7 +264,7 @@ public class BattleServiceImpl implements BattleService {
             .create();
 
         try {
-            repository.createVariable("API_BASE_URL", "https://api.codekatabattle.orciuolo.it");
+            repository.createVariable("API_BASE_URL", "https://codekatabattle-api.onrender.com.");
             repository.createVariable("BATTLE_ID", battle.getId().toString());
         } catch (Exception e) {
             this.deleteBattleRepository(battle);
