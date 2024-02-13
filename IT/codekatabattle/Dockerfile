@@ -27,5 +27,5 @@ COPY src/ src/
 COPY pom.xml .
 RUN mvn clean package -DskipTests
 
-ENTRYPOINT ["java", "-jar", "target/codekatabattle-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "/app/target/codekatabattle-1.0.0.jar.original"]
 EXPOSE 8000
