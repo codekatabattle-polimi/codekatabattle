@@ -12,7 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-            .allowedOrigins("http://localhost:8000", "http://localhost:5173", "https://codekatabattle.orciuolo.it", "https://api.codekatabattle.orciuolo.it")
+            .allowedOrigins("http://localhost:8000", "http://localhost:5173", "https://codekatabattle.onrender.com", "https://codekatabattle-api.onrender.com")
             .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD")
             .maxAge(3600);
     }
