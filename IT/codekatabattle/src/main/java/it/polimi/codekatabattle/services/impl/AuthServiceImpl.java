@@ -10,6 +10,8 @@ import it.polimi.codekatabattle.services.AuthService;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +44,8 @@ public class AuthServiceImpl implements AuthService {
     @Value("${ckb.test}")
     private Boolean isTest;
 
+    Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
+
     private OAuthConfig getOAuthConfig(AuthOrigin authOrigin) {
         final HashMap<AuthOrigin, OAuthConfig> oauthConfigMap = new HashMap<>() {{
             put(AuthOrigin.SWAGGER, new OAuthConfig(swaggerClientId, swaggerClientSecret));
@@ -65,6 +69,7 @@ public class AuthServiceImpl implements AuthService {
             throw new OAuthException("Failed to obtain access token from GitHub");
         }
         if (response.getBody() == null || response.getBody().access_token == null) {
+            logger.error("Error from GitHub: " + response.getBody().error);
             throw new OAuthException("Invalid response body");
         }
 
@@ -115,6 +120,9 @@ public class AuthServiceImpl implements AuthService {
             return AuthOrigin.SWAGGER;
         }
         if (origin.contains("localhost:5173")) {
+            return AuthOrigin.FRONTEND;
+        }
+        if (origin.contains("codekatabattle.onrender.com")) {
             return AuthOrigin.FRONTEND;
         }
 
