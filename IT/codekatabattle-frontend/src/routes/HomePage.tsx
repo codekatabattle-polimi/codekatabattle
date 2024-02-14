@@ -16,7 +16,7 @@ export function HomePage() {
                     <input type="checkbox" className=""/>
 
                     <div className="hero w-full bg-base-300 swap-on "
-                         style={{backgroundImage: 'url("src/assets/bg1.jpg")'}}>
+                         style={{backgroundImage: 'url("https://i.imgur.com/9lQnWNW.jpeg")'}}>
 
 
                         <div className="hero-content text-center text-neutral-content bg-base-100/50 rounded-xl">
@@ -45,7 +45,7 @@ export function HomePage() {
                     <div className="swap-off">
                         <div>
                             <div className="hero min-h-screen"
-                                 style={{backgroundImage: 'url("src/assets/bg.jpg")'}}>
+                                 style={{backgroundImage: 'url("https://i.imgur.com/B6WBZsX.jpeg")'}}>
 
                                 <div className="hero-content text-center text-neutral-content bg-base-100/50 rounded-xl">
                                     <div className="">
