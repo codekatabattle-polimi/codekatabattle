@@ -25,7 +25,7 @@ jobs:
         
       - name: Run Tests with Maven
         working-directory: ./IT/codekatabattle
-        run: mvn test -Dtest="TournamentIntegrationTests"
+        run: mvn test
         env:
           CKB_GITHUB_PAT: ${{ secrets.CKB_GITHUB_PAT }}
           CKB_GITHUB_TEST_PAT: ${{ secrets.CKB_GITHUB_TEST_PAT }}
